@@ -94,9 +94,10 @@ typedef enum {
     CGI_TR_NAME_EQUAL,
     CGI_TR_SEPARATE,
     CGI_TR_STASH,
+    CGI_TR_SV_SPACE,
     CGI_TR_VALUE_ESCAPE
 } te_cgi_trans;
-#define CGI_TRANSITION_CT  5
+#define CGI_TRANSITION_CT  6
 
 /**
  *  State transition handling map.  Map the state enumeration and the event
@@ -139,7 +140,7 @@ cgi_trans_table[ CGI_STATE_CT ][ CGI_EVENT_CT ] = {
   { { CGI_ST_VALUE, CGI_TR_STASH },                 /* EVT:  ALPHA */
     { CGI_ST_VALUE, CGI_TR_STASH },                 /* EVT:  NAME_CHAR */
     { CGI_ST_VALUE, CGI_TR_STASH },                 /* EVT:  = */
-    { CGI_ST_VALUE, CGI_TR_STASH },                 /* EVT:  + */
+    { CGI_ST_VALUE, CGI_TR_SV_SPACE },              /* EVT:  + */
     { CGI_ST_VALUE, CGI_TR_VALUE_ESCAPE },          /* EVT:  % */
     { CGI_ST_VALUE, CGI_TR_STASH },                 /* EVT:  OTHER */
     { CGI_ST_INIT, CGI_TR_SEPARATE },               /* EVT:  & */
@@ -280,6 +281,14 @@ cgi_run_fsm(
             *(pzOut++) = curCh;
             outlen--;
             /* END   == STASH == DO NOT CHANGE THIS COMMENT */
+            break;
+
+
+        case CGI_TR_SV_SPACE:
+            /* START == SV_SPACE == DO NOT CHANGE THIS COMMENT */
+            *(pzOut++) = ' ';
+            outlen--;
+            /* END   == SV_SPACE == DO NOT CHANGE THIS COMMENT */
             break;
 
 
