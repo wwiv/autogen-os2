@@ -11,4 +11,4 @@ New in 5.18.7 December 2015
 * add (max-file-time) scheme function (max source file time)
 * Allow MAN_PAGE_DATE to override using the date program in
   man page templates
-* Enable byte-for-byte reproducibility
+* Enable byte-for-byte build reproducibility
