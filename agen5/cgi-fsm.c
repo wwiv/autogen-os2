@@ -233,7 +233,7 @@ cgi_run_fsm(
 
         /* START == FIND TRANSITION == DO NOT CHANGE THIS COMMENT */
         char curCh = *(pzSrc++);
-        trans_evt = get_next_event(curCh, inlen--, saved_pzOut, saved_outlen);
+        trans_evt = get_next_event(curCh, inlen--, saved_pzOut, outlen);
         /* END   == FIND TRANSITION == DO NOT CHANGE THIS COMMENT */
 
 #ifndef __COVERITY__
@@ -253,28 +253,33 @@ cgi_run_fsm(
         switch (trans) {
         case CGI_TR_INVALID:
             /* START == INVALID == DO NOT CHANGE THIS COMMENT */
-            exit( cgi_invalid_transition( cgi_state, trans_evt ));
+            exit( cgi_invalid_transition(cgi_state, trans_evt));
             /* END   == INVALID == DO NOT CHANGE THIS COMMENT */
             break;
 
 
         case CGI_TR_NAME_EQUAL:
             /* START == NAME_EQUAL == DO NOT CHANGE THIS COMMENT */
-            strcpy( pzOut, "='" );
-            outlen -= 2;
-            pzOut  += 2;
+            {
+            static char const txt[] = "='";
+            memcpy(pzOut, txt, sizeof(txt) - 1);
+            outlen -= sizeof(txt) - 1;
+            pzOut  += sizeof(txt) - 1;
+            }
             /* END   == NAME_EQUAL == DO NOT CHANGE THIS COMMENT */
             break;
 
 
         case CGI_TR_SEPARATE:
             /* START == SEPARATE == DO NOT CHANGE THIS COMMENT */
-            strcpy( pzOut, "';\n" );
-            outlen -= 3;
-            pzOut  += 3;
+            {
+            static char const txt[] = "';\n";
+            memcpy(pzOut, txt, sizeof(txt) - 1);
+            outlen -= sizeof(txt) - 1;
+            pzOut  += sizeof(txt) - 1;
+            }
             /* END   == SEPARATE == DO NOT CHANGE THIS COMMENT */
             break;
-
 
         case CGI_TR_STASH:
             /* START == STASH == DO NOT CHANGE THIS COMMENT */

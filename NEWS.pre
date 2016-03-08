@@ -1,35 +1,14 @@
-New in __CURRENT_VERSION__ September 2015
+New in __CURRENT_VERSION__ March 2016
 
-* {AG,CL,GD}exe environment variables may be set to force
-  bootstrapping with a particular release.
-* MAN_PAGE_DATE can be used with various man page docs to
-  override the current date default.
-* project may now be bootstrapped and built in the source
-  directory with no ill effect.
-* AutoGen as a daemon will never happen.  Last vestiges gone.
-* templates may now obtain the most recent source modification
-  time with "(max-file-time)"
+* Ensure testing vars start as unset for testing
+* happy new year & de-uglifications
 
-New in 5.18.5 April 2015
+New in 5.18.7 December 2015
 
-* Guile 1.6 is now obsolete.  1.7/8 or newer from now on.
-  Fixed issues with Guile managed locale string processing.
-  (It keeps getting better and better all the time and I
-  must keep adjusting over and over all the time.)
-* for-each handler functions may now be able to free (or not)
-  the file text via the "handler-frees" attribute.
-
-New in 5.18.4 August 2014
-
-* Do Not Edit (dne) warning:  the default of printing a date in the
-  warning has now changed to not doing so.  The "-d" option to
-  suppress the date is now deprecated (ignored).  A new option, "-D"
-  will cause the date to be included.  The environment variable,
-  "AUTOGEN_DNE_DATE" overrides everything.
-
-New in 5.18.3 May 2014
-
-* Auto-edit Guile headers that depend upon configure values
-  most especially:  noreturn
-  but check for "ptrdiff_t" in our configure too, so that Guile does
-  not create its own duplicate definition.
+* Guile 1.6 support was removed
+* bootstrapping was made idempotent
+* add --enable-static-autogen config option
+* add (max-file-time) scheme function (max source file time)
+* Allow MAN_PAGE_DATE to override using the date program in
+  man page templates
+* Enable byte-for-byte reproducibility
