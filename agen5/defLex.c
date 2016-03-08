@@ -10,7 +10,7 @@
  */
 /*
  *  This file is part of AutoGen.
- *  AutoGen Copyright (C) 1992-2015 by Bruce Korb - all rights reserved
+ *  AutoGen Copyright (C) 1992-2016 by Bruce Korb - all rights reserved
  *
  * AutoGen is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -202,19 +202,20 @@ lex_comment(void)
     case '*':
     {
         char * pz = strstr(cctx->scx_scan+2, END_C_COMMENT);
-        if (pz != NULL) {
-            char * p = cctx->scx_scan+1;
-            for (;;) {
-                p = strchr(p+1, NL);
-                if ((p == NULL) || (p > pz))
-                    break;
-                cctx->scx_line++;
-            }
-            cctx->scx_scan = pz+2;
-            return SUCCESS;
+        if (pz == NULL)
+            break;
+
+        char * p = cctx->scx_scan+1;
+        for (;;) {
+            p = strchr(p+1, NL);
+            if ((p == NULL) || (p > pz))
+                break;
+            cctx->scx_line++;
         }
-        break;
+        cctx->scx_scan = pz+2;
+        return SUCCESS;
     }
+
     case '/':
     {
         char * pz = strchr(cctx->scx_scan+2, NL);

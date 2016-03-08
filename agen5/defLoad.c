@@ -11,7 +11,7 @@
  */
 /*
  *  This file is part of AutoGen.
- *  AutoGen Copyright (C) 1992-2015 by Bruce Korb - all rights reserved
+ *  AutoGen Copyright (C) 1992-2016 by Bruce Korb - all rights reserved
  *
  * AutoGen is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -386,7 +386,7 @@ ready_def_input(char const ** ppzfile, size_t * psz)
     if (strcmp(*ppzfile, "-") == 0) {
         *ppzfile = OPT_ARG(DEFINITIONS) = "stdin";
         if (getenv(REQUEST_METHOD) != NULL) {
-            loadCgi();
+            load_cgi();
             cctx = base_ctx;
             dp_run_fsm();
             return INPUT_DONE;

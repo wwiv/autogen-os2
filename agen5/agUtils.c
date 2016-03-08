@@ -9,7 +9,7 @@
  */
 /*
  *  This file is part of AutoGen.
- *  Copyright (C) 1992-2015 Bruce Korb - all rights reserved
+ *  Copyright (C) 1992-2016 Bruce Korb - all rights reserved
  *
  * AutoGen is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -472,7 +472,7 @@ skip_quote(char const * qstr)
             if (qc == '\'') {
                 /*
                  *  Single quoted strings process the backquote specially
-                 *  only in fron of these three characters:
+                 *  only in front of these three characters:
                  */
                 switch (*qstr) {
                 case '\\':

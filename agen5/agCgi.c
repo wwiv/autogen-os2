@@ -7,7 +7,7 @@
  *  AutoGen process.
  *
  *  This file is part of AutoGen.
- *  AutoGen Copyright (C) 1992-2015 by Bruce Korb - all rights reserved
+ *  AutoGen Copyright (C) 1992-2016 by Bruce Korb - all rights reserved
  *
  * AutoGen is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -26,7 +26,7 @@
 typedef struct {
     char const * pzName;
     char *       pzValue;
-} tNameMap;
+} name_map_t;
 
 #define ENV_TABLE \
     _ET_(SERVER_SOFTWARE) \
@@ -50,7 +50,7 @@ typedef struct {
     _ET_(HTTP_USER_AGENT) \
     _ET_(HTTP_REFERER)
 
-static tNameMap nameValueMap[] = {
+static name_map_t name_val_map[] = {
 #define _ET_(n) { #n, NULL },
     ENV_TABLE
 #undef _ET_
@@ -62,19 +62,19 @@ typedef enum {
     ENV_TABLE
 #undef _ET_
     NAME_CT
-} tNameIdx;
+} name_idx_t;
 
-#define pzCgiMethod nameValueMap[ REQUEST_METHOD_IDX ].pzValue
-#define pzCgiQuery  nameValueMap[ QUERY_STRING_IDX   ].pzValue
-#define pzCgiLength nameValueMap[ CONTENT_LENGTH_IDX ].pzValue
+#define pzCgiMethod name_val_map[ REQUEST_METHOD_IDX ].pzValue
+#define pzCgiQuery  name_val_map[ QUERY_STRING_IDX   ].pzValue
+#define pzCgiLength name_val_map[ CONTENT_LENGTH_IDX ].pzValue
 
 /* = = = START-STATIC-FORWARD = = = */
 static char *
-parseInput(char * pzSrc, int len);
+parse_input(char * src, int len);
 /* = = = END-STATIC-FORWARD = = = */
 
 LOCAL void
-loadCgi(void)
+load_cgi(void)
 {
     /*
      *  Redirect stderr to a file.  If it gets used, we must trap it
@@ -103,46 +103,46 @@ loadCgi(void)
      *  gets an empty string default.
      */
     {
-        tNameMap * pNM = nameValueMap;
-        tNameIdx   ix  = (tNameIdx)0;
+        name_map_t * nm_map = name_val_map;
+        name_idx_t   ix     = (name_idx_t)0;
 
         do  {
-            pNM->pzValue = getenv(pNM->pzName);
-            if (pNM->pzValue == NULL)
-                pNM->pzValue = (char *)zNil;
-        } while (pNM++, ++ix < NAME_CT);
+            nm_map->pzValue = getenv(nm_map->pzName);
+            if (nm_map->pzValue == NULL)
+                nm_map->pzValue = (char *)zNil;
+        } while (nm_map++, ++ix < NAME_CT);
     }
 
     base_ctx = (scan_ctx_t *)AGALOC(sizeof(scan_ctx_t), "CGI ctx");
     memset(VOIDP(base_ctx), 0, sizeof(scan_ctx_t));
 
     {
-        size_t textLen = strtoul(pzCgiLength, NULL, 0);
-        char *  pzText;
+        size_t len = strtoul(pzCgiLength, NULL, 0);
+        char * text;
 
         if (strcasecmp(pzCgiMethod, "POST") == 0) {
-            if (textLen == 0)
+            if (len == 0)
                 AG_ABEND(LOAD_CGI_NO_DATA_MSG);
 
-            pzText  = AGALOC(textLen + 1, "CGI POST");
-            if (fread(pzText, (size_t)1, textLen, stdin) != textLen)
+            text  = AGALOC(len + 1, "CGI POST");
+            if (fread(text, (size_t)1, len, stdin) != len)
                 AG_CANT(LOAD_CGI_READ_NAME, LOAD_CGI_READ_WHAT);
 
-            pzText[ textLen ] = NUL;
+            text[ len ] = NUL;
 
-            base_ctx->scx_data = parseInput(pzText, (int)textLen);
-            AGFREE(pzText);
+            base_ctx->scx_data = parse_input(text, (int)len);
+            AGFREE(text);
 
         } else if (strcasecmp(pzCgiMethod, LOAD_CGI_GET_NAME) == 0) {
-            if (textLen == 0)
-                textLen = strlen(pzCgiQuery);
-            base_ctx->scx_data = parseInput(pzCgiQuery, (int)textLen);
+            if (len == 0)
+                len = strlen(pzCgiQuery);
+            base_ctx->scx_data = parse_input(pzCgiQuery, (int)len);
 
         } else {
             AG_ABEND(aprf(LOAD_CGI_INVAL_REQ_FMT, pzCgiMethod));
             /* NOTREACHED */
 #ifdef  WARNING_WATCH
-            pzText = NULL;
+            text = NULL;
 #endif
         }
     }
@@ -154,14 +154,15 @@ loadCgi(void)
 
 
 static char *
-parseInput(char * pzSrc, int len)
+parse_input(char * src, int len)
 {
-#   define defLen   (sizeof("Autogen Definitions cgi;\n") - 1)
-    char * pzRes  = AGALOC((len * 2) + defLen + 1, "CGI Definitions");
+    static char const preamble[] = "Autogen Definitions cgi;\n";
+#   define def_len (sizeof(preamble) - 1)
+    char * res = AGALOC((len * 2) + def_len + 1, "CGI Defs");
 
-    memcpy(pzRes, PARSE_INPUT_AG_DEF_STR, defLen);
-    (void)cgi_run_fsm(pzSrc, len, pzRes + defLen, len * 2);
-    return AGREALOC(pzRes, strlen(pzRes)+1, "CGI input");
+    memcpy(res, PARSE_INPUT_AG_DEF_STR, def_len);
+    (void)cgi_run_fsm(src, len, res + def_len, len * 2);
+    return AGREALOC(res, strlen(res)+1, "CGI input");
 }
 
 /*

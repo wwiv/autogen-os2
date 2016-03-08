@@ -9,7 +9,7 @@
  */
 /*
  * This file is part of AutoGen.
- * AutoGen Copyright (C) 1992-2015 by Bruce Korb - all rights reserved
+ * AutoGen Copyright (C) 1992-2016 by Bruce Korb - all rights reserved
  *
  * AutoGen is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -201,6 +201,8 @@ process_tpl(templ_t * tpl)
     }
 
     do  {
+        out_spec_t * os;
+
         /*
          * We cannot be in Scheme processing.  We've either just started
          * or we've made a long jump from our own code.  If we've made a
@@ -214,22 +216,21 @@ process_tpl(templ_t * tpl)
          */
         switch (setjmp(abort_jmp_buf)) {
         case SUCCESS:
-        {
-            out_spec_t * ospec = output_specs;
+            os = output_specs;
 
             if (OPT_VALUE_TRACE >= TRACE_EVERYTHING) {
-                fprintf(trace_fp, PROC_TPL_START, ospec->os_sfx);
+                fprintf(trace_fp, PROC_TPL_START, os->os_sfx);
                 fflush(trace_fp);
             }
             /*
              *  Set the output file name buffer.
              *  It may get switched inside open_output.
              */
-            open_output(ospec);
+            open_output(os);
             memcpy(&out_root, cur_fpstack, sizeof(out_root));
             AGFREE(cur_fpstack);
             cur_fpstack    = &out_root;
-            curr_sfx       = ospec->os_sfx;
+            curr_sfx       = os->os_sfx;
             curr_def_ctx   = root_def_ctx;
             cur_fpstack->stk_flags &= ~FPF_FREE;
             cur_fpstack->stk_prev   = NULL;
@@ -239,13 +240,11 @@ process_tpl(templ_t * tpl)
                 out_close(false);  /* keep output */
             } while (cur_fpstack->stk_prev != NULL);
 
-            output_specs = next_out_spec(ospec);
+            output_specs = next_out_spec(os);
             break;
-        }
 
         case PROBLEM:
-        {
-            out_spec_t * os = output_specs;
+            os = output_specs;
             /*
              *  We got here by a long jump.  Close/purge the open files
              *  and go on to the next output.
@@ -256,7 +255,6 @@ process_tpl(templ_t * tpl)
             last_scm_cmd = NULL; /* "problem" means "drop current output". */
             output_specs = next_out_spec(os);
             break;
-        }
 
         default:
             fprintf(trace_fp, PROC_TPL_BOGUS_RET, oops_pfx);
@@ -264,8 +262,7 @@ process_tpl(templ_t * tpl)
             /* FALLTHROUGH */
 
         case FAILURE:
-        {
-            out_spec_t * os = output_specs;
+            os = output_specs;
 
             /*
              *  We got here by a long jump.  Close/purge the open files.
@@ -283,7 +280,6 @@ process_tpl(templ_t * tpl)
 
             exit(EXIT_FAILURE);
             /* NOTREACHED */
-        }
         }
     } while (output_specs != NULL);
 }

@@ -8,7 +8,7 @@
  *
  *  Automated Finite State Machine
  *
- *  Copyright (C) 1992-2015 Bruce Korb - all rights reserved
+ *  Copyright (C) 1992-2016 Bruce Korb - all rights reserved
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,10 +45,39 @@
 /* START === USER HEADERS === DO NOT CHANGE THIS COMMENT */
 
 /*  This file is part of AutoGen.
- *  Copyright (C) 1992-2014 Bruce Korb - all rights reserved
+ *  Copyright (C) 1992-2016 Bruce Korb - all rights reserved
  */
 
 #include "autogen.h"
+
+static inline te_cgi_state
+get_next_event(char ch, int inlen, char * out, int outlen)
+{
+    if (inlen <= 0)
+        return CGI_EV_END;
+
+    if (outlen < 4) {
+        static char const exhaustion[] = "output space exhausted\n";
+        memcpy(out, exhaustion, sizeof(exhaustion));
+
+        return CGI_ST_INVALID;
+    }
+
+    if (IS_ALPHABETIC_CHAR( ch ))
+        return CGI_EV_ALPHA;
+
+    if (IS_DEC_DIGIT_CHAR( ch ))
+        return CGI_EV_NAME_CHAR;
+
+    switch (ch) {
+    case '_': return CGI_EV_NAME_CHAR; break;
+    case '=': return CGI_EV_EQUAL;     break;
+    case '+': return CGI_EV_SPACE;     break;
+    case '%': return CGI_EV_ESCAPE;    break;
+    case '&': return CGI_EV_SEPARATOR; break;
+    default:  return CGI_EV_OTHER;     break;
+    }
+}
 
 /* END   === USER HEADERS === DO NOT CHANGE THIS COMMENT */
 
@@ -202,35 +231,8 @@ cgi_run_fsm(
     while (cgi_state < CGI_ST_INVALID) {
 
         /* START == FIND TRANSITION == DO NOT CHANGE THIS COMMENT */
-
-        char  curCh;
-        if (--inlen < 0) {
-            trans_evt = CGI_EV_END;
-            curCh = NUL;
-
-        } else {
-            if (outlen < 4) {
-                static char const exhaustion[] = "output space exhausted\n";
-                if (saved_outlen > (int)sizeof(exhaustion))
-                    memcpy(saved_pzOut, exhaustion, sizeof(exhaustion));
-
-                return CGI_ST_INVALID;
-            }
-            curCh = *(pzSrc++);
-            if (IS_ALPHABETIC_CHAR( curCh ))
-                trans_evt = CGI_EV_ALPHA;
-            else if (IS_DEC_DIGIT_CHAR( curCh ))
-                trans_evt = CGI_EV_NAME_CHAR;
-            else switch (curCh) {
-            case '_': trans_evt = CGI_EV_NAME_CHAR; break;
-            case '=': trans_evt = CGI_EV_EQUAL;     break;
-            case '+': trans_evt = CGI_EV_SPACE;     curCh = ' '; break;
-            case '%': trans_evt = CGI_EV_ESCAPE;    break;
-            case '&': trans_evt = CGI_EV_SEPARATOR; break;
-            default:  trans_evt = CGI_EV_OTHER;     break;
-            }
-        }
-
+        char curCh = *(pzSrc++);
+        trans_evt = get_next_event(curCh, inlen--, saved_pzOut, saved_outlen);
         /* END   == FIND TRANSITION == DO NOT CHANGE THIS COMMENT */
 
 #ifndef __COVERITY__
@@ -267,7 +269,7 @@ cgi_run_fsm(
         case CGI_TR_SEPARATE:
             /* START == SEPARATE == DO NOT CHANGE THIS COMMENT */
             strcpy( pzOut, "';\n" );
-            outlen -= 2;
+            outlen -= 3;
             pzOut  += 3;
             /* END   == SEPARATE == DO NOT CHANGE THIS COMMENT */
             break;

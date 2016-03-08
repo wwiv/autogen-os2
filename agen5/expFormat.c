@@ -9,7 +9,7 @@
  */
 /*
  *  This file is part of AutoGen.
- *  AutoGen Copyright (C) 1992-2015 by Bruce Korb - all rights reserved
+ *  AutoGen Copyright (C) 1992-2016 by Bruce Korb - all rights reserved
  *
  * AutoGen is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -50,6 +50,7 @@ trim_trailing_white(char * text)
         switch (*text++) {
         case NUL:
             return;
+
         case NL:
             if (IS_HORIZ_WHITE_CHAR(text[-2]))
                 goto doit;
@@ -61,24 +62,23 @@ trim_trailing_white(char * text)
  doit:
     start = SPN_HORIZ_WHITE_BACK(start, text - 2);
     *(start++) = NL;
-    {
-        char * dest = start;
 
-        for (;;) {
-            switch (*(dest++) = *(text++)) {
-            case NUL:
-                return;
+    char * dest = start;
 
-            case NL:
-                if (IS_HORIZ_WHITE_CHAR(dest[-2])) {
-                    dest  = SPN_HORIZ_WHITE_BACK(start, dest - 2);
-                    start = dest;
-                    *(dest++) = NL;
-                }
+    for (;;) {
+        switch (*(dest++) = *(text++)) {
+        case NUL:
+            return;
 
-            default:
-                break;
+        case NL:
+            if (IS_HORIZ_WHITE_CHAR(dest[-2])) {
+                dest  = SPN_HORIZ_WHITE_BACK(start, dest - 2);
+                start = dest;
+                *(dest++) = NL;
             }
+
+        default:
+            break;
         }
     }
 }

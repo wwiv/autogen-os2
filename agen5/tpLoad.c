@@ -9,7 +9,7 @@
  */
 /*
  * This file is part of AutoGen.
- * Copyright (C) 1992-2015 Bruce Korb - all rights reserved
+ * Copyright (C) 1992-2016 Bruce Korb - all rights reserved
  *
  * AutoGen is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -31,6 +31,15 @@ read_okay(char const * fname);
 
 static char const *
 expand_dir(char const ** dir_pp, char * name_buf);
+
+static inline bool
+file_search_dirs(
+    char const * in_name,
+    char *       res_name,
+    char const * const * sfx_list,
+    char const * referring_tpl,
+    size_t       nm_len,
+    bool         no_suffix);
 
 static size_t
 cnt_macros(char const * pz);
@@ -104,6 +113,103 @@ expand_dir(char const ** dir_pp, char * name_buf)
     return res;
 }
 
+static inline bool
+file_search_dirs(
+    char const * in_name,
+    char *       res_name,
+    char const * const * sfx_list,
+    char const * referring_tpl,
+    size_t       nm_len,
+    bool         no_suffix)
+{
+    /*
+     *  Search each directory in our directory search list for the file.
+     *  We always force two copies of this option, so we know it exists.
+     *  Later entries are more recently added and are searched first.
+     *  We start the "dirlist" pointing to the real last entry.
+     */
+    int  ct = STACKCT_OPT(TEMPL_DIRS);
+    char const ** dirlist = STACKLST_OPT(TEMPL_DIRS) + ct - 1;
+    char const *  c_dir   = FIND_FILE_CURDIR;
+
+    /*
+     *  IF the file name starts with a directory separator,
+     *  then we only search once, looking for the exact file name.
+     */
+    if (*in_name == '/')
+        ct = -1;
+
+    for (;;) {
+        char * pzEnd;
+
+        /*
+         *  c_dir is always FIND_FILE_CURDIR the first time through
+         *  and is never that value after that.
+         */
+        if (c_dir == FIND_FILE_CURDIR) {
+
+            memcpy(res_name, in_name, nm_len);
+            pzEnd  = res_name + nm_len;
+            *pzEnd = NUL;
+
+        } else {
+            unsigned int fmt_len;
+
+            /*
+             *  IF one of our template paths starts with '$', then expand it
+             *  and replace it now and forever (the rest of this run, anyway).
+             */
+            if (*c_dir == '$')
+                c_dir = expand_dir(dirlist+1, res_name);
+
+            fmt_len = (unsigned)snprintf(
+                res_name, AG_PATH_MAX - MAX_SUFFIX_LEN,
+                FIND_FILE_DIR_FMT, c_dir, in_name);
+            if (fmt_len >= AG_PATH_MAX - MAX_SUFFIX_LEN)
+                break; // fail-return
+            pzEnd = res_name + fmt_len;
+        }
+
+        if (read_okay(res_name))
+            return true;
+
+        /*
+         *  IF the file does not already have a suffix,
+         *  THEN try the ones that are okay for this file.
+         */
+        if (no_suffix && (sfx_list != NULL)) {
+            char const * const * sfxl = sfx_list;
+            *(pzEnd++) = '.';
+
+            do  {
+                strcpy(pzEnd, *(sfxl++)); /* must fit */
+                if (read_okay(res_name))
+                    return true;
+
+            } while (*sfxl != NULL);
+        }
+
+        /*
+         *  IF we've exhausted the search list,
+         *  THEN see if we're done, else go through search dir list.
+         *
+         *  We try one more thing if there is a referrer.
+         *  If the searched-for file is a full path, "ct" will
+         *  start at -1 and we will leave the loop here and now.
+         */
+        if (--ct < 0) {
+            if ((referring_tpl == NULL) || (ct != -1))
+                break;
+            c_dir = referring_tpl;
+
+        } else {
+            c_dir = *(dirlist--);
+        }
+    }
+
+    return false;
+}
+
 /**
  *  Search for a file.
  *
@@ -173,102 +279,16 @@ find_file(char const * in_name,
         if (pz == NULL)
             referring_tpl = NULL;
         else {
-            AGDUPSTR(referring_tpl, referring_tpl, "referring_tpl");
+            AGDUPSTR(referring_tpl, referring_tpl, "refer tpl");
             pz = strrchr(referring_tpl, '/');
             *pz = NUL;
         }
     }
 
-    {
-        /*
-         *  Search each directory in our directory search list for the file.
-         *  We always force two copies of this option, so we know it exists.
-         *  Later entries are more recently added and are searched first.
-         *  We start the "dirlist" pointing to the real last entry.
-         */
-        int  ct = STACKCT_OPT(TEMPL_DIRS);
-        char const ** dirlist = STACKLST_OPT(TEMPL_DIRS) + ct - 1;
-        char const *  c_dir   = FIND_FILE_CURDIR;
+    if (! file_search_dirs(in_name, res_name, sfx_list, referring_tpl,
+                           nm_len, no_suffix))
+        res = FAILURE;
 
-        /*
-         *  IF the file name starts with a directory separator,
-         *  then we only search once, looking for the exact file name.
-         */
-        if (*in_name == '/')
-            ct = -1;
-
-        for (;;) {
-            char * pzEnd;
-
-            /*
-             *  c_dir is always FIND_FILE_CURDIR the first time through
-             *  and is never that value after that.
-             */
-            if (c_dir == FIND_FILE_CURDIR) {
-
-                memcpy(res_name, in_name, nm_len);
-                pzEnd  = res_name + nm_len;
-                *pzEnd = NUL;
-
-            } else {
-                unsigned int fmt_len;
-
-                /*
-                 *  IF one of our template paths starts with '$', then expand it
-                 *  and replace it now and forever (the rest of this run, anyway).
-                 */
-                if (*c_dir == '$')
-                    c_dir = expand_dir(dirlist+1, res_name);
-
-                fmt_len = (unsigned)snprintf(
-                    res_name, AG_PATH_MAX - MAX_SUFFIX_LEN,
-                    FIND_FILE_DIR_FMT, c_dir, in_name);
-                if (fmt_len >= AG_PATH_MAX - MAX_SUFFIX_LEN)
-                    break; // fail-return
-                pzEnd = res_name + fmt_len;
-            }
-
-            if (read_okay(res_name))
-                goto find_file_done;
-
-            /*
-             *  IF the file does not already have a suffix,
-             *  THEN try the ones that are okay for this file.
-             */
-            if (no_suffix && (sfx_list != NULL)) {
-                char const * const * sfxl = sfx_list;
-                *(pzEnd++) = '.';
-
-                do  {
-                    strcpy(pzEnd, *(sfxl++)); /* must fit */
-                    if (read_okay(res_name))
-                        goto find_file_done;
-
-                } while (*sfxl != NULL);
-            }
-
-            /*
-             *  IF we've exhausted the search list,
-             *  THEN see if we're done, else go through search dir list.
-             *
-             *  We try one more thing if there is a referrer.
-             *  If the searched-for file is a full path, "ct" will
-             *  start at -1 and we will leave the loop here and now.
-             */
-            if (--ct < 0) {
-                if ((referring_tpl == NULL) || (ct != -1))
-                    break;
-                c_dir = referring_tpl;
-
-            } else {
-                c_dir = *(dirlist--);
-            }
-        }
-    }
-
-    res = FAILURE;
-
- find_file_done:
     AGFREE(free_me);
     AGFREE(referring_tpl);
     return res;

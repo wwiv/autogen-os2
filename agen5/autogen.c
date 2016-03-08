@@ -8,7 +8,7 @@
  */
 
 /*  This file is part of AutoGen.
- *  Copyright (C) 1992-2015 Bruce Korb - all rights reserved
+ *  Copyright (C) 1992-2016 Bruce Korb - all rights reserved
  *
  * AutoGen is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -24,9 +24,17 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #ifdef HAVE_SYS_RESOURCE_H
-#include <sys/resource.h>
+# include <sys/resource.h>
 #endif
-//#include <locale.h>
+
+#ifdef SIGRTMIN
+# define MAX_AG_SIG SIGRTMIN-1
+#else
+# define MAX_AG_SIG NSIG
+#endif
+#ifndef SIGCHLD
+#  define SIGCHLD SIGCLD
+#endif
 
 typedef void (void_main_proc_t)(int, char **);
 
@@ -492,7 +500,6 @@ ag_abend_at(char const * msg
     }
 }
 
-
 static void
 setup_signals(sighandler_proc_t * hdl_chld,
               sighandler_proc_t * hdl_abrt,
@@ -500,11 +507,7 @@ setup_signals(sighandler_proc_t * hdl_chld,
 {
     struct sigaction  sa;
     int    sigNo  = 1;
-#ifdef SIGRTMIN
-    const int maxSig = SIGRTMIN-1;
-#else
-    const int maxSig = NSIG;
-#endif
+    int const maxSig = MAX_AG_SIG;
 
     sa.sa_flags   = 0;
     sigemptyset(&sa.sa_mask);
@@ -520,9 +523,6 @@ setup_signals(sighandler_proc_t * hdl_chld,
              *  POSIX oversight.  Allowed to be fixed for next POSIX rev, tho
              *  it is "optional" to reset SIGCHLD on exec(2).
              */
-#ifndef SIGCHLD
-#  define SIGCHLD SIGCLD
-#endif
         case SIGCHLD:
             sa.sa_handler = hdl_chld;
             break;

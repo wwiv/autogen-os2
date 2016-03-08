@@ -10,7 +10,7 @@
  */
 /*
  *  This file is part of AutoGen.
- *  AutoGen Copyright (C) 1992-2015 by Bruce Korb - all rights reserved
+ *  AutoGen Copyright (C) 1992-2016 by Bruce Korb - all rights reserved
  *
  * AutoGen is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -819,6 +819,23 @@ ag_scm_c_string(SCM str)
     return res;
 }
 
+/**
+ * Map a character range for ag_scm_string_tr_x()
+ */
+static inline void
+tr_char_range(unsigned char * ch_map, unsigned char * from, unsigned char * to)
+{
+    unsigned char fs = (unsigned char)from[-2]; // "from" start char
+    unsigned char fe = (unsigned char)from[0];  // "from" end char
+    unsigned char ts = (unsigned char)to[-2];   // "to" start char
+    unsigned char te = (unsigned char)to[0];    // "to" end char
+
+    while (fs < fe) {
+        ch_map[ fs++ ] = ts;
+        if (ts < te)
+            ts++;
+    }
+}
 
 /*=gfunc string_tr_x
  *
@@ -863,18 +880,17 @@ ag_scm_string_tr_x(SCM str, SCM from_xform, SCM to_xform)
             goto map_done;
 
         case '-':
-            if ((i > 0) && (tch == '-')) {
-                unsigned char fs = (unsigned char)from[-2];
-                unsigned char fe = (unsigned char)from[0];
-                unsigned char ts = (unsigned char)to[-2];
-                unsigned char te = (unsigned char)to[0];
-                if (te != NUL) {
-                    while (fs < fe) {
-                        ch_map[ fs++ ] = ts;
-                        if (ts < te) ts++;
-                    }
-                    break;
-                }
+            /*
+             * "from" char is a hyphen.
+             * IF we are beyond the first character AND
+             *    the "to" character is a hyphen AND
+             *    there is a "from" character after the hyphen
+             *    there is a "to" character after the hyphen,
+             * THEN map a character range
+             */
+            if ((i > 0) && (tch == '-') && (from[0] != NUL) && (to[0] != NUL)) {
+                tr_char_range(ch_map, (unsigned char *)from, (unsigned char *)to);
+                break;
             }
 
         default:

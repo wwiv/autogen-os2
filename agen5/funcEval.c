@@ -9,7 +9,7 @@
  */
 /*
  *  This file is part of AutoGen.
- *  AutoGen Copyright (C) 1992-2015 by Bruce Korb - all rights reserved
+ *  AutoGen Copyright (C) 1992-2016 by Bruce Korb - all rights reserved
  *
  * AutoGen is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -123,6 +123,76 @@ tpl_warning(templ_t * tpl, macro_t * mac, char const * msg)
     fprintf(trace_fp, TPL_WARN_FMT, tpl->td_file, mac->md_line, msg);
 }
 
+/**
+ * eval_mac_expr() helper function.  Determine if the entry found is
+ * a text entry.  If not, we return an empty string.
+ *
+ * @param allocated  whether the returned string has been allocated
+ * @param ent        The macro entry we found.  Now testing validity.
+ * @param code       flag word to indicate we found a valid string
+ * @param tpl        the current template being parsed
+ * @param mac        the current macro being invoked
+ *
+ * @returns a pointer to the macro substitution text
+ */
+static char const *
+is_mac_entry_ok(bool * allocated, def_ent_t * ent,
+                int * code, templ_t * tpl, macro_t * mac)
+{
+    char const * res = (char *)zNil;
+
+    if ((*code & EMIT_IF_ABSENT) != 0)
+        return res;
+
+    if (  (ent->de_type != VALTYP_TEXT)
+       && ((*code & EMIT_PRIMARY_TYPE) == EMIT_VALUE)  ) {
+        tpl_warning(tpl, mac, EVAL_EXPR_BLOCK_IN_EVAL);
+        return res;
+    }
+
+    /*
+     *  Compute the expression string.  There are three possibilities:
+     *  1.  There is an expression string in the macro, but it must
+     *      be formatted with the text value.
+     *      Make sure we have a value.
+     *  2.  There is an expression string in the macro, but it is *NOT*
+     *      to be formatted.  Use it as is.  Do *NOT* verify that
+     *      the define value is text.
+     *  3.  There is no expression with the macro invocation.
+     *      The define value *must* be text.
+     */
+    if ((*code & EMIT_FORMATTED) != 0) {
+        /*
+         *  And make sure what we found is a text value
+         */
+        if (ent->de_type != VALTYP_TEXT) {
+            tpl_warning(tpl, mac, EVAL_EXPR_BLOCK_IN_EVAL);
+            return res;
+        }
+
+        *allocated = true;
+        res = aprf(tpl_text(tpl, mac), ent->de_val.dvu_text);
+    }
+
+    else if (mac->md_txt_off != 0)
+        res = tpl->td_text + mac->md_txt_off;
+
+    else {
+        /*
+         *  And make sure what we found is a text value
+         */
+        if (ent->de_type != VALTYP_TEXT) {
+            tpl_warning(tpl, mac, EVAL_EXPR_BLOCK_IN_EVAL);
+            return res;
+        }
+
+        res = ent->de_val.dvu_text;
+    }
+
+    *code &= EMIT_PRIMARY_TYPE;
+    return res;
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /**
  *  Evaluate an expression and return a string pointer.  Always.
@@ -201,55 +271,9 @@ eval_mac_expr(bool * allocated)
          *  OTHERWISE, we found an entry.  Make sure we were supposed to.
          */
         else {
-            if ((code & EMIT_IF_ABSENT) != 0)
-                return (char *)zNil;
-
-            if (  (ent->de_type != VALTYP_TEXT)
-               && ((code & EMIT_PRIMARY_TYPE) == EMIT_VALUE)  ) {
-                tpl_warning(tpl, mac, EVAL_EXPR_BLOCK_IN_EVAL);
-                return (char *)zNil;
-            }
-
-            /*
-             *  Compute the expression string.  There are three possibilities:
-             *  1.  There is an expression string in the macro, but it must
-             *      be formatted with the text value.
-             *      Make sure we have a value.
-             *  2.  There is an expression string in the macro, but it is *NOT*
-             *      to be formatted.  Use it as is.  Do *NOT* verify that
-             *      the define value is text.
-             *  3.  There is no expression with the macro invocation.
-             *      The define value *must* be text.
-             */
-            if ((code & EMIT_FORMATTED) != 0) {
-                /*
-                 *  And make sure what we found is a text value
-                 */
-                if (ent->de_type != VALTYP_TEXT) {
-                    tpl_warning(tpl, mac, EVAL_EXPR_BLOCK_IN_EVAL);
-                    return (char *)zNil;
-                }
-
-                *allocated = true;
-                text = aprf(tpl_text(tpl, mac), ent->de_val.dvu_text);
-            }
-
-            else if (mac->md_txt_off != 0)
-                text = tpl->td_text + mac->md_txt_off;
-
-            else {
-                /*
-                 *  And make sure what we found is a text value
-                 */
-                if (ent->de_type != VALTYP_TEXT) {
-                    tpl_warning(tpl, mac, EVAL_EXPR_BLOCK_IN_EVAL);
-                    return (char *)zNil;
-                }
-
-                text = ent->de_val.dvu_text;
-            }
-
-            code &= EMIT_PRIMARY_TYPE;
+            text = is_mac_entry_ok(allocated, ent, &code, tpl, mac);
+            if (text == zNil)
+                return text;
         }
     }
 

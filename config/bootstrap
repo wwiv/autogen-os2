@@ -121,8 +121,9 @@ source_bs() {
 
 pre_local()
 {
-    BOOTSTRAP=pre
+    BOOTSTRAP=pre REQUEST_METHOD=
     export BOOTSTRAP
+    unset REQUEST_METHOD
     source_bs pbs  ${conf_dir}/bootstrap.local pre
     source_bs aobs autoopts/bootstrap.dir aoconf
 }
