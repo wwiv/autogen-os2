@@ -353,16 +353,15 @@ text_munmap(tmap_info_t * mi)
 #ifdef HAVE_MMAP
     (void)munmap(mi->txt_data, mi->txt_full_size);
 
-#else  /* don't HAVE_MMAP */
+#else // don't HAVE_MMAP
     /*
      *  IF the memory is writable *AND* it is not private (copy-on-write)
      *     *AND* the memory is "sharable" (seen by other processes)
      *  THEN rewrite the data.  Emulate mmap visibility.
      */
-    if (   FILE_WRITABLE(mi->txt_prot, mi->txt_flags)
-        && (lseek(mi->txt_fd, 0, SEEK_SET) >= 0) ) {
+    if (  FILE_WRITABLE(mi->txt_prot, mi->txt_flags)
+       && (lseek(mi->txt_fd, 0, SEEK_SET) >= 0) )
         write(mi->txt_fd, mi->txt_data, mi->txt_size);
-    }
 
     free(mi->txt_data);
 #endif /* HAVE_MMAP */

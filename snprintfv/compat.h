@@ -29,7 +29,7 @@
 #define SNPRINTFV_COMPAT_H 1
 
 #define  _GNU_SOURCE    1 /* for strsignal in GNU's libc */
-#define  __USE_GNU      1 /* exact same thing as above   */
+#define  __USE_GNU      1 // likewise
 #define  __EXTENSIONS__ 1 /* and another way to call for it */
 
 #ifdef __cplusplus

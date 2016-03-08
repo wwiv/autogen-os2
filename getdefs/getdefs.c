@@ -372,7 +372,7 @@ buildDefinition(char * pzDef, char const * pzFile, int line, char * pzOut)
         default:
         {
             char zRER[ MAXNAMELEN ];
-            static char const zErr[] = "error %d (%s) finding `%s' in\n%s\n\n";
+            static char const zErr[] = "error %d (%s) finding '%s' in\n%s\n\n";
             regerror(re_res, &attrib_re, zRER, sizeof(zRER));
             *pzOut++ = '\n';
             *pzOut++ = '#';
@@ -875,7 +875,7 @@ processFile(char const * fname)
  *
  *  Go through all our different kinds of defines.  On the first occurrence
  *  of each different name, check for an index value.  If not supplied,
- *  then insert ``[OPT_VALUE_FIRST_INDEX]'' after the object name.
+ *  then insert ''[OPT_VALUE_FIRST_INDEX]'' after the object name.
  */
 static void
 set_first_idx(void)
