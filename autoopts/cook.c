@@ -30,6 +30,9 @@
  */
 
 /* = = = START-STATIC-FORWARD = = = */
+static char *
+nl_count(char * start, char * end, int * lnct_p);
+
 static bool
 contiguous_quote(char ** pps, char * pq, int * lnct_p);
 /* = = = END-STATIC-FORWARD = = = */
@@ -135,6 +138,18 @@ ao_string_cook_escape_char(char const * pzIn, char * pRes, uint_t nl)
     return res;
 }
 
+/**
+ * count newlines between start and end
+ */
+static char *
+nl_count(char * start, char * end, int * lnct_p)
+{
+    while (start < end) {
+        if (*(start++) == NL)
+            (*lnct_p)++;
+    }
+    return end;
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *
@@ -168,38 +183,22 @@ contiguous_quote(char ** pps, char * pq, int * lnct_p)
              */
             switch (ps[1]) {
             default:
-                *pps = NULL;
-                return false;
+                goto fail_return;
 
             case '/':
                 /*
                  *  Skip to end of line
                  */
                 ps = strchr(ps, NL);
-                if (ps == NULL) {
-                    *pps = NULL;
-                    return false;
-                }
+                if (ps == NULL)
+                    goto fail_return;
                 break;
 
             case '*':
-            {
-                char * p = strstr( ps+2, "*/" );
-                /*
-                 *  Skip to terminating star slash
-                 */
-                if (p == NULL) {
-                    *pps = NULL;
-                    return false;
-                }
-
-                while (ps < p) {
-                    if (*(ps++) == NL)
-                        (*lnct_p)++;
-                }
-
-                ps = p + 2;
-            }
+                ps = nl_count(ps + 2, strstr(ps + 2, "*/"), lnct_p);
+                if (ps == NULL)
+                    goto fail_return;
+                ps += 2;
             }
             continue;
 
@@ -212,6 +211,10 @@ contiguous_quote(char ** pps, char * pq, int * lnct_p)
             return false;
         }
     }
+
+ fail_return:
+    *pps = NULL;
+    return false;
 }
 
 /*=export_func  ao_string_cook

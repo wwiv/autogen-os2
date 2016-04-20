@@ -37,6 +37,9 @@
  *  13aa749a5b0a454917a944ed8fffc530b784f5ead522b1aacaf4ec8aa55a6239  COPYING.mbsd
  */
 
+#define GRAPH_CH(_ch) \
+    ((((unsigned)_ch) <= 0x7E) && (((unsigned)_ch) > ' '))
+
 /* = = = START-STATIC-FORWARD = = = */
 static unsigned int
 parse_usage_flags(ao_flag_names_t const * fnt, char const * txt);
@@ -777,7 +780,7 @@ prt_vendor_opts(tOptions * opts, char const * title)
         do  {
             size_t l;
             if (  ((od->fOptState & not_vended_mask) != 0)
-               || IS_GRAPHIC_CHAR(od->optValue))
+               || GRAPH_CH(od->optValue))
                 continue;
 
             l = strlen(od->pz_Name);
@@ -795,7 +798,7 @@ prt_vendor_opts(tOptions * opts, char const * title)
 
     do  {
         if (  ((od->fOptState & not_vended_mask) != 0)
-           || IS_GRAPHIC_CHAR(od->optValue))
+           || GRAPH_CH(od->optValue))
             continue;
 
         prt_one_vendor(opts, od, &argTypes, vfmt);
@@ -1005,7 +1008,7 @@ prt_preamble(tOptions * opts, tOptDesc * od, arg_types_t * at)
     if ((opts->fOptSet & OPTPROC_SHORTOPT) == 0)
         fputs(at->pzSpc, option_usage_fp);
 
-    else if (! IS_GRAPHIC_CHAR(od->optValue)) {
+    else if (! GRAPH_CH(od->optValue)) {
         if (  (opts->fOptSet & (OPTPROC_GNUUSAGE|OPTPROC_LONGOPT))
            == (OPTPROC_GNUUSAGE|OPTPROC_LONGOPT))
             fputc(' ', option_usage_fp);
@@ -1132,7 +1135,7 @@ prt_opt_usage(tOptions * opts, int ex_code, char const * title)
 
         /* Skip name only options when we have a vendor option */
         if (  ((opts->fOptSet & OPTPROC_VENDOR_OPT) != 0)
-           && (! IS_GRAPHIC_CHAR(od->optValue)))
+           && (! GRAPH_CH(od->optValue)))
             continue;
 
         /*

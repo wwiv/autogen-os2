@@ -2,7 +2,7 @@
 /**
  *  \file cright-update.c
  *
- *  cright-update Copyright (C) 1992-2015 by Bruce Korb - all rights reserved
+ *  cright-update Copyright (C) 1992-2016 by Bruce Korb - all rights reserved
  *
  * cright-update is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -858,26 +858,43 @@ count_len(char * p)
     for (;;) {
         char ch = *++p;
 
-        if (ch == NUL) {
+        switch (ch) {
+        case NUL:
         found_nul:
             die(CRIGHT_UPDATE_EXIT_REGCOMP, "bad regex string:  %s\n", ptr);
-        }
 
-        if (ch == qch) {
+        case DQUOT: case SQUOT:
+            if (ch != qch)
+                break;
             p = SPN_HORIZ_WHITE_CHARS(p+1);
-            if ((*p == BACKS) && (p[1] == NL)) {
-                p = SPN_HORIZ_WHITE_CHARS(p+2);
-                if (ch == qch) {
-                    p++;
-                    continue;
-                }
-            }
-            if (*p == NUL)
+            switch (*p) {
+            case NUL:
                 goto found_nul;
-            break; // done
-        }
 
-        len++;
+            case BACKS:
+                /*
+                 * IF we have an escaped newline, look ahead to the next token.
+                 * If that is the same kind of quote, then we glue the strings
+                 * together, so keep counting.
+                 */
+                if (p[1] == NL) {
+                    p = SPN_HORIZ_WHITE_CHARS(p+2);
+                    if (*p == qch) {
+                        p++;
+                        continue;
+                    }
+                }
+                // we do not have a backslash/newline followed by more text, so
+                /* FALLTHROUGH */
+
+            default:
+                return len;
+            }
+            /* NOTREACHED */
+
+        default:
+            len++;
+        }
     }
 
     return len;
@@ -895,7 +912,10 @@ assemble_cooked(char * src_p)
         fserr(CRIGHT_UPDATE_EXIT_NOMEM, "allocation", "copyright mark regex");
 
     for (;;) {
+        char ch_buf[4];
         char ch = *++src_p;
+        int  ix;
+
         switch (ch) {
         case DQUOT:
             /*
@@ -927,43 +947,36 @@ assemble_cooked(char * src_p)
             case 'v': *(dst_p++) = '\v'; break;
             case 'f': *(dst_p++) = '\f'; break;
             case 'r': *(dst_p++) = '\r'; break;
-            case 'x':
-            {
-                char buf[4];
-                int ix = 0;
 
-                for (;;) {
+            case 'x':
+                for (ix = 0;;) {
                     if (! IS_HEX_DIGIT_CHAR(src_p[1]))
                         break;
 
-                    buf[ix] = *++src_p;
+                    ch_buf[ix] = *++src_p;
                     if (++ix >= 2)
                         break;
                 }
 
-                buf[ix] = NUL;
-                *(dst_p++) = 0xFF & strtoul(buf, 0, 16);
+                ch_buf[ix] = NUL;
+                *(dst_p++) = 0xFF & strtoul(ch_buf, 0, 16);
                 break;
-            }
+
             case '0': case '1': case '2': case '3':
             case '4': case '5': case '6': case '7':
-            {
-                char buf[4];
-                int ix = 0;
-
-                for (;;) {
+                for (ix = 0;;) {
                     if (! IS_OCT_DIGIT_CHAR(src_p[1]))
                         break;
 
-                    buf[ix] = *++src_p;
+                    ch_buf[ix] = *++src_p;
                     if (++ix >= 3)
                         break;
                 }
 
-                buf[ix] = NUL;
-                *(dst_p++) = 0xFF & strtoul(buf, 0, 8);
+                ch_buf[ix] = NUL;
+                *(dst_p++) = 0xFF & strtoul(ch_buf, 0, 8);
                 break;
-            }
+
             default:
                 *(dst_p++) = ch;
             }
@@ -994,19 +1007,17 @@ assemble_raw(char * src_p)
             src_p = SPN_HORIZ_WHITE_CHARS(src_p+1);
             if ((src_p[0] == BACKS) && (src_p[1] == NL)) {
                 src_p = SPN_HORIZ_WHITE_CHARS(src_p + 2);
-                if (*src_p == SQUOT) {
-                    src_p++;
+                if (*src_p == SQUOT)
                     continue;
-                }
             }
-            goto assembly_done; // break; break;
+            break;
 
         default:
             *(dst_p++) = ch;
+            continue;
         }
     }
 
- assembly_done:
     *dst_p = NUL;
     cu_regcomp(res, res_str, regex_flags);
     return res;
@@ -1041,7 +1052,8 @@ assemble_line(char * p)
 }
 
 /**
- * parse out and allocate a regex buffer
+ * parse out and allocate a regex buffer.
+ * Ignore leading colon or equal char.
  */
 static regex_t *
 assemble_regex(char * p)
@@ -1076,16 +1088,10 @@ choose_re(char * ftext, regex_t * preg)
     if (p == NULL)
         return preg;
 
-    {
-        regex_t * res_reg;
-        int       reres;
-        char *    re_str;
+    if (preg == NULL)
+        fserr(CRIGHT_UPDATE_EXIT_NOMEM, "allocation", "regex struct");
 
-        if (preg == NULL)
-            fserr(CRIGHT_UPDATE_EXIT_NOMEM, "allocation", "regex struct");
-
-        return assemble_regex(p + sizeof(mark) - 1);
-    }
+    return assemble_regex(p + sizeof(mark) - 1);
 }
 
 /**

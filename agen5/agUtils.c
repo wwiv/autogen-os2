@@ -431,14 +431,13 @@ span_quote(char * in_q)
                 if (dp[-1] == 0x7F)  dp--;
                 in_q += ct;
 
-            } else {
+            } else
                 switch (*in_q) {
                 case '\\':
                 case '\'':
                 case '#':
                     dp[-1] = *in_q++;
                 }
-            }
             break;
 
         default:

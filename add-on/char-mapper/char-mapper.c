@@ -5,7 +5,7 @@
  *  This is the main routine for char-mapper.
  *
  *  This file is part of char-mapper.
- *  char-mapper Copyright (C) 2003-2015 by Bruce Korb - all rights reserved
+ *  char-mapper Copyright (C) 2003-2016 by Bruce Korb - all rights reserved
  *
  * char-mapper is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -473,6 +473,63 @@ emit_table(int bit_count)
         printf(endif_fmt, data_guard);
 }
 
+value_map_t *
+new_map(char * name)
+{
+    value_map_t * map = malloc(sizeof(*map));
+    memset(map, 0, sizeof(*map));
+    *end_map = map;
+    end_map  = &(map->next);
+    strcpy(map->vname, name);
+    map->bit_no = ~0;
+    total_map_ct++;
+    return map;
+}
+
+static inline void
+scan_data_buf(char * scan, char * nm_buf)
+{
+    value_map_t * map = NULL;
+
+    while (scan != NULL) {
+        switch (*scan) {
+        case NUL:
+            return;
+
+        case '"':
+            if (map == NULL)
+                map  = new_map(nm_buf);
+            if (map->bit_no == ~0) {
+                map->mask  |= 1 << bit_num;
+                map->bit_no = bit_num;
+                bit_num++;
+            }
+            scan = scan_quoted_value(scan+1, map, VAL_ADD);
+            break;
+
+        case ' ': case '\t':
+            scan = SPN_WHITESPACE_CHAR(scan+1);
+            break;
+
+        case '+':
+        case '-':
+            if (map == NULL)
+                map  = new_map(nm_buf);
+            if (scan[1] == '"')
+                scan = scan_quoted_value(scan+2, map, VAL_REMOVE);
+            else scan = copy_another_value(scan, map);
+            break;
+
+        case '%':
+            scan = parse_directive(scan);
+            break;
+
+        default:
+            die("value must start with quote or '+' or '-'\n\t%s\n", scan);
+        }
+    }
+}
+
 int
 read_data(void)
 {
@@ -481,48 +538,13 @@ read_data(void)
     while (fgets(buffer, BUF_SIZE, stdin) != NULL) {
         char nm_buf[CLASS_NAME_LIMIT+1];
         char * scan = trim(buffer);
-        value_map_t * map = NULL;
         if (scan == NULL)  continue;
 
         scan = get_name(scan, nm_buf, sizeof(nm_buf));
         if (curr_name_len > max_name_len)
             max_name_len = curr_name_len;
 
-        while (scan != NULL) {
-            switch (*scan) {
-            case NUL: goto end_while;
-            case '"':
-                if (map == NULL)
-                    map  = new_map(nm_buf);
-                if (map->bit_no == ~0) {
-                    map->mask  |= 1 << bit_num;
-                    map->bit_no = bit_num;
-                    bit_num++;
-                }
-                scan = scan_quoted_value(scan+1, map, VAL_ADD);
-                break;
-
-            case ' ': case '\t':
-                while (isspace(*scan))  scan++;
-                break;
-
-            case '+':
-            case '-':
-                if (map == NULL)
-                    map  = new_map(nm_buf);
-                if (scan[1] == '"')
-                     scan = scan_quoted_value(scan+2, map, VAL_REMOVE);
-                else scan = copy_another_value(scan, map);
-                break;
-
-            case '%':
-                scan = parse_directive(scan);
-                break;
-
-            default:
-                die("value must start with quote or '+' or '-'\n\t%s\n", scan);
-            }
-        } end_while:;
+        scan_data_buf(scan, nm_buf);
     }
 
     return bit_num;
@@ -536,6 +558,7 @@ eat_a_byte(char * scan, int * byte_val)
 
     } else {
         int chval = '\\';
+        char ch_buf[4];
 
         switch (*++scan) {
         case NUL: break;
@@ -548,43 +571,39 @@ eat_a_byte(char * scan, int * byte_val)
         case 'f':  chval = '\f'; scan++; break;
         case 'r':  chval = '\r'; scan++; break;
         case '"':  chval = '"';  scan++; break;
+
         case '0' ... '7':
-            {
-                char octbuf[4];
-                octbuf[0] = *(scan++);
+            ch_buf[0] = *(scan++);
+            if ((*scan < '0') || (*scan > '7'))
+                ch_buf[1] = NUL;
+            else {
+                ch_buf[1] = *(scan++);
                 if ((*scan < '0') || (*scan > '7'))
-                    octbuf[1] = NUL;
+                    ch_buf[2] = NUL;
                 else {
-                    octbuf[1] = *(scan++);
-                    if ((*scan < '0') || (*scan > '7'))
-                        octbuf[2] = NUL;
-                    else {
-                        octbuf[2] = *(scan++);
-                        octbuf[3] = NUL;
-                    }
+                    ch_buf[2] = *(scan++);
+                    ch_buf[3] = NUL;
                 }
-                chval = (int)strtoul(octbuf, NULL, 8);
-                if (chval > 0xFF) {
-                    scan -= 2;
-                    goto invalid_escape;
-                }
-                break;
             }
+            chval = (int)strtoul(ch_buf, NULL, 8);
+            if (chval > 0xFF) {
+                scan -= 2;
+                goto invalid_escape;
+            }
+            break;
 
         case 'x': case 'X':
-        {
-            char hexbuf[4];
-            if (! isxdigit(*++scan)) goto invalid_escape;
-            hexbuf[0] = *(scan++);
+            if (! isxdigit(*++scan))
+                goto invalid_escape;
+            ch_buf[0] = *(scan++);
             if (! isxdigit(*scan))
-                hexbuf[1] = NUL;
+                ch_buf[1] = NUL;
             else {
-                hexbuf[1] = *(scan++);
-                hexbuf[2] = NUL;
+                ch_buf[1] = *(scan++);
+                ch_buf[2] = NUL;
             }
-            chval = (int)strtoul(hexbuf, NULL, 16);
+            chval = (int)strtoul(ch_buf, NULL, 16);
             break;
-        }
 
         default:
         invalid_escape:
@@ -684,19 +703,6 @@ get_name(char * scan, char * nm_buf, size_t buf_size)
     curr_name_len = nm_len;
 
     return scan;
-}
-
-value_map_t *
-new_map(char * name)
-{
-    value_map_t * map = malloc(sizeof(*map));
-    memset(map, 0, sizeof(*map));
-    *end_map = map;
-    end_map  = &(map->next);
-    strcpy(map->vname, name);
-    map->bit_no = ~0;
-    total_map_ct++;
-    return map;
 }
 
 char *
