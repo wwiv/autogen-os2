@@ -940,9 +940,9 @@ DEFINE emit-flag-text                 :+][+:
             arg-optional Oc :+][+:
       ENDIF                             :+][+:
 
-      IF (exist? "disable")
-        :+], " Fl \-[+:(. dis-name):+]"[+:
-      ENDIF                             :+][+:
+      (if (exist? "disable")
+          (string-append ", Fl \\-" dis-name)
+          "")                           :+][+:
     ENDIF                               :+][+:
   ENDIF                                 :+]
 [+: (get "descrip" "") :+].[+:
