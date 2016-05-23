@@ -44,6 +44,9 @@ do_substitution(
     SCM          repl,
     char **      ppz_res,
     ssize_t *    res_len);
+
+static inline void
+tr_char_range(unsigned char * ch_map, unsigned char * from, unsigned char * to);
 /* = = = END-STATIC-FORWARD = = = */
 
 static size_t

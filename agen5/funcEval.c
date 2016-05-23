@@ -32,6 +32,10 @@ tpl_text(templ_t * tpl, macro_t * mac);
 static void
 tpl_warning(templ_t * tpl, macro_t * mac, char const * msg);
 
+static char const *
+is_mac_entry_ok(bool * allocated, def_ent_t * ent,
+                int * code, templ_t * tpl, macro_t * mac);
+
 static void
 emit_insertion_file(char const * fname, FILE * outfp);
 
