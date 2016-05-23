@@ -94,7 +94,7 @@ do_output_file_line(int line_delta, char const * fmt)
         sprintfv(buf, fmt, (snv_constpointer *)args);
     }
 
-    return AG_SCM_STR02SCM(buf);
+    return scm_from_latin1_string(buf);
 }
 
 /**
@@ -240,7 +240,7 @@ ag_scm_out_delete(void)
 SCM
 ag_scm_out_move(SCM new_file)
 {
-    size_t sz = AG_SCM_STRLEN(new_file);
+    size_t sz = scm_c_string_length(new_file);
     char * pz = (char *)AGALOC(sz + 1, "file name");
     memcpy(pz, scm_i_string_chars(new_file), sz);
     pz[sz] = NUL;
@@ -310,7 +310,7 @@ ag_scm_out_pop(SCM ret_contents)
                 AG_CANT(SCM_OUT_POP_NO_REREAD, cur_fpstack->stk_fname);
         }
 
-        res = AG_SCM_STR2SCM(pz, (size_t)pos);
+        res = scm_from_latin1_stringn(pz, (size_t)pos);
     }
 
     outputDepth--;
@@ -347,7 +347,7 @@ ag_scm_output_file_next_line(SCM num_or_str, SCM str)
     else
         str = num_or_str;
 
-    if (AG_SCM_STRING_P(str))
+    if (scm_is_string(str))
         fmt = ag_scm2zchars(str, "file/line format");
     else
         fmt = FILE_LINE_FMT;
@@ -386,7 +386,7 @@ ag_scm_out_suspend(SCM susp_nm)
                          suspAllocCt * sizeof(tSuspendName), "add to susp f");
     }
 
-    pSuspended[ suspendCt-1 ].pzSuspendName = AG_SCM_TO_NEWSTR(susp_nm);
+    pSuspended[ suspendCt-1 ].pzSuspendName = scm_to_latin1_string(susp_nm);
     pSuspended[ suspendCt-1 ].pOutDesc      = cur_fpstack;
     if (OPT_VALUE_TRACE >= TRACE_EXPRESSIONS)
         fprintf(trace_fp, TRACE_SUSPEND, __func__, cur_fpstack->stk_fname,
@@ -479,7 +479,7 @@ ag_scm_ag_fprintf(SCM port, SCM fmt, SCM alist)
      *  If "port" is a string, it must match one of the suspended outputs.
      *  Otherwise, we'll fall through to the abend.
      */
-    if (AG_SCM_STRING_P(port)) {
+    if (scm_is_string(port)) {
         int  ix  = 0;
         char const * pzName = ag_scm2zchars(port, "resume name");
 
@@ -548,11 +548,11 @@ ag_scm_out_push_add(SCM new_file)
 {
     static char const append_mode[] = "a" FOPEN_BINARY_FLAG "+";
 
-    if (! AG_SCM_STRING_P(new_file))
+    if (! scm_is_string(new_file))
         AG_ABEND(OUT_ADD_INVALID);
 
-    open_output_file(scm_i_string_chars(new_file), AG_SCM_STRLEN(new_file),
-                     append_mode, 0);
+    open_output_file(scm_i_string_chars(new_file),
+                     scm_c_string_length(new_file), append_mode, 0);
 
     return SCM_UNDEFINED;
 }
@@ -607,9 +607,9 @@ ag_scm_out_push_new(SCM new_file)
 {
     static char const write_mode[] = "w" FOPEN_BINARY_FLAG "+";
 
-    if (AG_SCM_STRING_P(new_file)) {
-        open_output_file(scm_i_string_chars(new_file), AG_SCM_STRLEN(new_file),
-                         write_mode, 0);
+    if (scm_is_string(new_file)) {
+        open_output_file(scm_i_string_chars(new_file),
+                         scm_c_string_length(new_file), write_mode, 0);
         return SCM_UNDEFINED;
     }
 
@@ -691,10 +691,10 @@ ag_scm_out_switch(SCM new_file)
     struct utimbuf tbuf;
     char *  pzNewFile;
 
-    if (! AG_SCM_STRING_P(new_file))
+    if (! scm_is_string(new_file))
         return SCM_UNDEFINED;
     {
-        size_t sz = AG_SCM_STRLEN(new_file);
+        size_t sz = scm_c_string_length(new_file);
         pzNewFile = AGALOC(sz + 1, "new file name");
         memcpy(pzNewFile, scm_i_string_chars(new_file), sz);
         pzNewFile[ sz ] = NUL;
@@ -761,7 +761,7 @@ ag_scm_out_name(void)
 {
     out_stack_t * p = cur_fpstack;
     while (p->stk_flags & FPF_UNLINK)  p = p->stk_prev;
-    return AG_SCM_STR02SCM(VOIDP(p->stk_fname));
+    return scm_from_latin1_string(VOIDP(p->stk_fname));
 }
 
 
@@ -885,9 +885,9 @@ ag_scm_make_header_guard(SCM name)
          *  to "HEADER"
          */
         char const * lpz =
-            AG_SCM_STRING_P(name) ? scm_i_string_chars(name) : HEADER_STR;
+            scm_is_string(name) ? scm_i_string_chars(name) : HEADER_STR;
         size_t lsz = (lpz == HEADER_STR)
-            ? HEADER_STR_LEN : AG_SCM_STRLEN(name);
+            ? HEADER_STR_LEN : scm_c_string_length(name);
 
         /*
          *  Full, maximal length of output
@@ -938,7 +938,7 @@ ag_scm_make_header_guard(SCM name)
 
         if (snprintf(p, sz, MK_HEAD_GUARD_GUARD, gpz) >= sz)
             AG_ABEND(BOGUS_TAG);
-        name = AG_SCM_STR02SCM(p);
+        name = scm_from_latin1_string(p);
     }
 
     AGFREE(gpz);

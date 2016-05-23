@@ -165,7 +165,7 @@ do_stdout_tpl(templ_t * tpl)
         if (strneqvcmp(pzRes, DO_STDOUT_TPL_CONTENT, 13) != 0)
             fputs(DO_STDOUT_TPL_CONTENT, stdout);
 
-        fwrite(pzRes, AG_SCM_STRLEN(res), 1, stdout);
+        fwrite(pzRes, scm_c_string_length(res), 1, stdout);
     }
 
     fclose(stdout);

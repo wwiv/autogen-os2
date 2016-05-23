@@ -344,7 +344,7 @@ ag_scm_makefile_script(SCM text_scm)
     size_t sz   = script_size(&text, &tabch);
 
     if (sz == 0)
-        return AG_SCM_STR02SCM(zNil);
+        return scm_from_latin1_string(zNil);
 
     bol = out = res_str = scribble_get((ssize_t)sz);
 
@@ -417,7 +417,7 @@ ag_scm_makefile_script(SCM text_scm)
     }
 
     {
-        SCM res = AG_SCM_STR2SCM(res_str, (size_t)(out - res_str));
+        SCM res = scm_from_latin1_stringn(res_str, (size_t)(out - res_str));
         return res;
     }
 }

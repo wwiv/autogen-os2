@@ -400,7 +400,7 @@ ag_scm_emit(SCM val)
         if (scm_is_null(val))
             break;
 
-        if (AG_SCM_STRING_P(val)) {
+        if (scm_is_string(val)) {
             fputs((char *)ag_scm2zchars(val, "emit val"), fp);
             fflush(fp);
             break;
@@ -499,7 +499,7 @@ ag_scm_insert_file(SCM val)
         if (scm_is_null(val))
             break;
 
-        if (AG_SCM_STRING_P(val)) {
+        if (scm_is_string(val)) {
             emit_insertion_file(ag_scm2zchars(val, "emit val"), fp);
             break;
         }
@@ -551,7 +551,7 @@ eval(char const * expr)
         (void)span_quote(pzTemp);
         expr = shell_cmd(pzTemp);
         AGFREE(pzTemp);
-        res = AG_SCM_STR02SCM((char *)expr);
+        res = scm_from_latin1_string((char *)expr);
         AGFREE(expr);
         break;
 
@@ -564,7 +564,7 @@ eval(char const * expr)
         /* FALLTHROUGH */
 
     default:
-        res = AG_SCM_STR02SCM((char *)expr);
+        res = scm_from_latin1_string((char *)expr);
         if (allocated)
             AGFREE(expr);
     }

@@ -505,7 +505,7 @@ build_defs(int def_ct, def_list_t * def_list)
             }
 
             res = ag_eval(def_list->pzExpr);
-            if (AG_SCM_STRING_P(res)) {
+            if (scm_is_string(res)) {
                 AGDUPSTR(def_list->de.de_val.dvu_text,
                          ag_scm2zchars(res, "res"), "ev res");
             }

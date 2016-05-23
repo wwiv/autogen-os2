@@ -71,9 +71,9 @@ ag_scm_make_gperf(SCM name, SCM hlist)
 
     char const * gp_nam = ag_scm2zchars(name, "gp nm");
     char const * h_list;
-    SCM          nl_scm = AG_SCM_STR2SCM(NEWLINE, (size_t)1);
+    SCM          nl_scm = scm_from_latin1_stringn(NEWLINE, (size_t)1);
 
-    if (! AG_SCM_STRING_P(name))
+    if (! scm_is_string(name))
         return SCM_UNDEFINED;
 
     /*
@@ -142,7 +142,7 @@ ag_scm_gperf(SCM name, SCM str)
     if (*key2hash == NUL)
         str = SCM_UNDEFINED;
     else
-        str = AG_SCM_STR02SCM(key2hash);
+        str = scm_from_latin1_string(key2hash);
 
     AGFREE(cmd);
     AGFREE(key2hash);

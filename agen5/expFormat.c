@@ -134,14 +134,14 @@ ag_scm_dne(SCM prefix, SCM first, SCM opt)
     char const *  pzFirst;
     char const *  pzPrefix;
 
-    if (! AG_SCM_STRING_P(prefix))
+    if (! scm_is_string(prefix))
         return SCM_UNDEFINED;
 
     date_str = zNil;
     pzFirst  = zNil;
 
     {
-        size_t pfxLen   = AG_SCM_STRLEN(prefix);
+        size_t pfxLen   = scm_c_string_length(prefix);
         pzPrefix = ag_scm2zchars(prefix, "dne-prefix");
 
         /*
@@ -187,7 +187,7 @@ ag_scm_dne(SCM prefix, SCM first, SCM opt)
      *  IF we also have a 'first' prefix string,
      *  THEN we set it to something other than ``zNil'' and deallocate later.
      */
-    if (AG_SCM_STRING_P(first))
+    if (scm_is_string(first))
         pzFirst = aprf(ENABLED_OPT(WRITABLE) ? "%s\n" : EXP_FMT_DNE1,
                        ag_scm2zchars(first, "pfx-1"), pzPrefix);
 
@@ -241,7 +241,7 @@ ag_scm_dne(SCM prefix, SCM first, SCM opt)
     if (pzFirst != zNil)
         AGFREE(pzFirst);
     {
-        SCM res = AG_SCM_STR02SCM(date_str);
+        SCM res = scm_from_latin1_string(date_str);
         AGFREE(date_str);
 
         return res;
@@ -358,7 +358,8 @@ ag_scm_error(SCM res)
      *  THEN print it.
      */
     if (*msg != NUL) {
-        char * pz = aprf(DEF_NOTE_FMT, (abrt != PROBLEM) ? ERROR_STR : WARN_STR,
+        char const * typ = (abrt != PROBLEM) ? ERROR_STR : WARN_STR;
+        char * pz = aprf(DEF_NOTE_FMT, typ,
                          current_tpl->td_file, cur_macro->md_line,
                          cur_fpstack->stk_fname, msg);
         if (abrt != PROBLEM)
@@ -587,27 +588,29 @@ construct_license(
             MK_LIC_PROG, MK_LIC_PFX, MK_LIC_OWN, MK_LIC_YRS
         };
         subs = scm_gc_protect_object(
-            scm_list_4(AG_SCM_STR02SCM(slst[0]), AG_SCM_STR02SCM(slst[1]),
-                       AG_SCM_STR02SCM(slst[2]), AG_SCM_STR02SCM(slst[3])));
+            scm_list_4(scm_from_latin1_string(slst[0]),
+                       scm_from_latin1_string(slst[1]),
+                       scm_from_latin1_string(slst[2]),
+                       scm_from_latin1_string(slst[3])));
 
-        empty = scm_gc_protect_object(AG_SCM_STR02SCM(""));
+        empty = scm_gc_protect_object(scm_from_latin1_string(""));
     }
 
-    if (! AG_SCM_STRING_P(lic))
+    if (! scm_is_string(lic))
         AG_ABEND(MK_LIC_NOT_STR);
 
     lic_text = find_lic_text(seg, lic, &text_len, pfx_pz);
     if (lic_text == NULL)
         AG_ABEND(aprf(MK_LIC_NO_LIC, ag_scm2zchars(lic, "lic")));
 
-    if (! AG_SCM_STRING_P(owner))   owner = empty;
-    if (! AG_SCM_STRING_P(years))   years = empty;
+    if (! scm_is_string(owner))   owner = empty;
+    if (! scm_is_string(years))   years = empty;
     vals = scm_list_4(prog, pfx, owner, years);
 
     do_multi_subs(&lic_text, &text_len, subs, vals);
 
     trim_trailing_white(lic_text);
-    return AG_SCM_STR02SCM(lic_text);
+    return scm_from_latin1_string(lic_text);
 }
 
 /*=gfunc license_full
@@ -740,7 +743,7 @@ ag_scm_license_name(SCM lic)
         txt = SPN_WHITESPACE_CHARS(txt);
         e   = SPN_WHITESPACE_BACK(txt, txt);
         *e  = NUL;
-        lic = AG_SCM_STR02SCM(txt);
+        lic = scm_from_latin1_string(txt);
     }
     return lic;
 }
@@ -764,7 +767,8 @@ ag_scm_gpl(SCM prog_name, SCM prefix)
     static SCM lic = SCM_UNDEFINED;
 
     if (lic == SCM_UNDEFINED)
-        lic = scm_gc_protect_object(AG_SCM_STR02SCM(FIND_LIC_TEXT_LGPL+1));
+        lic = scm_gc_protect_object(
+            scm_from_latin1_string(FIND_LIC_TEXT_LGPL+1));
     return ag_scm_license_description(lic, prog_name, prefix, SCM_UNDEFINED);
 }
 
@@ -787,7 +791,8 @@ ag_scm_agpl(SCM prog_name, SCM prefix)
     static SCM lic = SCM_UNDEFINED;
 
     if (lic == SCM_UNDEFINED)
-        lic = scm_gc_protect_object(AG_SCM_STR02SCM(FIND_LIC_TEXT_AGPL));
+        lic = scm_gc_protect_object(
+            scm_from_latin1_string(FIND_LIC_TEXT_AGPL));
     return ag_scm_license_description(lic, prog_name, prefix, SCM_UNDEFINED);
 }
 
@@ -811,7 +816,8 @@ ag_scm_lgpl(SCM prog_name, SCM owner, SCM prefix)
     static SCM lic = SCM_UNDEFINED;
 
     if (lic == SCM_UNDEFINED)
-        lic = scm_gc_protect_object(AG_SCM_STR02SCM(FIND_LIC_TEXT_LGPL));
+        lic = scm_gc_protect_object(
+            scm_from_latin1_string(FIND_LIC_TEXT_LGPL));
     return ag_scm_license_description(lic, prog_name, prefix, owner);
 }
 
@@ -836,7 +842,8 @@ ag_scm_bsd(SCM prog_name, SCM owner, SCM prefix)
     static SCM lic = SCM_UNDEFINED;
 
     if (lic == SCM_UNDEFINED)
-        lic = scm_gc_protect_object(AG_SCM_STR02SCM(FIND_LIC_TEXT_MBSD));
+        lic = scm_gc_protect_object(
+            scm_from_latin1_string(FIND_LIC_TEXT_MBSD));
     return ag_scm_license_description(lic, prog_name, prefix, owner);
 }
 
@@ -867,7 +874,7 @@ ag_scm_license(SCM license, SCM prog_name, SCM owner, SCM prefix)
 
     char * pzRes;
 
-    if (! AG_SCM_STRING_P(license))
+    if (! scm_is_string(license))
         return SCM_UNDEFINED;
 
     {
@@ -917,13 +924,13 @@ ag_scm_license(SCM license, SCM prog_name, SCM owner, SCM prefix)
      *  Make sure they are reasonably sized (less than
      *  SCRIBBLE_SIZE).  Copy them to the scratch buffer.
      */
-    if (AG_SCM_STRLEN(prog_name) >= SCRIBBLE_SIZE)
+    if (scm_c_string_length(prog_name) >= SCRIBBLE_SIZE)
         AG_ABEND(aprf(MK_LIC_TOO_BIG_FMT, MK_LIC_BIG_PROG, SCRIBBLE_SIZE));
 
-    if (AG_SCM_STRLEN(prefix) >= SCRIBBLE_SIZE)
+    if (scm_c_string_length(prefix) >= SCRIBBLE_SIZE)
         AG_ABEND(aprf(MK_LIC_TOO_BIG_FMT, MK_LIC_BIG_PFX, SCRIBBLE_SIZE));
 
-    if (AG_SCM_STRLEN(owner) >= SCRIBBLE_SIZE)
+    if (scm_c_string_length(owner) >= SCRIBBLE_SIZE)
         AG_ABEND(aprf(MK_LIC_TOO_BIG_FMT, MK_LIC_BIG_OWN, SCRIBBLE_SIZE));
 
     /*
@@ -984,7 +991,8 @@ ag_scm_license(SCM license, SCM prog_name, SCM owner, SCM prefix)
          */
         AGFREE(pzRes);
 
-        return AG_SCM_STR2SCM(pzSaveRes, (size_t)((pzOut - pzSaveRes) - 1));
+        return scm_from_latin1_stringn(
+            pzSaveRes, (size_t)((pzOut - pzSaveRes) - 1));
     }
 }
 /**

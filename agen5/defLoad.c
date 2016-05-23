@@ -274,7 +274,7 @@ insert_ent(def_ent_t * de)
                sizeof(def) - ag_offsetof(def_ent_t, de_name));
 
         /*
-         * Contents are swapped.  Link "de" after "de_list" and return "de_list".
+         * Contents are swapped.  Link "de" after "de_list" & return "de_list".
          */
         de->de_twin = de_list->de_twin;
         if (de->de_twin != NULL)

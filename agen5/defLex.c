@@ -549,10 +549,10 @@ alist_to_autogen_def(void)
     /*
      *  The result *must* be a string, or we choke.
      */
-    if (! AG_SCM_STRING_P(res))
+    if (! scm_is_string(res))
         AG_ABEND(ALIST_TO_AG_ERR);
 
-    res_len   = AG_SCM_STRLEN(res);
+    res_len   = scm_c_string_length(res);
     processing_state = PROC_STATE_LOAD_DEFS;
     cctx->scx_scan = pzEnd;
     AGFREE(pzText);

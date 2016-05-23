@@ -172,7 +172,7 @@ run_printf(char const * pzFmt, int len, SCM alist)
     {
         char *  bf;
         size_t  bf_sz = (size_t)safePrintf(&bf, pzFmt, arglist);
-        res = AG_SCM_STR2SCM(bf, bf_sz);
+        res = scm_from_latin1_stringn(bf, bf_sz);
         free(bf);
     }
 
@@ -284,14 +284,15 @@ ag_scm_hide_email(SCM display, SCM eaddr)
     do {
         if (*end_adr == NUL)
             break;
-        scan += snprintf(scan, str_size - (scan - res), HTML_DEC_DIGIT, *(end_adr++));
+        scan += snprintf(scan, str_size - (scan - res),
+                         HTML_DEC_DIGIT, *(end_adr++));
     } while (scan < end);
 
     scan += snprintf(scan, str_size - (scan - res), HIDE_EMAIL_END_FMT, disp);
     if (scan > end)
         AG_ABEND(BOGUS_TAG);
 
-    return AG_SCM_STR2SCM(res, (size_t)(scan - res));
+    return scm_from_latin1_stringn(res, (size_t)(scan - res));
 }
 
 /*=gfunc   format_arg_count

@@ -29,8 +29,8 @@ AG_ABEND(aprf(DIRECT_NOMATCH_FMT, cctx->scx_fname, cctx->scx_line, _typ))
 
 /**
  * "ifdef" processing level.  Blocks of text being skipped do not increment
- * the value.  Thus, transitioning from skip mode to process mode increments it,
- * and the reverse decrements it.
+ * the value.  Thus, transitioning from skip mode to process mode increments
+ * it, and the reverse decrements it.
  */
 static int  ifdef_lvl = 0;
 

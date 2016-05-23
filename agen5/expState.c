@@ -150,7 +150,7 @@ find_entry_value(SCM op, SCM obj, SCM test)
             return SCM_BOOL_F; /* Cannot match string -- not a text value */
         }
 
-        field  = AG_SCM_STR02SCM(def->de_val.dvu_text);
+        field  = scm_from_latin1_string(def->de_val.dvu_text);
         result = AG_SCM_APPLY2(op, field, test);
         if (! has_idx)
             while (result == SCM_BOOL_F) {
@@ -159,7 +159,7 @@ find_entry_value(SCM op, SCM obj, SCM test)
                 if (def == NULL)
                     break;
 
-                field = AG_SCM_STR02SCM(def->de_val.dvu_text);
+                field = scm_from_latin1_string(def->de_val.dvu_text);
                 result = AG_SCM_APPLY2(op, field, test);
             }
 
@@ -183,7 +183,7 @@ find_entry_value(SCM op, SCM obj, SCM test)
      */
     pzField[-1] = name_sep_ch;
     {
-        SCM field   = AG_SCM_STR02SCM(pzField);
+        SCM field   = scm_from_latin1_string(pzField);
         SCM result;
         def_ctx_t ctx = curr_def_ctx;
 
@@ -222,7 +222,7 @@ find_entry_value(SCM op, SCM obj, SCM test)
 SCM
 ag_scm_base_name(void)
 {
-    return AG_SCM_STR02SCM(C(char *, OPT_ARG(BASE_NAME)));
+    return scm_from_latin1_string(C(char *, OPT_ARG(BASE_NAME)));
 }
 
 /*=gfunc version_compare
@@ -338,7 +338,7 @@ ag_scm_count(SCM obj)
 SCM
 ag_scm_def_file(void)
 {
-    return AG_SCM_STR02SCM(C(char *, (base_ctx->scx_fname)));
+    return scm_from_latin1_string(C(char *, (base_ctx->scx_fname)));
 }
 
 /*=gfunc exist_p
@@ -419,7 +419,7 @@ SCM
 ag_scm_match_value_p(SCM op, SCM obj, SCM test)
 {
     if (  (! AG_SCM_IS_PROC(op))
-       || (! AG_SCM_STRING_P(obj)) )
+       || (! scm_is_string(obj)) )
         return SCM_UNDEFINED;
 
     if (OPT_VALUE_TRACE >= TRACE_EXPRESSIONS)
@@ -444,12 +444,12 @@ ag_scm_match_value_p(SCM op, SCM obj, SCM test)
 SCM
 ag_scm_get(SCM v_name, SCM alt_v_name)
 {
-    if (AG_SCM_STRING_P(v_name)) {
+    if (scm_is_string(v_name)) {
         bool   x;
         char * vnm = ag_scm2zchars(v_name, "vname");
         def_ent_t * de  = find_def_ent(vnm, &x);
         if ((de != NULL) && (de->de_type == VALTYP_TEXT))
-            return AG_SCM_STR02SCM(de->de_val.dvu_text);
+            return scm_from_latin1_string(de->de_val.dvu_text);
         if (OPT_VALUE_TRACE >= TRACE_EXPRESSIONS)
             fprintf(trace_fp, GOT_NOTHING_FMT, vnm,
                     (de != NULL) ? "non text value" : "no value at all",
@@ -460,9 +460,9 @@ ag_scm_get(SCM v_name, SCM alt_v_name)
         fprintf(trace_fp, GET_NOTHING_FMT, current_tpl->td_file,
                 (unsigned)cur_macro->md_line);
     
-    if (AG_SCM_STRING_P(alt_v_name))
+    if (scm_is_string(alt_v_name))
         return alt_v_name;
-    return AG_SCM_STR02SCM(zNil);
+    return scm_from_latin1_string(zNil);
 }
 
 /*=gfunc get_c_name
@@ -640,7 +640,7 @@ ag_scm_set_option(SCM opt)
 SCM
 ag_scm_suffix(void)
 {
-    return AG_SCM_STR02SCM((char *)curr_sfx);
+    return scm_from_latin1_string((char *)curr_sfx);
 }
 
 /*=gfunc tpl_file
@@ -662,10 +662,10 @@ ag_scm_tpl_file(SCM full)
 
         char z[AG_PATH_MAX];
         if (SUCCESSFUL(find_file(tpl_fname, z, sfx, NULL)))
-            return AG_SCM_STR02SCM(z);
+            return scm_from_latin1_string(z);
     }
 
-    return AG_SCM_STR02SCM(C(char *, tpl_fname));
+    return scm_from_latin1_string(C(char *, tpl_fname));
 }
 
 /**
@@ -689,7 +689,7 @@ do_tpl_file_line(int line_delta, char const * fmt)
     }
 
     sprintfv(buf, fmt, (snv_constpointer *)args);
-    return AG_SCM_STR02SCM(buf);
+    return scm_from_latin1_string(buf);
 }
 
 /*=gfunc tpl_file_line
@@ -718,7 +718,7 @@ SCM
 ag_scm_tpl_file_line(SCM fmt_scm)
 {
     char const * fmt = TPL_FILE_LINE_FMT;
-    if (AG_SCM_STRING_P(fmt_scm))
+    if (scm_is_string(fmt_scm))
         fmt = ag_scm2zchars(fmt_scm, "f/l fmt");
 
     return do_tpl_file_line(0, fmt);
@@ -739,7 +739,7 @@ SCM
 ag_scm_tpl_file_next_line(SCM fmt_scm)
 {
     char const * fmt = TPL_FILE_NEXT_LINE_FMT;
-    if (AG_SCM_STRING_P(fmt_scm))
+    if (scm_is_string(fmt_scm))
         fmt = ag_scm2zchars(fmt_scm, "f/l fmt");
 
     return do_tpl_file_line(1, fmt);
@@ -750,8 +750,8 @@ ag_scm_tpl_file_next_line(SCM fmt_scm)
  * what: get the maximum input file modification time
  *
  * doc:  returns the time stamp of the most recently modified sourc file as the
- *       number of seconds since the epoch.  If any input is dynamic (a shell command),
- *       then it will be the current time.
+ *       number of seconds since the epoch.  If any input is dynamic
+ *       (a shell command), then it will be the current time.
 =*/
 SCM
 ag_scm_max_file_time(void)
@@ -797,7 +797,7 @@ ag_scm_def_file_line(SCM obj, SCM fmt_scm)
     if (def == NULL)
         return SCM_UNDEFINED;
 
-    if (AG_SCM_STRING_P(fmt_scm))
+    if (scm_is_string(fmt_scm))
         fmt = ag_scm2zchars(fmt_scm, "f/l fmt");
 
     {
@@ -817,7 +817,7 @@ ag_scm_def_file_line(SCM obj, SCM fmt_scm)
         sprintfv(buf, fmt, (snv_constpointer *)args);
     }
 
-    return AG_SCM_STR02SCM(buf);
+    return scm_from_latin1_string(buf);
 }
 
 /**

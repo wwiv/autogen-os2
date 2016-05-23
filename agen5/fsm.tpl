@@ -76,7 +76,7 @@ YOU SUPPLY a "method" and a "type" as above, plus:
                  suitable for use in a procedure header.  It is used to pass
                  through arguments to implementation code.
 
-  transition     Define the handling for a transition from one state to another.
+  transition     Define the handling for a transition to a new state.
                  It contains:
      tst         the starting state(s).  This may be one, or a list or '*'
                  to indicate all states.

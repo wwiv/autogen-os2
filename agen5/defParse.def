@@ -102,5 +102,5 @@ transition =
                       ttype = start_block; },
 { tst  = need_value;  tev   = delete_ent; next  = need_name; },
 { tst  = have_value;  tev   = lit_semi;   next  = need_name; ttype = noop; },
-{ tst  = have_value;  tev   = lit_comma;  next  = need_value;ttype = next_val;};
+{ tst  = have_value;  tev   = lit_comma;  next = need_value;ttype = next_val;};
 /* end of agen5/defParse.def */

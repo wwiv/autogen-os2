@@ -59,7 +59,7 @@ static for_state_t *
 find_for_state(SCM which_scm)
 {
     ivk_info_t * srch = curr_ivk_info;
-    char const * which = AG_SCM_STRING_P(which_scm)
+    char const * which = scm_is_string(which_scm)
         ? ag_scm2zchars(which_scm, "which for") : NULL;
 
     for (; srch != NULL; srch = srch->ii_prev) {
@@ -101,7 +101,7 @@ ag_scm_first_for_p(SCM which)
     if (p == NULL)
         return SCM_UNDEFINED;
 
-    if (! AG_SCM_STRING_P(which))
+    if (! scm_is_string(which))
         return (for_state->for_isfirst) ? SCM_BOOL_T : SCM_BOOL_F;
 
     which = p->for_isfirst ? SCM_BOOL_T : SCM_BOOL_F;
@@ -185,7 +185,7 @@ ag_scm_for_from(SCM from)
     if ((! for_state->for_loading) || (! scm_is_number(from)))
         return SCM_UNDEFINED;
 
-    for_state->for_from = AG_SCM_TO_INT(from);
+    for_state->for_from = scm_to_int(from);
     return SCM_BOOL_T;
 }
 
@@ -206,7 +206,7 @@ ag_scm_for_to(SCM to)
     if ((! for_state->for_loading) || (! scm_is_number(to)))
         return SCM_UNDEFINED;
 
-    for_state->for_to = AG_SCM_TO_INT(to);
+    for_state->for_to = scm_to_int(to);
     return SCM_BOOL_T;
 }
 
@@ -227,7 +227,7 @@ ag_scm_for_by(SCM by)
     if ((! for_state->for_loading) || (! scm_is_number(by)))
         return SCM_UNDEFINED;
 
-    for_state->for_by = AG_SCM_TO_INT(by);
+    for_state->for_by = scm_to_int(by);
     return SCM_BOOL_T;
 }
 
@@ -245,7 +245,7 @@ ag_scm_for_by(SCM by)
 SCM
 ag_scm_for_sep(SCM obj)
 {
-    if ((! for_state->for_loading) || (! AG_SCM_STRING_P(obj)))
+    if ((! for_state->for_loading) || (! scm_is_string(obj)))
         return SCM_UNDEFINED;
 
     AGDUPSTR(for_state->for_sep_str, ag_scm2zchars(obj, "sep"), "seps");
@@ -326,7 +326,8 @@ set_loop_limit(def_ent_t * found)
     def_ent_t * lde = (found->de_etwin != NULL) ? found->de_etwin : found;
 
     if (for_state->for_from == UNASSIGNED)
-        for_state->for_from = invert ? (int)lde->de_index : (int)found->de_index;
+        for_state->for_from =
+            invert ? (int)lde->de_index : (int)found->de_index;
 
     if (for_state->for_to == UNASSIGNED)
         for_state->for_to = invert ? (int)found->de_index : (int)lde->de_index;

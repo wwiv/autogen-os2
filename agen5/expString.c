@@ -135,7 +135,7 @@ shell_stringify(SCM obj, uint_t qt)
     dtaSize = stringify_for_sh(pzNew, qt, pzDta);
 
     {
-        SCM res = AG_SCM_STR2SCM(pzNew, dtaSize);
+        SCM res = scm_from_latin1_stringn(pzNew, dtaSize);
         AGFREE(pzNew);
         return res;
     }
@@ -180,8 +180,8 @@ do_substitution(
 {
     char * pzMatch  = ag_scm2zchars(match, "match text");
     char * rep_str  = ag_scm2zchars(repl,  "repl text");
-    int    mark_len = (int)AG_SCM_STRLEN(match);
-    int    repl_len = (int)AG_SCM_STRLEN(repl);
+    int    mark_len = (int)scm_c_string_length(match);
+    int    repl_len = (int)scm_c_string_length(repl);
 
     {
         int ct = sub_count(src_str, pzMatch);
@@ -242,7 +242,7 @@ do_multi_subs(char ** ppzStr, ssize_t * pStrLen, SCM match, SCM repl)
         match = SCM_CDR(match);
         repl  = SCM_CDR(repl);
 
-        if (AG_SCM_STRING_P(matchCar)) {
+        if (scm_is_string(matchCar)) {
             do_substitution(pzStr, *pStrLen, matchCar, replCar,
                             &pzNxt, pStrLen);
 
@@ -278,7 +278,7 @@ do_multi_subs(char ** ppzStr, ssize_t * pStrLen, SCM match, SCM repl)
 SCM
 ag_scm_mk_gettextable(SCM txt)
 {
-    if (AG_SCM_STRING_P(txt)) {
+    if (scm_is_string(txt)) {
         char const * pz = ag_scm2zchars(txt, "txt");
         optionPrintParagraphs(pz, false, cur_fpstack->stk_fp);
     }
@@ -303,18 +303,18 @@ ag_scm_in_p(SCM obj, SCM list)
     SCM     car;
     char const * pz1;
 
-    if (! AG_SCM_STRING_P(obj))
+    if (! scm_is_string(obj))
         return SCM_UNDEFINED;
 
     pz1  = scm_i_string_chars(obj);
-    lenz = AG_SCM_STRLEN(obj);
+    lenz = scm_c_string_length(obj);
 
     /*
      *  If the second argument is a string somehow, then treat
      *  this as a straight out string comparison
      */
-    if (AG_SCM_STRING_P(list)) {
-        if (  (AG_SCM_STRLEN(list) == lenz)
+    if (scm_is_string(list)) {
+        if (  (scm_c_string_length(list) == lenz)
            && (strncmp(pz1, scm_i_string_chars(list), lenz) == 0))
             return SCM_BOOL_T;
         return SCM_BOOL_F;
@@ -337,13 +337,13 @@ ag_scm_in_p(SCM obj, SCM list)
          *  hands it to us, it magically becomes a nested list.
          *  This unravels that.
          */
-        if (! AG_SCM_STRING_P(car)) {
+        if (! scm_is_string(car)) {
             if (ag_scm_in_p(obj, car) == SCM_BOOL_T)
                 return SCM_BOOL_T;
             continue;
         }
 
-        if (  (AG_SCM_STRLEN(car) == lenz)
+        if (  (scm_c_string_length(car) == lenz)
            && (strncmp(pz1, scm_i_string_chars(car), lenz) == 0) )
             return SCM_BOOL_T;
     }
@@ -376,15 +376,15 @@ ag_scm_join(SCM sep, SCM list)
     char const * pzSep;
     char *   pzScan;
 
-    if (! AG_SCM_STRING_P(sep))
+    if (! scm_is_string(sep))
         return SCM_UNDEFINED;
 
     sv_l_len = l_len = (int)scm_ilength(list);
     if (l_len == 0)
-        return AG_SCM_STR02SCM(zNil);
+        return scm_from_latin1_string(zNil);
 
     pzSep   = scm_i_string_chars(sep);
-    sep_len = AG_SCM_STRLEN(sep);
+    sep_len = scm_c_string_length(sep);
     str_len = 0;
 
     /*
@@ -400,14 +400,14 @@ ag_scm_join(SCM sep, SCM list)
          *  hands it to us, it magically becomes a nested list.
          *  This unravels that.
          */
-        if (! AG_SCM_STRING_P(car)) {
+        if (! scm_is_string(car)) {
             if (car != SCM_UNDEFINED)
                 car = ag_scm_join(sep, car);
-            if (! AG_SCM_STRING_P(car))
+            if (! scm_is_string(car))
                 return SCM_UNDEFINED;
         }
 
-        str_len += AG_SCM_STRLEN(car);
+        str_len += scm_c_string_length(car);
 
         if (--l_len <= 0)
             break;
@@ -430,10 +430,10 @@ ag_scm_join(SCM sep, SCM list)
         /*
          *  This unravels nested lists.
          */
-        if (! AG_SCM_STRING_P(car))
+        if (! scm_is_string(car))
             car = ag_scm_join(sep, car);
 
-        cpy_len = AG_SCM_STRLEN(car);
+        cpy_len = scm_c_string_length(car);
         memcpy(VOIDP(pzScan), scm_i_string_chars(car), cpy_len);
         pzScan += cpy_len;
 
@@ -446,7 +446,7 @@ ag_scm_join(SCM sep, SCM list)
         pzScan += sep_len;
     }
 
-    return AG_SCM_STR2SCM(pzRes, str_len);
+    return scm_from_latin1_stringn(pzRes, str_len);
 }
 
 
@@ -516,7 +516,7 @@ ag_scm_prefix(SCM prefx, SCM txt)
              * Trim trailing white space on the final line.
              */
             scan = SPN_HORIZ_WHITE_BACK(r_str, scan);
-            return AG_SCM_STR2SCM(r_str, scan - r_str);
+            return scm_from_latin1_stringn(r_str, scan - r_str);
 
         case NL:
             /*
@@ -564,7 +564,7 @@ ag_scm_raw_shell_str(SCM obj)
     data = ag_scm2zchars(obj, "AG Object");
 
     {
-        size_t dtaSize = AG_SCM_STRLEN(obj) + 3; /* NUL + 2 quotes */
+        size_t dtaSize = scm_c_string_length(obj) + 3; /* NUL + 2 quotes */
         pz = data-1;
         for (;;) {
             pz = strchr(pz+1, '\'');
@@ -625,7 +625,7 @@ ag_scm_raw_shell_str(SCM obj)
 
  returnString:
     {
-        SCM res = AG_SCM_STR02SCM(pzFree);
+        SCM res = scm_from_latin1_string(pzFree);
         AGFREE(pzFree);
         return res;
     }
@@ -754,7 +754,7 @@ ag_scm_stack(SCM obj)
         if (pDE->de_type != VALTYP_TEXT)
             return SCM_UNDEFINED;
 
-        str  = AG_SCM_STR02SCM(pDE->de_val.dvu_text);
+        str  = scm_from_latin1_string(pDE->de_val.dvu_text);
         *pos = scm_cons(str, SCM_EOL);
         pos  = SCM_CDRLOC(*pos);
     }
@@ -783,7 +783,7 @@ ag_scm_kr_string(SCM str)
     char const * pz = ag_scm2zchars(str, "krstr");
     SCM res;
     pz  = optionQuoteString(pz, KR_STRING_NEWLINE);
-    res = AG_SCM_STR02SCM(pz);
+    res = scm_from_latin1_string(pz);
     AGFREE(pz);
     return res;
 }
@@ -814,7 +814,7 @@ ag_scm_c_string(SCM str)
     char const * pz = ag_scm2zchars(str, "cstr");
     SCM res;
     pz  = optionQuoteString(pz, C_STRING_NEWLINE);
-    res = AG_SCM_STR02SCM(pz);
+    res = scm_from_latin1_string(pz);
     AGFREE(pz);
     return res;
 }
@@ -888,8 +888,12 @@ ag_scm_string_tr_x(SCM str, SCM from_xform, SCM to_xform)
              *    there is a "to" character after the hyphen,
              * THEN map a character range
              */
-            if ((i > 0) && (tch == '-') && (from[0] != NUL) && (to[0] != NUL)) {
-                tr_char_range(ch_map, (unsigned char *)from, (unsigned char *)to);
+            if (  (i > 0)
+               && (tch     == '-')
+               && (from[0] != NUL)
+               && (to[0]   != NUL)) {
+                tr_char_range(ch_map, (unsigned char *)from,
+                              (unsigned char *)to);
                 break;
             }
 
@@ -899,7 +903,7 @@ ag_scm_string_tr_x(SCM str, SCM from_xform, SCM to_xform)
     } map_done:;
 
     to = C(char *, scm_i_string_chars(str));
-    i    = (int)AG_SCM_STRLEN(str);
+    i    = (int)scm_c_string_length(str);
     while (i-- > 0) {
         *to = (char)ch_map[ (int)*to ];
         to++;
@@ -922,8 +926,8 @@ ag_scm_string_tr_x(SCM str, SCM from_xform, SCM to_xform)
 SCM
 ag_scm_string_tr(SCM Str, SCM From, SCM To)
 {
-    size_t lenz  = AG_SCM_STRLEN(Str);
-    SCM    res   = AG_SCM_STR2SCM(scm_i_string_chars(Str), lenz);
+    size_t lenz  = scm_c_string_length(Str);
+    SCM    res   = scm_from_latin1_stringn(scm_i_string_chars(Str), lenz);
     return ag_scm_string_tr_x(res, From, To);
 }
 
@@ -954,18 +958,18 @@ ag_scm_string_substitute(SCM str, SCM Match, SCM Repl)
     ssize_t len;
     SCM     res;
 
-    if (! AG_SCM_STRING_P(str))
+    if (! scm_is_string(str))
         return SCM_UNDEFINED;
 
     text = scm_i_string_chars(str);
-    len   = (ssize_t)AG_SCM_STRLEN(str);
+    len   = (ssize_t)scm_c_string_length(str);
 
-    if (AG_SCM_STRING_P(Match))
+    if (scm_is_string(Match))
         do_substitution(text, len, Match, Repl, (char **)&text, &len);
     else
         do_multi_subs((char **)&text, &len, Match, Repl);
 
-    res = AG_SCM_STR2SCM(text, (size_t)len);
+    res = scm_from_latin1_stringn(text, (size_t)len);
     return res;
 }
 
@@ -990,7 +994,7 @@ ag_scm_time_string_to_number(SCM time_spec)
     char const * pz;
     time_t  time_period;
 
-    if (! AG_SCM_STRING_P(time_spec))
+    if (! scm_is_string(time_spec))
         return SCM_UNDEFINED;
 
     pz = scm_i_string_chars(time_spec);

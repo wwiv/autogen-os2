@@ -11,9 +11,9 @@
  * ("autogen"), a library ("libopts") and its support templates (collectively,
  * "AutoOpts"), several support and utility programs ("columns", "getdefs" and
  * "xml2ag"), *plus* several handy embedded utility templates.  They are all
- * bundled together because they all require each other.  They each do completely
- * separate things, but they each are not useful without the other.  Thus,
- * they are bundled together.
+ * bundled together because they all require each other.
+ * They each do completely separate things, but they each are not useful
+ * without the other.  Thus, they are bundled together.
  *
  * @group autogen
  * @{

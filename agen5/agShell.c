@@ -51,7 +51,7 @@ ag_scm_chdir(SCM dir)
         free(cur_dir);
     {
         char const * pz = ag_scm2zchars(dir, zChdirDir);
-        cur_dir = malloc(AG_SCM_STRLEN(dir) + 1);
+        cur_dir = malloc(scm_c_string_length(dir) + 1);
         strcpy((char *)cur_dir, pz);
     }
     return dir;
@@ -86,19 +86,19 @@ ag_scm_shell(SCM cmd)
 #ifndef SHELL_ENABLED
     return cmd;
 #else
-    if (! AG_SCM_STRING_P(cmd)) {
+    if (! scm_is_string(cmd)) {
         static SCM joiner = SCM_UNDEFINED;
         if (joiner == SCM_UNDEFINED)
-            joiner = scm_gc_protect_object(AG_SCM_STR02SCM(""));
+            joiner = scm_gc_protect_object(scm_from_latin1_string(""));
 
         cmd = ag_scm_join(joiner, cmd);
-        if (! AG_SCM_STRING_P(cmd))
+        if (! scm_is_string(cmd))
             return SCM_UNDEFINED;
     }
 
     {
         char * pz = shell_cmd(ag_scm2zchars(cmd, "command"));
-        cmd   = AG_SCM_STR02SCM(pz);
+        cmd   = scm_from_latin1_string(pz);
         AGFREE(pz);
         return cmd;
     }
@@ -127,7 +127,7 @@ ag_scm_shellf(SCM fmt, SCM alist)
     pz = shell_cmd(ag_scm2zchars(fmt, "shell script"));
     if (pz == NULL)
         AG_ABEND(SHELL_RES_NULL_MSG);
-    fmt = AG_SCM_STR02SCM(pz);
+    fmt = scm_from_latin1_string(pz);
     AGFREE(pz);
 #endif
     return fmt;
@@ -202,7 +202,8 @@ close_server_shell(void)
     (void)kill(serv_id, SIGKILL);
     serv_id = NULLPROCESS;
     if (OPT_VALUE_TRACE >= TRACE_SERVER_SHELL)
-        fprintf(trace_fp, "close_server_shell in %u state\n", processing_state);
+        fprintf(trace_fp, "close_server_shell in %u state\n",
+                processing_state);
 
     /*
      *  This guard should not be necessary.  However, sometimes someone

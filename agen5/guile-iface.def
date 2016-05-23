@@ -51,48 +51,6 @@ iface = {
 };
 
 iface = {
-  i-name    = str02scm;
-  i-args    = '_s';
-  i-impl    = { i-end = '201'; i-code = 'scm_from_latin1_string(_s)'; };
-};
-
-iface = {
-  i-name    = str2scm;
-  i-args    = '_st,_sz';
-  i-impl    = { i-end = '201'; i-code = 'scm_from_latin1_stringn(_st,_sz)'; };
-};
-
-iface = {
-  i-name    = to_newstr;
-  i-args    = '_s';
-  i-impl    = { i-end = '201'; i-code = 'scm_to_latin1_string(_s)'; };
-};
-
-iface = {
-  i-name    = string_p;
-  i-args    = '_s';
-  i-impl    = { i-end = '201'; i-code = 'scm_is_string(_s)'; };
-};
-
-iface = {
-  i-name    = strlen;
-  i-args    = '_s';
-  i-impl    = { i-end = '201'; i-code = 'scm_c_string_length(_s)'; };
-};
-
-iface = {
-  i-name    = sym_p;
-  i-args    = '_s';
-  i-impl    = { i-end = '201'; i-code = 'scm_is_symbol(_s)'; };
-};
-
-iface = {
-  i-name    = to_int;
-  i-args    = '_i';
-  i-impl    = { i-end = '201'; i-code = 'scm_to_int(_i)'; };
-};
-
-iface = {
   i-name    = to_long;
   i-args    = '_v';
   i-impl    = { i-end = '201'; i-code = 'scm_to_long(_v)'; };
@@ -104,9 +62,4 @@ iface = {
   i-impl    = { i-end = '201'; i-code = '((unsigned long)scm_to_ulong(_v))'; };
 };
 
-iface = {
-  i-name    = vec_p;
-  i-args    = '_v';
-  i-impl    = { i-end = '201'; i-code = 'scm_is_vector(_v)'; };
-};
 /* end of guile-iface.def */
