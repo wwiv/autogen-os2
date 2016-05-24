@@ -200,16 +200,6 @@ test -f ${testname}-task6-OK \
 cat > ${testname}.base6 <<EOF
 Scheme evaluation error.  AutoGen ABEND-ing in template
 	error.tpl6 on line 3
-Failing Guile command:  = = = = =
-
-(
-if (exist? "nothing")
-   (error "it is broken
-   'cuz it's okay")
-   (stumble-over-unbound-variable)
-)
-
-=================================
 EOF
 
 # Guile keeps changing its mind about what it ought to print in the
