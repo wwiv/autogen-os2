@@ -104,13 +104,6 @@ Error in template error.tpl, line 16
 	This is a multi-line
 	error to show how to exit
 	your template
-Failing Guile command:  = = = = =
-
-(error "This is a multi-line
-	error to show how to exit
-	your template")
-
-=================================
 _EOF_
 
 agopts="--no-def --base=${testname}"
