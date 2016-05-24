@@ -1,4 +1,8 @@
-New in __CURRENT_VERSION__ April 2016
+New in __CURRENT_VERSION__ May 2016
+
+* NUL terminate CGI definitions text
+
+New in 5.18.9 April 2016
 
 * When parsing CGI, do not allow spaces to be lost
 * In producing usage text, check more rigorously that
