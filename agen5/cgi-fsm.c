@@ -274,7 +274,7 @@ cgi_run_fsm(
             /* START == SEPARATE == DO NOT CHANGE THIS COMMENT */
             {
             static char const txt[] = "';\n";
-            memcpy(pzOut, txt, sizeof(txt) - 1);
+            memcpy(pzOut, txt, sizeof(txt));
             outlen -= sizeof(txt) - 1;
             pzOut  += sizeof(txt) - 1;
             }

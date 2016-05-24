@@ -483,6 +483,9 @@ ag_abend_at(char const * msg
     if (msg[-1] != NL)
         fputc(NL, stderr);
 
+#ifdef DEBUG_ENABLED
+    abort();
+#else
     {
         proc_state_t o_state = processing_state;
         processing_state = PROC_STATE_ABORTING;
@@ -494,10 +497,11 @@ ag_abend_at(char const * msg
             longjmp(abort_jmp_buf, FAILURE);
             /* NOTREACHED */
         default:
-            exit(EXIT_FAILURE);
+            abort();
             /* NOTREACHED */
         }
     }
+#endif
 }
 
 static void

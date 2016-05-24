@@ -24,31 +24,32 @@
  */
 
 typedef struct {
-    char const * pzName;
-    char *       pzValue;
+    char const * name;
+    char *       cgi_val;
 } name_map_t;
 
 #define ENV_TABLE \
-    _ET_(SERVER_SOFTWARE) \
-    _ET_(SERVER_NAME) \
-    _ET_(GATEWAY_INTERFACE) \
-    _ET_(SERVER_PROTOCOL) \
-    _ET_(SERVER_PORT) \
     _ET_(REQUEST_METHOD) \
+    _ET_(QUERY_STRING) \
+    _ET_(CONTENT_LENGTH) \
+\
+    _ET_(AUTH_TYPE) \
+    _ET_(CONTENT_TYPE) \
+    _ET_(GATEWAY_INTERFACE) \
+    _ET_(HTTP_ACCEPT) \
+    _ET_(HTTP_REFERER) \
+    _ET_(HTTP_USER_AGENT) \
     _ET_(PATH_INFO) \
     _ET_(PATH_TRANSLATED) \
-    _ET_(SCRIPT_NAME) \
-    _ET_(QUERY_STRING) \
-    _ET_(REMOTE_HOST) \
     _ET_(REMOTE_ADDR) \
-    _ET_(AUTH_TYPE) \
-    _ET_(REMOTE_USER) \
+    _ET_(REMOTE_HOST) \
     _ET_(REMOTE_IDENT) \
-    _ET_(CONTENT_TYPE) \
-    _ET_(CONTENT_LENGTH) \
-    _ET_(HTTP_ACCEPT) \
-    _ET_(HTTP_USER_AGENT) \
-    _ET_(HTTP_REFERER)
+    _ET_(REMOTE_USER) \
+    _ET_(SCRIPT_NAME) \
+    _ET_(SERVER_NAME) \
+    _ET_(SERVER_PORT) \
+    _ET_(SERVER_PROTOCOL) \
+    _ET_(SERVER_SOFTWARE)
 
 static name_map_t name_val_map[] = {
 #define _ET_(n) { #n, NULL },
@@ -64,14 +65,21 @@ typedef enum {
     NAME_CT
 } name_idx_t;
 
-#define pzCgiMethod name_val_map[ REQUEST_METHOD_IDX ].pzValue
-#define pzCgiQuery  name_val_map[ QUERY_STRING_IDX   ].pzValue
-#define pzCgiLength name_val_map[ CONTENT_LENGTH_IDX ].pzValue
+#define cgi_method name_val_map[ REQUEST_METHOD_IDX ].cgi_val
+#define cgi_query  name_val_map[ QUERY_STRING_IDX   ].cgi_val
+#define cgi_len    name_val_map[ CONTENT_LENGTH_IDX ].cgi_val
 
-/* = = = START-STATIC-FORWARD = = = */
-static char *
-parse_input(char * src, int len);
-/* = = = END-STATIC-FORWARD = = = */
+ static inline char *
+parse_input(char * src, int len)
+{
+    size_t rsz = (len * 4) + PARSE_INPUT_AG_DEF_STR_LEN;
+    char * res = AGALOC(rsz, "CGI Defs");
+
+    memcpy(res, PARSE_INPUT_AG_DEF_STR, PARSE_INPUT_AG_DEF_STR_LEN);
+    (void)cgi_run_fsm(src, len, res + PARSE_INPUT_AG_DEF_STR_LEN, len * 2);
+    assert(rsz > strlen(res));
+    return AGREALOC(res, strlen(res)+1, "CGI input");
+}
 
 LOCAL void
 load_cgi(void)
@@ -107,9 +115,9 @@ load_cgi(void)
         name_idx_t   ix     = (name_idx_t)0;
 
         do  {
-            nm_map->pzValue = getenv(nm_map->pzName);
-            if (nm_map->pzValue == NULL)
-                nm_map->pzValue = (char *)zNil;
+            nm_map->cgi_val = getenv(nm_map->name);
+            if (nm_map->cgi_val == NULL)
+                nm_map->cgi_val = (char *)zNil;
         } while (nm_map++, ++ix < NAME_CT);
     }
 
@@ -117,10 +125,10 @@ load_cgi(void)
     memset(VOIDP(base_ctx), 0, sizeof(scan_ctx_t));
 
     {
-        size_t len = strtoul(pzCgiLength, NULL, 0);
+        size_t len = strtoul(cgi_len, NULL, 0);
         char * text;
 
-        if (strcasecmp(pzCgiMethod, "POST") == 0) {
+        if (strcasecmp(cgi_method, "POST") == 0) {
             if (len == 0)
                 AG_ABEND(LOAD_CGI_NO_DATA_MSG);
 
@@ -133,13 +141,13 @@ load_cgi(void)
             base_ctx->scx_data = parse_input(text, (int)len);
             AGFREE(text);
 
-        } else if (strcasecmp(pzCgiMethod, LOAD_CGI_GET_NAME) == 0) {
+        } else if (strcasecmp(cgi_method, LOAD_CGI_GET_NAME) == 0) {
             if (len == 0)
-                len = strlen(pzCgiQuery);
-            base_ctx->scx_data = parse_input(pzCgiQuery, (int)len);
+                len = strlen(cgi_query);
+            base_ctx->scx_data = parse_input(cgi_query, (int)len);
 
         } else {
-            AG_ABEND(aprf(LOAD_CGI_INVAL_REQ_FMT, pzCgiMethod));
+            AG_ABEND(aprf(LOAD_CGI_INVAL_REQ_FMT, cgi_method));
             /* NOTREACHED */
 #ifdef  WARNING_WATCH
             text = NULL;
@@ -150,19 +158,6 @@ load_cgi(void)
     base_ctx->scx_line  = 1;
     base_ctx->scx_fname = LOAD_CGI_DEFS_MARKER;
     base_ctx->scx_scan  = base_ctx->scx_data;
-}
-
-
-static char *
-parse_input(char * src, int len)
-{
-    static char const preamble[] = "Autogen Definitions cgi;\n";
-#   define def_len (sizeof(preamble) - 1)
-    char * res = AGALOC((len * 2) + def_len + 1, "CGI Defs");
-
-    memcpy(res, PARSE_INPUT_AG_DEF_STR, def_len);
-    (void)cgi_run_fsm(src, len, res + def_len, len * 2);
-    return AGREALOC(res, strlen(res)+1, "CGI input");
 }
 
 /*
