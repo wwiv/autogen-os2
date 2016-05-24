@@ -116,7 +116,8 @@ verb_ok=true
 
 omit_pat='Giving up in | is deprecated\.|erasing the .* environment variable'
 
-${EGREP} -v "$omit_pat" ${testname}.err2 > ${testname}.res2
+${EGREP} -v "$omit_pat" ${testname}.err2 | \
+    ${SED} -n '/Failing Guile command:/q;p' > ${testname}.res2
 
 cmp -s ${testname}.base2 ${testname}.res2 || \
   failure "expected->actual${nl}`diff -c ${testname}.base2 ${testname}.res2`"
@@ -208,7 +209,8 @@ EOF
 # the Guile library error messages.  :(
 #
 ${SED} -n '/^Scheme evaluation error./,/^==========/p' ${testname}.err6 | \
-  ${SED} "/^${testname}\.tpl6:7:4:/d" > ${testname}.res6
+    ${SED} "/^${testname}\.tpl6:7:4:/d" | \
+    ${SED} -n '/Failing Guile command:/q;p' > ${testname}.res6
 
 cmp -s  ${testname}.base6  ${testname}.res6 || \
   failure "expected->actual${nl}`diff -c ${testname}.base6 ${testname}.res6`"
