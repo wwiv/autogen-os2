@@ -25,8 +25,7 @@
 
 verb_ok=true
 
-ag_err()
-{
+ag_err() {
   if ${VERBOSE} && ${verb_ok}
   then
     AUTOGEN_TRACE=everything
@@ -39,6 +38,17 @@ ag_err()
   seq=${1} ; shift
   ${AGexe} ${agl_opts} "$@" 2> ${testname}.err${seq} && \
     touch ${testname}-task${seq}-OK
+}
+
+strip_variable_msgs() {
+  sedcmd='/Giving up in/d
+	/is deprecated\./d
+	/erasing the .* environment variable/d
+	/Failing Guile command:/q
+	/^Aborte.*core dumped/q
+	p'
+
+  ${SED} -n "${sedcmd}" $1
 }
 
 # # # # # # # # # # # # # TEST 1 # # # # # # # # # # # #
@@ -85,10 +95,7 @@ ag_err 1 ${testname}.def
 test -f  ${testname}-task1-OK \
   && failure unexpected success for test-1
 
-${SED} '/Giving up in/d
-        /erasing the .* environment variable/d
-        /Failing Guile command:/,$d' ${testname}.err1 \
-  > ${testname}.err
+strip_variable_msgs ${testname}.err1 > ${testname}.err
 cmp -s ${testname}.err ${testname}.base1 || \
   failure "expected->actual${nl}`diff -c ${testname}.base1 ${testname}.err`"
 
@@ -114,10 +121,7 @@ test -f ${testname}-task2-OK \
   && failure unexpected success for test-2
 verb_ok=true
 
-omit_pat='Giving up in | is deprecated\.|erasing the .* environment variable'
-
-${EGREP} -v "$omit_pat" ${testname}.err2 | \
-    ${SED} -n '/Failing Guile command:/q;p' > ${testname}.res2
+strip_variable_msgs ${testname}.err2 > ${testname}.res2
 
 cmp -s ${testname}.base2 ${testname}.res2 || \
   failure "expected->actual${nl}`diff -c ${testname}.base2 ${testname}.res2`"
@@ -150,8 +154,8 @@ ag_err 4 ${testname}2.def
 test -f ${testname}-task4-OK \
   && failure unexpected success for test-4
 
-${EGREP} -v "$omit_pat" ${testname}.err4 | \
-  ${SED} -n '/Failing Guile command:/q;p' > ${testname}.res4
+strip_variable_msgs ${testname}.err4 > ${testname}.res4
+
 cmp -s  ${testname}.res4 ${testname}.base4 \
   || failure "expected->actual${nl}`diff -c ${testname}.base4 ${testname}.res4`"
 
@@ -168,8 +172,8 @@ ag_err 5 -T ${testname}.tpl5 ${agopts}5 > /dev/null
 test -f ${testname}-task5-OK \
   && failure unexpected success for test-5
 
-${EGREP} -v "$omit_pat" ${testname}.err5 | \
-  ${SED} -n '/Failing Guile command:/q;p' > ${testname}.res5
+strip_variable_msgs ${testname}.err5 > ${testname}.res5
+
 cat > ${testname}.base5 <<'EOF'
 Error in template error.tpl5, line 3
 	Unknown macro or invalid context in error.tpl5 line 3:
@@ -208,9 +212,10 @@ EOF
 # print file and line, but it was made just too hard.  Strip out all
 # the Guile library error messages.  :(
 #
-${SED} -n '/^Scheme evaluation error./,/^==========/p' ${testname}.err6 | \
-    ${SED} "/^${testname}\.tpl6:7:4:/d" | \
-    ${SED} -n '/Failing Guile command:/q;p' > ${testname}.res6
+sedcmd="/^${testname}\\.tpl6:7:4:/d"
+sedcmd="${sedcmd}${nl}/Failing Guile command:/q"
+sedcmd="${sedcmd}${nl}/^Scheme evaluation error./,/^==========/p"
+${SED} -n "${sedcmd}" ${testname}.err6 > ${testname}.res6
 
 cmp -s  ${testname}.base6  ${testname}.res6 || \
   failure "expected->actual${nl}`diff -c ${testname}.base6 ${testname}.res6`"
