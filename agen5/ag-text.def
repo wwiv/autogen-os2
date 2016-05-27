@@ -494,7 +494,7 @@ string = { nm = MK_GPERF_SCRIPT;
 	   die "gperf failed on ${gpdir}/%2$s.gperf
 	      `cat %2$s.log`"
 	egrep -v '^[^#].*_inline' %2$s-temp.c > %2$s.c
-	export CFLAGS=-g
+	export CFLAGS="$CFLAGS -g"
 	%1$s %2$s 1>&2
 	test $? -eq 0 -a -x ${gperf_%2$s} || \
 	  die "could not '%1$s %2$s' gperf program

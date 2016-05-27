@@ -578,7 +578,7 @@ ag_scm_make_tmp_dir(void)
         temp_tpl_dir_len = tmp_sz - 9;    // "ag-XXXXXX"
 
         tmpdir[temp_tpl_dir_len - 1] = NUL;       // trim dir char
-        if (snprintf(cmdbf, bfsz, SET_TMP_DIR_CMD, tmpdir) >= bfsz)
+        if (snprintf(cmdbf, bfsz, SET_TMP_DIR_CMD, tmpdir) >= (int)bfsz)
             AG_ABEND(BOGUS_TAG);
         tmpdir[temp_tpl_dir_len - 1] = DIRCH;     // restore dir char
 
@@ -932,11 +932,11 @@ ag_scm_make_header_guard(SCM name)
         size_t sz2 = MK_HEAD_GUARD_GUARD_LEN + 2 * gsz;
         size_t sz  = (sz1 < sz2) ? sz2 : sz1;
         char * p   = scribble_get((ssize_t)sz);
-        if (snprintf(p, sz, MK_HEAD_GUARD_SCM, opz, gpz) >= sz)
+        if (snprintf(p, sz, MK_HEAD_GUARD_SCM, opz, gpz) >= (int)sz)
             AG_ABEND(BOGUS_TAG);
         (void)ag_scm_c_eval_string_from_file_line(p, __FILE__, __LINE__);
 
-        if (snprintf(p, sz, MK_HEAD_GUARD_GUARD, gpz) >= sz)
+        if (snprintf(p, sz, MK_HEAD_GUARD_GUARD, gpz) >= (int)sz)
             AG_ABEND(BOGUS_TAG);
         name = scm_from_latin1_string(p);
     }

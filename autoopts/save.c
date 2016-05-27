@@ -215,11 +215,12 @@ find_file_name(tOptions * opts, int * p_free_name)
      *  THEN tack on the config file name
      */
     if (S_ISDIR(stBuf.st_mode)) {
-        size_t sz = strlen(pzDir) + strlen(opts->pzRcName) + 2;
 
         {
+            size_t sz = strlen(pzDir) + strlen(opts->pzRcName) + 2;
             char * pzPath = (char *)AGALOC(sz, "file name");
-            if (snprintf(pzPath, sz, "%s/%s", pzDir, opts->pzRcName) >= sz)
+            if (   snprintf(pzPath, sz, "%s/%s", pzDir, opts->pzRcName)
+                >= (int)sz)
                 option_exits(EXIT_FAILURE);
 
             if (free_dir_name)

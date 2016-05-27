@@ -183,7 +183,7 @@ optionQuoteString(char const * text, char const * nl)
             *(out++) = '"';
             *(out++) = NUL;
 #ifndef NDEBUG
-            if ((out - res) > out_sz) {
+            if ((size_t)(out - res) > out_sz) {
                 fputs(misguess_len, stderr);
                 option_exits(EXIT_FAILURE);
             }

@@ -132,7 +132,8 @@ main(int argc, char ** argv)
     {
         char const * lc = getenv("LC_ALL");
         if ((lc != NULL) && (*lc != NUL) && (strcmp(lc, "C") != 0)) {
-            putenv("LC_ALL=C");
+            static char lc_all[] = "LC_ALL=C";
+            putenv(lc_all);
             execvp(argv[0], argv);
             fserr(AUTOGEN_EXIT_FS_ERROR, "execvp", argv[0]);
         }

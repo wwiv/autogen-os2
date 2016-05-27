@@ -208,7 +208,7 @@ else
  INCLIST="${INCLIST} -I\${top_builddir}/autoopts -I\${top_srcdir}/autoopts"
 fi
 ]AC_SUBST(INCLIST)[
-test ${GUILE_VERSION} -ge 108000 \
+test ${ag_gv} -ge 108000 \
   -a "X${WERROR}" = Xyes \
   -a "X${GCC}" = Xyes && \
     CFLAGS=`echo $CFLAGS -Wall -Werror -Wcast-align -Wmissing-prototypes \
