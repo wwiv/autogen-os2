@@ -1,5 +1,11 @@
 New in __CURRENT_VERSION__ May 2016
 
+* fix up tests that got broken in 5.18.10
+* in the make gperf script, LDFLAGS sometimes rely on CFLAGS
+* correct misuse of guile version information in configure
+
+New in 5.18.10 May 2016
+
 * NUL terminate CGI definitions text
 
 New in 5.18.9 April 2016
