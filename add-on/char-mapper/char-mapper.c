@@ -487,7 +487,7 @@ new_map(char * name)
 }
 
 static inline void
-scan_data_buf(char * scan, char * nm_buf)
+scan_data_buf(char * scan, char * nm_buf, int * bit_num)
 {
     value_map_t * map = NULL;
 
@@ -500,15 +500,15 @@ scan_data_buf(char * scan, char * nm_buf)
             if (map == NULL)
                 map  = new_map(nm_buf);
             if (map->bit_no == ~0) {
-                map->mask  |= 1 << bit_num;
-                map->bit_no = bit_num;
-                bit_num++;
+                map->mask  |= 1 << *bit_num;
+                map->bit_no = *bit_num;
+                (*bit_num)++;
             }
             scan = scan_quoted_value(scan+1, map, VAL_ADD);
             break;
 
         case ' ': case '\t':
-            scan = SPN_WHITESPACE_CHAR(scan+1);
+            scan += 1 + strspn(scan+1, " \t");
             break;
 
         case '+':
@@ -544,7 +544,7 @@ read_data(void)
         if (curr_name_len > max_name_len)
             max_name_len = curr_name_len;
 
-        scan_data_buf(scan, nm_buf);
+        scan_data_buf(scan, nm_buf, &bit_num);
     }
 
     return bit_num;
