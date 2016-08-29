@@ -169,13 +169,13 @@ GDnam=getdefs${ac_exeext}
 CLnam=columns${ac_exeext}
 if test "X$cross_compiling" = Xyes
 then
+  AGexe=`which ${AGnam}`
+  GDexe=`which ${GDnam}`
+  CLexe=`which ${CLnam}`
+else
   AGexe=${ag_top_builddir}/agen5/${AGnam}
   GDexe=${ag_top_builddir}/getdefs/${GDnam}
   CLexe=${ag_top_builddir}/columns/${CLnam}
-else
-  AGexe=${AGnam}
-  GDexe=${GDnam}
-  CLexe=${CLnam}
 fi
 M4_SRC=`cd $srcdir/config ; echo [a-z]*.m4`
 ENABLE_STATIC=${enable_static}

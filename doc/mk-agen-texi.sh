@@ -186,9 +186,9 @@ sanity_check()
   for f in ${ADDON_TEXI} ${AGEN_TEXI} \
            ${top_builddir}/autoopts/libopts.texi
   do
-    test -f ${f} || (
-      cd `dirname ${f}`
-      ${MAKE} `basename ${f}` >&2
+    test -f "${f}" || (
+      cd `dirname "${f}"`
+      ${MAKE} `basename "${f}"` >&2
       test $? -ne 0 && die MAKE of ${f} failed.
     )
   done
@@ -196,8 +196,8 @@ sanity_check()
   # Make sure we have all our sources and generate the doc
   #
   for f in ${DOC_DEPENDS}
-  do test -f ${f} || die cannot find doc file: ${f}
-     test -f `basename $f` || ln -s $f .
+  do test -f "${f}" || die cannot find doc file: ${f}
+     test -f `basename $f` || ln -s "${f}" .
   done
 }
 
