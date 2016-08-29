@@ -1,5 +1,10 @@
 New in __CURRENT_VERSION__ May 2016
 
+* several configury fixes to enable cross platform building.
+* fompletion of a change in "char-mapper" to enable bootstrapping
+
+New in 5.18.11 May 2016
+
 * fix up tests that got broken in 5.18.10
 * in the make gperf script, LDFLAGS sometimes rely on CFLAGS
 * correct misuse of guile version information in configure
