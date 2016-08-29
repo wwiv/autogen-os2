@@ -340,7 +340,12 @@ test = {
 
 do-always = <<- _END_ALWAYS_
 	GUILE_FLAGS
-	[ag_gv=`gdir=\`pkg-config --cflags-only-I \
+	[test -x "${PKG_CONFIG}" || {
+			test -z "${PKG_CONFIG}" && PKG_CONFIG=pkg-config
+			f=`command -v ${PKG_CONFIG}`
+			test -x "${f}" && PKG_CONFIG="$f"
+		}
+		ag_gv=`gdir=\`${PKG_CONFIG} --cflags-only-I \
 			guile-${GUILE_EFFECTIVE_VERSION} | \
 			sed 's/-I *//;s/ *-I.*/ /g'\`
 		test -z "$gdir" && gdir=/usr/include

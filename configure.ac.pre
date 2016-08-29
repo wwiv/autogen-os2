@@ -167,9 +167,16 @@ test -f ./snprintfv/snprintfv/snprintfv.h \
 AGnam=autogen${ac_exeext}
 GDnam=getdefs${ac_exeext}
 CLnam=columns${ac_exeext}
-AGexe=${ag_top_builddir}/agen5/${AGnam}
-GDexe=${ag_top_builddir}/getdefs/${GDnam}
-CLexe=${ag_top_builddir}/columns/${CLnam}
+if test "X$cross_compiling" = Xyes
+then
+  AGexe=${ag_top_builddir}/agen5/${AGnam}
+  GDexe=${ag_top_builddir}/getdefs/${GDnam}
+  CLexe=${ag_top_builddir}/columns/${CLnam}
+else
+  AGexe=${AGnam}
+  GDexe=${GDnam}
+  CLexe=${CLnam}
+fi
 M4_SRC=`cd $srcdir/config ; echo [a-z]*.m4`
 ENABLE_STATIC=${enable_static}
 config_end_time=`date +%s 2>/dev/null`
