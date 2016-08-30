@@ -71,7 +71,8 @@ install_m4() {
 one_year_limit() {
     (
         set +x
-        limit=$(date --date=@$(( $(date +%s) - (60 * 60 * 24 * 365) )) +%Y-%M-%d)
+        year_ago=$(( $(date +%s) - (60 * 60 * 24 * 365) ))
+        limit=$(date --date=@${year_ago} +%Y-%M-%d)
         while IFS= read -r line
         do
             if [[ "$line" =~ ^[12].* ]]
@@ -87,14 +88,16 @@ one_year_limit() {
 
 find_gnulib() {
     test -z "$GNULIBDIR" && {
-        for d in ~gnu/proj/gnulib /usr/share/gnulib $(dirname $(command -v gnulib-tool) )
+        for d in ~gnu/proj/gnulib /usr/share/gnulib $(
+                 dirname $(command -v gnulib-tool) )
         do
             test -d "$d" && GNULIBDIR=$d && break
         done
         test -z "$GNULIBDIR" && die "cannot find GNULIBDIR"
     }
     unset LANG || LANG=''
-    for f in gnulib-tool m4/lib-link.m4 build-aux/config.rpath build-aux/git-version-gen
+    for f in gnulib-tool m4/lib-link.m4 build-aux/config.rpath \
+             build-aux/git-version-gen
     do test -s ${GNULIBDIR}/$f || die "not found: ${GNULIBDIR}/$f"
         g=${f##*/} ; g=${g%%.*} ; g=${g//-/_}
         eval export GL_${g^^}=${GNULIBDIR}/$f
@@ -128,6 +131,12 @@ set_ag_ver() {
     declare scmd+=";s/^AG_PATCHLEVEL=.*/AG_PATCHLEVEL=${AG_PATCHLEVEL}/"
     sed "$scmd" VERSION.pre > VERSION
     eval "$(egrep '^[A-Z][A-Z0-9_]+=' VERSION | sed 's/^/export /')"
+    test ${#AGexe} -eq 0 && AGexe=autogen
+    f=$(command -v ${AGexe}
+    if test -x "$f"
+    then AGexe="$f"
+    else AGexe=$(command -v autogen)
+    fi
 }
 
 config_versions() {
@@ -146,13 +155,15 @@ config_versions() {
     sed "1s/__CURRENT_VERSION__.*/${AG_VERSION} - $(date '+%B %Y')/" NEWS.pre > NEWS
 
     cd ${top_srcdir}/config
-    if ${omit_ag}
+    : omit_ag ${omit_ag:-false}
+    if test ${#AGexe} -eq 0
     then
         untar_touch m4.tgz
 
     else
         ${AGexe} -L. libopts.def || exit 1
         ${AGexe} -L. misc.def    || exit 1
+        tar -czf m4.tgz libopts.m4 ag_macros.m4
     fi
     cd ..
 
