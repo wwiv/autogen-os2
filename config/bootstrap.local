@@ -132,7 +132,7 @@ set_ag_ver() {
     sed "$scmd" VERSION.pre > VERSION
     eval "$(egrep '^[A-Z][A-Z0-9_]+=' VERSION | sed 's/^/export /')"
     test ${#AGexe} -eq 0 && AGexe=autogen
-    f=$(command -v ${AGexe}
+    f=$(command -v ${AGexe})
     if test -x "$f"
     then AGexe="$f"
     else AGexe=$(command -v autogen)
@@ -154,21 +154,10 @@ config_versions() {
 
     sed "1s/__CURRENT_VERSION__.*/${AG_VERSION} - $(date '+%B %Y')/" NEWS.pre > NEWS
 
-    cd ${top_srcdir}/config
-    : omit_ag ${omit_ag:-false}
-    if test ${#AGexe} -eq 0
-    then
-        untar_touch m4.tgz
-
-    else
-        ${AGexe} -L. libopts.def || exit 1
-        ${AGexe} -L. misc.def    || exit 1
-        tar -czf m4.tgz libopts.m4 ag_macros.m4
-    fi
-    cd ..
+    cd ${top_srcdir}
 
     cp snprintfv/snprintfv.m4 config/.
-    f=$(exec 2>/dev/null ; commandd -v guile)
+    f=$(exec 2>/dev/null ; command -v guile)
     test ${#f} -gt 0 && f=${f%/guile} && f=${f%/bin}
     install_m4 guile.m4 $f
     install_m4 pkg.m4
