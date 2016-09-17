@@ -48,6 +48,7 @@ strip_variable_msgs() {
 	/^Aborte.*core dumped/q
 	p'
 
+  rm -f core core.*
   ${SED} -n "${sedcmd}" $1
 }
 
