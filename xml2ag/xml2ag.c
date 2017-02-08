@@ -32,7 +32,6 @@ static char const zConflict[] =
 static char const zTextFmt[] =
     "text = '%s';\n";
 
-
 static char const * typeName[] = {
     "0 - inval",
     "ELEMENT_NODE",
@@ -87,7 +86,7 @@ printChildren(xmlNodePtr pNode);
 /* = = = END-STATIC-FORWARD = = = */
 #define TRIM(s,psz) trim( (char const *)(s), (size_t *)(psz) )
 
-extern void forkAutogen( char const * pzInput );
+extern void fork_ag(char const * pzInput);
 
 
 int
@@ -125,7 +124,7 @@ main(int argc, char ** argv)
     }
 
     if (! HAVE_OPT( OUTPUT ))
-        forkAutogen( pzFile );
+        fork_ag(pzFile);
     else
         outFp = stdout;
 
