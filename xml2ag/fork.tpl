@@ -3,7 +3,7 @@
  *  fork.tpl: template for passing arguments to autogen forked process.
  *
  *  This file is part of AutoGen.
- *  AutoGen Copyright (C) 1992-2015 by Bruce Korb - all rights reserved
+ *  AutoGen Copyright (C) 1992-2017 by Bruce Korb - all rights reserved
  *
  *  AutoGen is free software: you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the
@@ -82,7 +82,7 @@ add_arg(char const * arg, int ix)
 }
 
 static int
-become_child(int * fd, char const * pzInput)
+become_child(int * fd, char const * in_file)
 {
     if (pipe(fd) != 0) {
         fprintf(stderr, fs_err_fmt, xml2agOptions.pzProgName,
@@ -111,8 +111,8 @@ become_child(int * fd, char const * pzInput)
 
     default:
         errno = 0;
-        outFp = fdopen(fd[1], "w");
-        if (outFp == NULL) {
+        ag_pipe_fp = fdopen(fd[1], "w");
+        if (ag_pipe_fp == NULL) {
             fprintf(stderr, fs_err_fmt, xml2agOptions.pzProgName,
                     errno, strerror( errno ), "fdopen(2) w/ pipe[1]");
             exit(EXIT_FAILURE);
@@ -122,28 +122,28 @@ become_child(int * fd, char const * pzInput)
     }
 
     if (! HAVE_OPT( BASE_NAME )) {
-        if (pzInput == NULL)
-            pzInput = "stdin";
+        if (in_file == NULL)
+            in_file = "stdin";
         else {
-            char * pz = strrchr(pzInput, '.');
+            char * pz = strrchr(in_file, '.');
             if (pz != NULL) {
-                pzInput = pz = strdup(pzInput);
+                in_file = pz = strdup(in_file);
                 pz = strrchr(pz, '.');
                 *pz = '\0';
             }
         }
-        SET_OPT_BASE_NAME(pzInput);
+        SET_OPT_BASE_NAME(in_file);
     }
 
     return 1;
 }
 
 void
-fork_ag(char const * pzInput)
+fork_ag(char const * in_file)
 {
     int fd[2];
 
-    if (! become_child(fd, pzInput))
+    if (! become_child(fd, in_file))
         return; // parent process returns
 
     get_argv_space();
