@@ -88,8 +88,9 @@ one_year_limit() {
 
 find_gnulib() {
     test -z "$GNULIBDIR" && {
-        for d in ~gnu/proj/gnulib /usr/share/gnulib $(
-                 dirname $(command -v gnulib-tool) )
+        local gld=$(command -v gnulib-tool)
+        test "X$gld" = "X" || gld=$(dirname "$gld")
+        for d in ~gnu/proj/gnulib /usr/share/gnulib ${gld:+"$gld"}
         do
             test -d "$d" && GNULIBDIR=$d && break
         done

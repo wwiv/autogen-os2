@@ -254,6 +254,7 @@ FOR doc-section                       :+][+:
   (shell (string-append
     "fn='" cvt-fn "'\n"
     "test -f ${fn} || die ${fn} not found from $PWD\n"
+    "export PERL5LIB=`dirname \"$fn\"`\n"
     "${fn} <<\\_EndOfDocSection_ || die ${fn} failed in $PWD\n"
     (get "ds-text")
     "\n_EndOfDocSection_"

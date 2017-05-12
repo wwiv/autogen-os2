@@ -47,7 +47,7 @@
 PS4='>${FUNCNAME:-bstp}> '
 
 top_srcdir=$(
-    cd $(dirname $0)/.. >/dev/null
+    cd $(dirname $0)/.. >/dev/null || kill -9 $$
     pwd )
 top_builddir=${top_srcdir}
 

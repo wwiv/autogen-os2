@@ -657,9 +657,10 @@ static void bogus_function(void) {
 (emit (out-pop #t))
 
 (out-push-new) \=]
+test "X${CDPATH}" = X || CDPATH=''
 incdir=[= (if (defined? 'inc-dir) inc-dir "") ;;' 4emacs =]
 test -d "$incdir" || incdir=`dirname [=(tpl-file #t)=]`/..
-incdir=`cd $incdir/autoopts >/dev/null 2>&1 && pwd`
+incdir=`cd $incdir/autoopts && pwd`
 test -f ${incdir}/usage-txt.h && {
     sedcmd='/LIBOPTS-MESSAGES:/,/END-[=
 

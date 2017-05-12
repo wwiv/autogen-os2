@@ -18,6 +18,7 @@
 ##  You should have received a copy of the GNU General Public License along
 ##  with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+test ${#CDPATH} -gt 0 && CDPATH=''
 top_builddir=`cd $top_builddir ; pwd`
 top_srcdir=`cd $top_srcdir ; pwd`
 
@@ -42,7 +43,7 @@ files='libopts.c gettext.h parse-duration.c parse-duration.h
     fgrep '#include' libopts.c | \
        sed -e 's,"$,,;s,#.*",,' )
 
-for f in ${files} intprops.h
+for f in ${files} intprops.h verify.h
 do
   test -f ${f} &&
     cp -f ${f} ${tagd}/${f} && continue
@@ -52,6 +53,8 @@ do
 
   test -f ${top_srcdir}/${f} &&
     cp -f ${top_srcdir}/${f} ${tagd}/${f} && continue
+
+  die "could not locate ${f} to copy into tarball"
 done
 
 cp -f ${top_srcdir}/pkg/libopts/COPYING.* ${tagd}/.

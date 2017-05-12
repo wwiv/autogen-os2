@@ -36,7 +36,7 @@ init() {
     EGREP='@EGREP@'
     target=`basename $2`
     builddir=`dirname $2`
-    builddir=`cd $builddir && pwd`
+    builddir=`cd $builddir >/dev/null && pwd`
     srcdir=`dirname $1`
     srcdir=`cd $srcdir >/dev/null && pwd`
 
