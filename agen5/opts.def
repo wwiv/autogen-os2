@@ -793,7 +793,18 @@ flag = {
 flag = {
     name        = autoopts-opts;
     documentation;
-    descrip = 'help, version and option handling';
+    descrip = 'help, version, option and error handling';
+};
+
+flag = {
+    name       = no-abort;
+    descrip    = "Do not abort on errors";
+
+    doc = <<-  _EOF_
+	By default, @code{AutoGen} will abort on an error leaving behind a core image.
+	That is sometimes inconvenient. If present on the command line or in
+	the environment, AutoGen will call @code{exit(1)} instead of @code{abort()}.
+	_EOF_;
 };
 #endif
 

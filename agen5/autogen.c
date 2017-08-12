@@ -233,6 +233,9 @@ cleanup_and_abort(int sig)
 
     if (processing_state == PROC_STATE_ABORTING) {
         exit_cleanup(EXIT_PCLOSE_NOWAIT);
+
+        if (HAVE_OPT(NO_ABORT))
+            exit(AUTOGEN_EXIT_USAGE_ERROR);
         abort();
     }
 
@@ -282,6 +285,9 @@ cleanup_and_abort(int sig)
 #endif
 
     exit_cleanup(EXIT_PCLOSE_NOWAIT);
+
+    if (HAVE_OPT(NO_ABORT))
+        exit(AUTOGEN_EXIT_USAGE_ERROR);
     abort();
 }
 
@@ -483,6 +489,9 @@ ag_abend_at(char const * msg
     msg += strlen(msg);
     if (msg[-1] != NL)
         fputc(NL, stderr);
+
+    if (HAVE_OPT(NO_ABORT))
+        exit(AUTOGEN_EXIT_USAGE_ERROR);
 
 #ifdef DEBUG_ENABLED
     abort();
