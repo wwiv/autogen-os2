@@ -688,23 +688,22 @@ ag_scm_out_push_new(SCM new_file)
 SCM
 ag_scm_out_switch(SCM new_file)
 {
-    struct utimbuf tbuf;
-    char *  pzNewFile;
+    char * new_fname;
 
     if (! scm_is_string(new_file))
         return SCM_UNDEFINED;
     {
         size_t sz = scm_c_string_length(new_file);
-        pzNewFile = AGALOC(sz + 1, "new file name");
-        memcpy(pzNewFile, scm_i_string_chars(new_file), sz);
-        pzNewFile[ sz ] = NUL;
+        new_fname = AGALOC(sz + 1, "new file name");
+        memcpy(new_fname, scm_i_string_chars(new_file), sz);
+        new_fname[ sz ] = NUL;
     }
 
     /*
      *  IF no change, THEN ignore this
      */
-    if (strcmp(cur_fpstack->stk_fname, pzNewFile) == 0) {
-        AGFREE(pzNewFile);
+    if (strcmp(cur_fpstack->stk_fname, new_fname) == 0) {
+        AGFREE(new_fname);
         return SCM_UNDEFINED;
     }
 
@@ -714,22 +713,21 @@ ag_scm_out_switch(SCM new_file)
      *  Make sure we get a new file pointer!!
      *  and try to ensure nothing is in the way.
      */
-    unlink(pzNewFile);
-    if (  freopen(pzNewFile, "w" FOPEN_BINARY_FLAG "+", cur_fpstack->stk_fp)
+    unlink(new_fname);
+    if (  freopen(new_fname, "w" FOPEN_BINARY_FLAG "+", cur_fpstack->stk_fp)
        != cur_fpstack->stk_fp)
 
-        AG_CANT(OUT_SWITCH_FAIL, pzNewFile);
+        AG_CANT(OUT_SWITCH_FAIL, new_fname);
 
     /*
      *  Set the mod time on the old file.
      */
-    tbuf.actime  = time(NULL);
-    tbuf.modtime = outfile_time;
-    utime(cur_fpstack->stk_fname, &tbuf);
+    set_utime(cur_fpstack->stk_fname);
+
     if (OPT_VALUE_TRACE > TRACE_DEBUG_MESSAGE)
         fprintf(trace_fp, TRACE_OUT_SWITCH,
-                __func__, cur_fpstack->stk_fname, pzNewFile);
-    cur_fpstack->stk_fname = pzNewFile;  /* memory leak */
+                __func__, cur_fpstack->stk_fname, new_fname);
+    cur_fpstack->stk_fname = new_fname;  /* FIXME: memory leak */
 
     return SCM_UNDEFINED;
 }

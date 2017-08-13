@@ -56,9 +56,9 @@ load_file(char const * fname)
 
         fsz = stbf.st_size;
         res = (char *)AGALOC(fsz + 1, "load_file");
-        if (outfile_time < stbf.st_mtime)
+        if (time_is_before(outfile_time, stbf.st_mtime))
             outfile_time = stbf.st_mtime;
-        if (maxfile_time < stbf.st_mtime)
+        if (time_is_before(maxfile_time, stbf.st_mtime))
             maxfile_time = stbf.st_mtime;
     }
 

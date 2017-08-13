@@ -481,9 +481,9 @@ tpl_load(char const * fname, char const * referrer)
             AG_CANT(LOAD_TPL_IRREGULAR, fname);
         }
 
-        if (outfile_time < stbf.st_mtime)
+        if (time_is_before(outfile_time, stbf.st_mtime))
             outfile_time = stbf.st_mtime;
-        if (maxfile_time < stbf.st_mtime)
+        if (time_is_before(maxfile_time, stbf.st_mtime))
             maxfile_time = stbf.st_mtime;
     }
 

@@ -400,8 +400,36 @@ MODE char const *   curr_sfx         VALUE( NULL );
 /**
  * The time to set for the modification times of the output files.
  */
-MODE time_t         outfile_time     VALUE( 0 );
-MODE time_t         maxfile_time     VALUE( 0 );
+#ifndef HAVE_CLOCK_GETTIME
+#undef  HAVE_UTIMENSAT
+#endif
+
+#ifndef HAVE_UTIMENSAT
+MODE time_t             outfile_time     VALUE( 0 );
+MODE time_t             maxfile_time     VALUE( 0 );
+#define time_is_before(_f, _s) ((_f) < (_s))
+
+#else  // HAVE_UTIMENSAT
+#ifdef DEFINING
+MODE struct timespec    outfile_time     = {0, UTIME_OMIT};
+MODE struct timespec    maxfile_time     = {0, UTIME_OMIT};
+#else
+MODE struct timespec    outfile_time, maxfile_time;
+#endif
+
+#define time_is_before(_f, _s) (                \
+    ((_f).tv_sec < (_s).tv_sec)                 \
+    || (  (((_f).tv_sec == (_s).tv_sec))        \
+       && (((_f).tv_nsec < (_s).tv_nsec)) )     \
+    )
+#undef  st_atime
+#define st_atime st_atim
+#undef  st_mtime
+#define st_mtime st_mtim
+#undef  st_ctime
+#define st_ctime st_ctim
+#endif // HAVE_UTIMENSAT
+
 /**
  * The original time autogen started
  */

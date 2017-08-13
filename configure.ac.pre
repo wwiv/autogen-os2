@@ -111,7 +111,7 @@ AC_CHECK_SIZEOF(int,   4)
 AC_CHECK_SIZEOF(long,  4)
 AC_CHECK_SIZEOF(short, 2)
 # ----------------------------------------------------------------------
-AC_CHECK_FUNCS(strchr strlcpy snprintf dlopen)
+AC_CHECK_FUNCS(strchr strlcpy snprintf dlopen utimensat clock_gettime)
 AC_SEARCH_LIBS(copysign, [m],
                [AC_DEFINE(HAVE_COPYSIGN, 1,
                           [Define to 1 if you have the `copysign' function.])])

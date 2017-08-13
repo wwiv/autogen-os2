@@ -302,10 +302,11 @@ file_size(char const * fname)
         return 0;
     }
 
-    if ((outfile_time < stbf.st_mtime) && ENABLED_OPT(SOURCE_TIME))
+    if (   time_is_before(outfile_time, stbf.st_mtime)
+        && ENABLED_OPT(SOURCE_TIME))
         outfile_time = stbf.st_mtime;
 
-    if (maxfile_time < stbf.st_mtime)
+    if (time_is_before(maxfile_time, stbf.st_mtime))
         maxfile_time = stbf.st_mtime;
 
     return stbf.st_size;
@@ -832,12 +833,7 @@ doDir_shell(directive_enum_t id, char const * arg, char * scan_next)
 
     (void)arg;
     (void)id;
-
-    /*
-     *  The output time will always be the current time.
-     *  The dynamic content is always current :)
-     */
-    maxfile_time = outfile_time = time(NULL);
+    mod_time_is_now();
 
     /*
      *  IF there are no data after the '#shell' directive,

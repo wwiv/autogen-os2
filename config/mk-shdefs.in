@@ -30,6 +30,12 @@ init() {
     prog=`basename $1 .sh`
     progpid=$$
 
+    if (exec 2> /dev/null ; unset CDPATH)
+    then unset CDPATH
+    elif test ${#CDPATH} -gt 0
+    then CDPATH=
+    fi
+
     SED='@SED@'
     AWK='@AWK@'
     GREP='@GREP@'

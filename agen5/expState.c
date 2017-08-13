@@ -756,7 +756,12 @@ ag_scm_tpl_file_next_line(SCM fmt_scm)
 SCM
 ag_scm_max_file_time(void)
 {
-    return scm_from_uint32((uint32_t)maxfile_time);
+#ifdef HAVE_UTIMENSAT
+    uint32_t t = maxfile_time.tv_sec;
+#else
+    uint32_t t = maxfile_time;
+#endif
+    return scm_from_uint32(t);
 }
 
 /*=gfunc def_file_line

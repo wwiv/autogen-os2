@@ -284,7 +284,50 @@ process_tpl(templ_t * tpl)
     } while (output_specs != NULL);
 }
 
+LOCAL void
+set_utime(char const * fname)
+{
+#ifdef HAVE_UTIMENSAT
+    enum { ACCESS_IDX = 0, MODIFY_IDX = 1 };
+    struct timespec const times[2] = {
+        [ACCESS_IDX] = {
+            .tv_sec     = 0,
+            .tv_nsec    = UTIME_OMIT
+        },
+        [MODIFY_IDX] = {
+            .tv_sec     = outfile_time.tv_sec,
+            .tv_nsec    = outfile_time.tv_nsec
+        }
+    };
+    utimensat(AT_FDCWD, fname, times, 0);
 
+#else
+    struct utimbuf const tbuf = {
+        .actime  = time(NULL),
+        .modtime = outfile_time
+    };
+
+    /*
+     *  The putative start time is one second earlier than the
+     *  earliest output file time, regardless of when that is.
+     */
+    if (outfile_time <= start_time)
+        start_time = outfile_time - 1;
+
+    utime(fname, &tbuf);
+#endif
+}
+
+/**
+ * close current output file
+ *
+ * @param purge "true" means the output is to be discarded
+ *
+ * Most output files will be set to read only, though that may
+ * get overridden. If the file name has been allocated, then it
+ * is also freed. The current output is set to the next in the
+ * stack.
+ */
 LOCAL void
 out_close(bool purge)
 {
@@ -308,21 +351,8 @@ out_close(bool purge)
         if (purge || ((cur_fpstack->stk_flags & FPF_UNLINK) != 0))
             unlink(cur_fpstack->stk_fname);
 
-        else {
-            struct utimbuf tbuf;
-
-            tbuf.actime  = time(NULL);
-            tbuf.modtime = outfile_time;
-
-            /*
-             *  The putative start time is one second earlier than the
-             *  earliest output file time, regardless of when that is.
-             */
-            if (outfile_time <= start_time)
-                start_time = outfile_time - 1;
-
-            utime(cur_fpstack->stk_fname, &tbuf);
-        }
+        else
+            set_utime(cur_fpstack->stk_fname);
     }
 
     /*
