@@ -110,13 +110,23 @@ EOMakefile
     | ${CLexe} -I4 --spread=1 --line-sep="  \\"
 } > Makefile.am
 
-gz='gzip --best'
+gz='gzip --best -n'
 sfx=tar.gz
 
 cd ..
 echo ! cd `pwd`
 echo ! tar cvf ${tag}.${sfx} ${tag}
-tar cvf - ${tag} | $gz > ${top_builddir}/autoopts/${tag}.${sfx}
+
+# If we have a SOURCE_DATE_EPOCH *and* tar supports a sort option,
+# then add some fancy options to make tar output repeatable.
+#
+rbopts=""
+[ -z "$SOURCE_DATE_EPOCH" ] \
+    || ! tar --help|grep -q sort= \
+    || rbopts="--sort=name --format=gnu --clamp-mtime --mtime @$SOURCE_DATE_EPOCH"
+
+tar cvf - $rbopts ${tag} | \
+    $gz > ${top_builddir}/autoopts/${tag}.${sfx}
 rm -rf ${tag}
 
 ## Local Variables:
