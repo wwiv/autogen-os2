@@ -34,6 +34,7 @@ man_MANS        = $(TARG).1
 DOCFILES        = invoke-$(TARG).texi invoke-$(TARG).menu $(TARG).1
 DISTCLEANFILES  = $(DOCFILES) $(nodist_xml2ag_SOURCES) stamp-*
 AM_CPPFLAGS     = @INCLIST@ $(LIBXML2_CFLAGS)
+AM_CFLAGS       = @WARN_CFLAGS@
 BOOTENV     = top_srcdir="$(top_srcdir)" top_builddir="$(top_builddir)" \
 	PATH=`cd ../columns;pwd`:"$$PATH" CLexe="$(CLexe)"
 

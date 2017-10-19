@@ -51,6 +51,7 @@ man_MANS        = $(TARG).1
 DOCFILES        = $(TARG).texi $(TARG).menu $(TARG).1
 DISTCLEANFILES  = $(DOCFILES) $(nodist_getdefs_SOURCES) *-stamp
 AM_CPPFLAGS     = @INCLIST@
+AM_CFLAGS       = @WARN_CFLAGS@
 AG_ENV          = top_builddir=$(top_builddir) \
   top_srcdir=$(top_srcdir) PATH=`cd ../columns >/dev/null && pwd`:$$PATH ; \
   export top_builddir top_srcdir PATH

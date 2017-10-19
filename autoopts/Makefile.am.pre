@@ -27,6 +27,7 @@ MOSTLYCLEANFILES    =
 libdatadir          = $(libdir)/@PACKAGE@
 SUBDIRS             = @OPTS_TESTDIR@
 AM_CPPFLAGS         = @INCLIST@
+AM_CFLAGS           = @WARN_CFLAGS@
 libsrc              = libopts-@AO_CURRENT@.@AO_REVISION@.@AO_AGE@.tar.gz
 LIBOPTS_VER         = @AO_CURRENT@:@AO_REVISION@:@AO_AGE@
 

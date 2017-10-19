@@ -215,15 +215,17 @@ else
  INCLIST="${INCLIST} -I\${top_builddir}/autoopts -I\${top_srcdir}/autoopts"
 fi
 ]AC_SUBST(INCLIST)[
+WARN_CFLAGS=
 test ${ag_gv} -ge 108000 \
   -a "X${WERROR}" = Xyes \
   -a "X${GCC}" = Xyes && \
-    CFLAGS=`echo $CFLAGS -Wall -Werror -Wcast-align -Wmissing-prototypes \
+    WARN_CFLAGS=`echo $CFLAGS -Wall -Werror -Wcast-align -Wmissing-prototypes \
 	-Wpointer-arith -Wshadow -Wstrict-prototypes -Wwrite-strings \
 	-Wno-format-contains-nul -fno-strict-aliasing -Wstrict-aliasing=3 \
 	-Wextra -Wno-cast-qual
 `
 ]dnl -Wconversion -Wsign-conversion -Wstrict-overflow
+AC_SUBST(WARN_CFLAGS)
 AC_CONFIG_HEADER(config.h:config-h.in)
 AH_TOP([#ifndef AUTOGEN_CONFIG_H])
 AH_TOP([#define AUTOGEN_CONFIG_H 1])

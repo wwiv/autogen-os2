@@ -24,14 +24,16 @@ AC_DEFUN([INVOKE_AG_MACROS_LAST],[
 [if test X${INVOKE_AG_MACROS_LAST_done} != Xyes ; then]
   GUILE_FLAGS
   [test -x "${PKG_CONFIG}" || {
-  test -z "${PKG_CONFIG}" && PKG_CONFIG=pkg-config
-  f=`command -v ${PKG_CONFIG}`
-  test -x "${f}" && PKG_CONFIG="$f"
+    test -z "${PKG_CONFIG}" && PKG_CONFIG=pkg-config
+    f=`command -v ${PKG_CONFIG}`
+    test -x "${f}" && PKG_CONFIG="$f"
   }
+  # Grab the first "-I" option that works
+  #
   ag_gv=`gdir=\`${PKG_CONFIG} --cflags-only-I \
-  guile-${GUILE_EFFECTIVE_VERSION} | \
-  sed 's/-I *//;s/ *-I.*/ /g'\`
-  test -z "$gdir" && gdir=/usr/include
+      guile-${GUILE_EFFECTIVE_VERSION} | \
+    sed 's/ *-I/ /g'\`
+  test ${#gdir} -gt 1 || gdir=/usr/include
   for d in $gdir
   do  test -f "$d/libguile/version.h" && gdir=$d && break
   done

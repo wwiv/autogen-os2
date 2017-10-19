@@ -18,9 +18,10 @@
 ## You should have received a copy of the GNU General Public License along
 ## with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-libdatadir       = $(libdir)/@PACKAGE@
+libdatadir      = $(libdir)/@PACKAGE@
 SUBDIRS         = test
 AM_CPPFLAGS     = @INCLIST@
+AM_CFLAGS       = @WARN_CFLAGS@
 FSMTPL          = fsm.tpl  fsm-macro.tlib fsm-trans.tlib
 templates       = snarf.tpl $(FSMTPL) guile-iface.tpl
 definitions     = cgi.def opts.def pseudo.def guile-iface.def defParse.def \
