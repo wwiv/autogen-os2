@@ -216,15 +216,13 @@ else
 fi
 ]AC_SUBST(INCLIST)[
 WARN_CFLAGS=
-test ${ag_gv} -ge 108000 \
-  -a "X${WERROR}" = Xyes \
-  -a "X${GCC}" = Xyes && \
-    WARN_CFLAGS=`echo $CFLAGS -Wall -Werror -Wcast-align -Wmissing-prototypes \
+test "X${GCC}" = Xyes && {
+  CFLAGS="$CFLAGS -Wno-format-contains-nul -fno-strict-aliasing"
+test ${ag_gv} -ge 108000 -a "X${WERROR}" = Xyes && \
+  WARN_CFLAGS=`echo $CFLAGS -Wall -Werror -Wcast-align -Wmissing-prototypes \
 	-Wpointer-arith -Wshadow -Wstrict-prototypes -Wwrite-strings \
-	-Wno-format-contains-nul -fno-strict-aliasing -Wstrict-aliasing=3 \
-	-Wextra -Wno-cast-qual
-`
-]dnl -Wconversion -Wsign-conversion -Wstrict-overflow
+	-Wstrict-aliasing=3 -Wextra -Wno-cast-qual`
+}]dnl -Wconversion -Wsign-conversion -Wstrict-overflow
 AC_SUBST(WARN_CFLAGS)
 AC_CONFIG_HEADER(config.h:config-h.in)
 AH_TOP([#ifndef AUTOGEN_CONFIG_H])
