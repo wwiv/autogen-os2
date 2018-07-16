@@ -7,7 +7,7 @@ addtogroup = 'autogen';
  *  "([12][90][0-9][0-9])"
  *
  *  This file is part of AutoGen.
- *  Copyright (C) 1992-2017 Bruce Korb - all rights reserved
+ *  Copyright (C) 1992-2018 Bruce Korb - all rights reserved
  *
  *  AutoGen is free software: you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the
@@ -24,7 +24,7 @@ addtogroup = 'autogen';
  */
 
 copyright = {
-    date  = "1992-2015";
+    date  = "1992-2018";
     owner = "Bruce Korb";
     eaddr = 'autogen-users@lists.sourceforge.net';
     type  = gpl;
