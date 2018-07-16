@@ -6,11 +6,6 @@
 *.o
 *stamp
 *~
-.#*
-.*.swp
-.deps
-.libs
-.sdir
 /*.cpx
 /COPYING
 /ChangeLog*
@@ -46,8 +41,7 @@
 /config/missing
 /configure
 /configure.ac
-/cscope.files
-/cscope.out
+/cscope.*
 /doc/autogen.info*
 /getdefs/getdefs.c
 /getdefs/proto.h
@@ -63,6 +57,12 @@ Makefile
 Makefile.in
 TAGS
 \#*
+\.#*
+\.*.swp
+\.cvsignore
+\.deps
+\.libs
+\.sdir
 errors-testd
 errors.log
 errors.trs

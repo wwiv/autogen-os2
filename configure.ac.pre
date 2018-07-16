@@ -218,8 +218,7 @@ fi
 WARN_CFLAGS=
 test "X${GCC}" = Xyes && {
   CFLAGS="$CFLAGS -Wno-format-contains-nul -fno-strict-aliasing"
-test ${ag_gv} -ge 108000 -a "X${WERROR}" = Xyes && \
-  WARN_CFLAGS=`echo $CFLAGS -Wall -Werror -Wcast-align -Wmissing-prototypes \
+  WARN_CFLAGS="$CFLAGS "`echo -Wall -Werror -Wcast-align -Wmissing-prototypes \
 	-Wpointer-arith -Wshadow -Wstrict-prototypes -Wwrite-strings \
 	-Wstrict-aliasing=3 -Wextra -Wno-cast-qual`
 }]dnl -Wconversion -Wsign-conversion -Wstrict-overflow

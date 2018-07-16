@@ -46,6 +46,7 @@ AC_DEFUN([INVOKE_AG_MACROS_LAST],[
   `
 
   test -n "$ag_gv" || ]AC_MSG_FAILURE([cannot determine Guile version], 1)
+  test ${ag_gv} -ge 200000 || AC_MSG_FAILURE([cannot use pre-2.0 Guile])
   AC_DEFINE_UNQUOTED(GUILE_VERSION, ${ag_gv},
              [define to a single number for Guile version])
   INVOKE_LIBOPTS_MACROS
@@ -356,10 +357,10 @@ xmlDocPtr p = xmlParseFile( "mumble.xml" ); }]])],
 AC_DEFUN([AG_RUN_SOLARIS_SYSINFO],[
   AC_MSG_CHECKING([whether sysinfo(2) is Solaris])
   AC_CACHE_VAL([ag_cv_run_solaris_sysinfo],[
-  AC_RUN_IFELSE([@%:@include <sys/systeminfo.h>
+  AC_RUN_IFELSE([AC_LANG_SOURCE([@%:@include <sys/systeminfo.h>
 int main() { char z@<:@ 256 @:>@;
 long sz = sysinfo(SI_SYSNAME, z, sizeof(z));
-return (sz > 0) ? 0 : 1; }],
+return (sz > 0) ? 0 : 1; }] )],
     [ag_cv_run_solaris_sysinfo=yes],[ag_cv_run_solaris_sysinfo=no],[ag_cv_run_solaris_sysinfo=no]
   ) # end of RUN_IFELSE
   ]) # end of AC_CACHE_VAL for ag_cv_run_solaris_sysinfo
@@ -396,12 +397,12 @@ AC_DEFUN([AG_ENABLE_TIMEOUT],[
 AC_DEFUN([AG_RUN_STRCSPN],[
   AC_MSG_CHECKING([whether strcspn matches prototype and works])
   AC_CACHE_VAL([ag_cv_run_strcspn],[
-  AC_RUN_IFELSE([@%:@include <string.h>
+  AC_RUN_IFELSE([AC_LANG_SOURCE([@%:@include <string.h>
 int main (int argc, char ** argv) {
    char zRej@<:@@:>@ = reject;
    char zAcc@<:@@:>@ = "a-ok-eject";
    return strcspn( zAcc, zRej ) - 5;
-}],
+}] )]
     [ag_cv_run_strcspn=yes],[ag_cv_run_strcspn=no],[ag_cv_run_strcspn=no]
   ) # end of RUN_IFELSE
   ]) # end of AC_CACHE_VAL for ag_cv_run_strcspn
@@ -420,9 +421,9 @@ int main (int argc, char ** argv) {
 AC_DEFUN([AG_RUN_UNAME_SYSCALL],[
   AC_MSG_CHECKING([whether uname(2) is POSIX])
   AC_CACHE_VAL([ag_cv_run_uname_syscall],[
-  AC_RUN_IFELSE([@%:@include <sys/utsname.h>
+  AC_RUN_IFELSE([AC_LANG_SOURCE([@%:@include <sys/utsname.h>
 int main() { struct utsname unm;
-return uname( &unm ); }],
+return uname( &unm ); }] )],
     [ag_cv_run_uname_syscall=yes],[ag_cv_run_uname_syscall=no],[ag_cv_run_uname_syscall=no]
   ) # end of RUN_IFELSE
   ]) # end of AC_CACHE_VAL for ag_cv_run_uname_syscall
