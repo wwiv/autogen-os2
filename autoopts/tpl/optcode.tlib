@@ -2,7 +2,7 @@
 
 ##  This file is part of AutoOpts, a companion to AutoGen.
 ##  AutoOpts is free software.
-##  AutoOpts is Copyright (C) 1992-2017 by Bruce Korb - all rights reserved
+##  AutoOpts is Copyright (C) 1992-2018 by Bruce Korb - all rights reserved
 ##
 ##  AutoOpts is available under any one of two licenses.  The license
 ##  in use must be one of these two and the choice is under the control
@@ -642,12 +642,12 @@ static void bogus_function(void) {
      extract the correct strings.  These strings are actually referenced
      by a field name in the [=(. pname)=]Options structure noted in the
      comments below.  The literal text is defined in [=(. pname)=]_opt_strs.
-   
+
      NOTE: the strings below are segmented with respect to the source string
      [=(. pname)=]_opt_strs.  The strings above are handed off for translation
      at run time a paragraph at a time.  Consequently, they are presented here
      for translation a paragraph at a time.
-   
+
      ALSO: often the description for an option will reference another option
      by name.  These are set off with apostrophe quotes (I hope).  Do not
      translate option names.
@@ -736,7 +736,9 @@ IF (exist? "version")   =]
      /* equivalenced to  */ NO_EQUIVALENT,
      /* min, max, act ct */ 0, 1, 0,
      /* opt state flags  */ VER_FLAGS, AOUSE_VERSION,
-     /* last opt argumnt */ { NULL },
+     /* last opt argumnt */ { [=(if (exist? "version-type")
+            (string-append "(char const*)\"" (get "version-type") "\"")
+            "NULL")=] },
      /* arg list/cookie  */ NULL,
      /* must/cannot opts */ NULL, NULL,
      /* option proc      */ VER_PROC,

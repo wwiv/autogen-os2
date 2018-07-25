@@ -5,7 +5,7 @@
  *  @{
  */
 /*
- *  Columns Copyright (C) 1992-2017 by Bruce Korb - all rights reserved
+ *  Columns Copyright (C) 1992-2018 by Bruce Korb - all rights reserved
  *  Columns is free software.
  *  This file is part of AutoGen.
  *

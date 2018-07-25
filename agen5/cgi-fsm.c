@@ -281,6 +281,7 @@ cgi_run_fsm(
             /* END   == SEPARATE == DO NOT CHANGE THIS COMMENT */
             break;
 
+
         case CGI_TR_STASH:
             /* START == STASH == DO NOT CHANGE THIS COMMENT */
             *(pzOut++) = curCh;

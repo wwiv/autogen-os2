@@ -191,36 +191,6 @@ flag = {
 };
 
 flag = {
-    name      = lib-template;
-    value     = l;
-    arg-type  = string;
-    arg-name  = TPL-FILE;
-    descrip   = "Load AutoGen macros from @file{TPL-FILE}";
-    max       = NOLIMIT;
-    deprecated;
-#ifndef XML2AG
-    doc = <<-  _EOF_
-	DEFINE macros are saved from this template file for use in processing
-	the main macro file.  Template text aside from the DEFINE macros is
-	is ignored.
-
-	Do not use this.  Instead, use the INCLUDE macro in your template.
-	_EOF_;
-
-    flag-code = <<- _EOCode_
-	    templ_t * tpl;
-	    processing_state = PROC_STATE_LIB_LOAD;
-	    tpl = tpl_load(pOptDesc->optArg.argString, NULL);
-	    tpl_unload(tpl);
-	    processing_state = PROC_STATE_OPTIONS;
-	_EOCode_;
-#else
-    stack-arg;
-    doc = "Pass-through AutoGen argument";
-#endif
-};
-
-flag = {
     name      = 'definitions';
     arg-type  = string;
     arg-name  = FILE;

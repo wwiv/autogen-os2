@@ -445,7 +445,7 @@ direction_ok(opt_state_mask_t f, int dir)
         if (PRESETTING(dir)) {
             /*
              *  We are in the presetting direction with an option we handle
-             *  immediately for disablement, but normally for disablement.
+             *  immediately for disablement, but normally for handling.
              *  Therefore, skip if NOT disabled.
              */
             if ((f & OPTST_DISABLED) != 0)
@@ -453,7 +453,7 @@ direction_ok(opt_state_mask_t f, int dir)
         } else {
             /*
              *  We are in the processing direction with an option we handle
-             *  immediately for disablement, but normally for disablement.
+             *  immediately for disablement, but normally for handling.
              *  Therefore, skip if disabled.
              */
             if ((f & OPTST_DISABLED) == 0)

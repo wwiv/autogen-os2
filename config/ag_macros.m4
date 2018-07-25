@@ -329,7 +329,7 @@ AC_DEFUN([AG_WITHLIB_XML2],[
 int main () {
 xmlDocPtr p = xmlParseFile( "mumble.xml" ); }]])],
     [ag_cv_with_libxml2=yes],
-    [ag_cv_with_libxml2=no]) # end of AC_LINK_IFELSE 
+    [ag_cv_with_libxml2=no]) # end of AC_LINK_IFELSE
   ]) # end of AC_CACHE_VAL for ag_cv_with_libxml2
   fi ## disabled by request
   AC_MSG_RESULT([${ag_cv_with_libxml2}])
@@ -341,7 +341,7 @@ xmlDocPtr p = xmlParseFile( "mumble.xml" ); }]])],
       LIBXML2_LIBS="${ag_cv_with_libxml2_libs}"]
     CPPFLAGS="@S|@{ag_save_CPPFLAGS}"
     LIBS="@S|@{ag_save_LIBS}"
-    
+
   else
     CPPFLAGS="${ag_save_CPPFLAGS}"
     LIBS="${ag_save_LIBS}"

@@ -2,7 +2,7 @@
 
 ##  This file is part of AutoOpts, a companion to AutoGen.
 ##  AutoOpts is free software.
-##  AutoOpts is Copyright (C) 1992-2017 by Bruce Korb - all rights reserved
+##  AutoOpts is Copyright (C) 1992-2018 by Bruce Korb - all rights reserved
 ##
 ##  AutoOpts is available under any one of two licenses.  The license
 ##  in use must be one of these two and the choice is under the control
@@ -181,7 +181,7 @@ main(int argc, char ** argv)
             =] Warning:  no command operands were processed\n"), stderr);[=
     ENDIF interleaved           =]
     }[=
- 
+
 IF (exist? "stdin-input")       =][=
     INVOKE stdin-as-input       =][=
 ELSE                            =][=
@@ -1407,7 +1407,7 @@ DEFINE emit-option-code        =][=
   ELSE            =][=
 
     IF (and (exist? "no-libopts") (not (exist? "autoopts-usage-tlib"))) =]
-    (void)process_[=(. pname)=]_opts(argc, argv);[= 
+    (void)process_[=(. pname)=]_opts(argc, argv);[=
     ELIF (exist? "main-text") =]
     {
         int ct = optionProcess(&[=(. pname)=]Options, argc, argv);
@@ -1435,7 +1435,7 @@ DEFINE emit-main-text        =][=
 
     IF (and (exist? "no-libopts") (not (exist? "autoopts-usage-tlib"))) =]
     /* When using AutoOpts with getopt(3C) or getopt_long(3GNU)
-       the main-text attribute of main _must_ be defined. */ 
+       the main-text attribute of main _must_ be defined. */
 #error autoopts_with_getopt_must_define_main_text_attribute[=
     ELSE test-main is not optionParseShell and main-text not exist
          Above, we figure out which emitter procedure is to be used.

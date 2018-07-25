@@ -5,7 +5,7 @@
  *  @{
  */
 /*
- *  getdefs Copyright (C) 1999-2017 by Bruce Korb - all rights reserved
+ *  getdefs Copyright (C) 1999-2018 by Bruce Korb - all rights reserved
  *
  *  Author:            Bruce Korb <bkorb@gnu.org>
  *  This file is part of AutoGen.

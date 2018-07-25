@@ -5,7 +5,7 @@
 
 ##  This file is part of AutoGen.
 ##  AutoGen is free software.
-##  AutoGen is Copyright (C) 1992-2017 by Bruce Korb - all rights reserved
+##  AutoGen is Copyright (C) 1992-2018 by Bruce Korb - all rights reserved
 ##
 ## AutoGen is free software: you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -174,6 +174,16 @@ done
 sed '1,/^#define.*_GUARD/d;s/^extern /static /;/^#endif.*_GUARD/,$d' \
     ${tmp_dir}/[=(. base-file-name)=].h
 
+cat <<\_EOF_
+
+#include <sys/types.h>
+#include <string.h>
+#ifndef NUL
+#define NUL '\0'
+#endif
+
+_EOF_
+
 sed 's/^[=(. enum-name)=]$/static [=(. enum-name)=]/
      s/^char const \*$/static char const */
      /end of .*\.c/d' <&4
@@ -182,12 +192,6 @@ exec 4<&-
 [=
 (shell (out-pop #t))
 =]
-
-#include <sys/types.h>
-#include <string.h>
-#ifndef NUL
-#define NUL '\0'
-#endif
 
 /**
  * Convert a string to a [= (. mask-name) =] mask.
@@ -206,7 +210,7 @@ exec 4<&-
 [= (string-append mask-name "\n" base-type-name)
 =]_str2mask(char const * str, [=(. mask-name)=] old)
 {
-    static char const white[] = " \t\f";
+    static char const white[] = ", \t\f";
     static char const name_chars[] =
 [= (shell
 "name_chars=`echo '"
@@ -428,6 +432,7 @@ FOR cmd     =][=
             =][=
 ENDFOR      =][=
 (if (exist? "no-code") (emit "no-code;\n"))
+(if (exist? "partial") (emit "partial;\n"))
 (out-pop)
 (shell assign-vals
 "{ ${AGexe} -L" (dirname (tpl-file #t)) " ${tmp_dir}/" base-file-name ".def"
@@ -441,4 +446,8 @@ ENDFOR      =][=
 
 ENDDEF init-header
 
-\=]
+ * Local Variables:
+ * mode: text
+ * indent-tabs-mode: nil
+ * End:
+ * end of str2mask.tpl \=]

@@ -120,7 +120,8 @@ add_files_to_mf() {
 make_funcs_def()
 {
     ${char_mapper:-char-mapper} autogen.map || die "FAILED: char-mapper"
-    ${ag_aopts} ao-strs.def || die "cannot make strings - exited $?"
+    ${ag_aopts} save-flags.def || die "cannot rebuild save-flags - exited $?"
+    ${ag_aopts} ao-strs.def    || die "cannot make strings - exited $?"
 
     declare cmd_list=$(
         sed -n '/case *XAT_CMD_/{;s/.*XAT_CMD_/cmd = /;s/:/;/;p;}' \

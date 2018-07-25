@@ -231,7 +231,7 @@ int main() {
   }
   return 0; }] )],
     [libopts_cv_with_libregex=yes], [libopts_cv_with_libregex=no],
-    [libopts_cv_with_libregex=no]) # end of AC_RUN_IFELSE 
+    [libopts_cv_with_libregex=no]) # end of AC_RUN_IFELSE
   ]) # end of AC_CACHE_VAL for libopts_cv_with_libregex
   fi ## disabled by request
   AC_MSG_RESULT([${libopts_cv_with_libregex}])

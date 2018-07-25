@@ -18,7 +18,7 @@
 /*
  *  This file is part of AutoOpts, a companion to AutoGen.
  *  AutoOpts is free software.
- *  AutoOpts is Copyright (C) 1992-2017 by Bruce Korb - all rights reserved
+ *  AutoOpts is Copyright (C) 1992-2018 by Bruce Korb - all rights reserved
  *
  *  AutoOpts is available under any one of two licenses.  The license
  *  in use must be one of these two and the choice is under the control
@@ -307,7 +307,7 @@ print_offer_usage(tOptions * opts)
             help[0] = help[1] = '-';
             strncpy(help + 2, od->pz_Name, 20);
             break;
-        
+
         case 0:
             strncpy(help, od->pz_Name, 20);
             break;
@@ -323,7 +323,7 @@ print_offer_usage(tOptions * opts)
         case (OPTPROC_LONGOPT | OPTPROC_SHORTOPT):
             strcpy(help, "--help");
             break;
-        
+
         case 0:
             strcpy(help, "help");
             break;
@@ -441,7 +441,7 @@ print_one_paragraph(char const * text, bool plain, FILE * fp)
         AGFREE(t);
     }
 }
- 
+
 /*=export_func  optionPrintParagraphs
  * private:
  *
@@ -620,7 +620,7 @@ optionUsage(tOptions * opts, int usage_exit_code)
         print_usage_details(opts, usage_exit_code);
     else
         print_offer_usage(opts);
-    
+
  flush_and_exit:
     fflush(option_usage_fp);
     if (ferror(option_usage_fp) != 0)

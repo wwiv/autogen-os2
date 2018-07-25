@@ -32,7 +32,7 @@ copyright = {
 prog-name     = "getdefs";
 prog-title    = "AutoGen Definition Extraction Tool";
 package       = 'GNU AutoGen';
-version       = "1.5";
+version       = "1.5"; version-type = copyright;
 homerc        = /dev/null;
 no-xlate      = anything;
 

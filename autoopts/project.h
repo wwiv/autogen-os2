@@ -71,6 +71,9 @@ typedef int tSuccess;
 #  define MODE extern
 #endif
 
+#undef NUL
+#define NUL '\0'
+
 #define parse_duration option_parse_duration
 
 #endif /* AUTOGEN_PROJECT_H */

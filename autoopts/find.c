@@ -638,6 +638,7 @@ get_opt_arg_none(tOptions * pOpts, tOptState * o_st)
      */
     else
         pOpts->pzCurOpt = NULL;
+
     return SUCCESS;
 }
 
@@ -658,10 +659,24 @@ get_opt_arg(tOptions * opts, tOptState * o_st)
      * are handled with the "none" procedure.  Otherwise, check the
      * optional flag and call either the "may" or "must" function.
      */
-    if (  ((o_st->flags & OPTST_DISABLED) != 0)
-       || (OPTST_GET_ARGTYPE(o_st->flags) == OPARG_TYPE_NONE))
+    if ((o_st->flags & OPTST_DISABLED) != 0)
         return get_opt_arg_none(opts, o_st);
-    
+
+    switch (OPTST_GET_ARGTYPE(o_st->flags)) {
+    case OPARG_TYPE_STATIC:
+    {
+        /*
+         * Propagate the static arg
+         */
+        tSuccess res = get_opt_arg_none(opts, o_st);
+        o_st->pzOptArg = o_st->pOD->optArg.argString;
+        return res;
+    }
+            
+    case OPARG_TYPE_NONE:
+        return get_opt_arg_none(opts, o_st);
+    }
+
     if (o_st->flags & OPTST_ARG_OPTIONAL)
         return get_opt_arg_may( opts, o_st);
     
