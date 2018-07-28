@@ -129,6 +129,7 @@ compress_def(char * pz)
             case '\n':
                 if (*pzSrc != NUL)
                     goto lineDone;
+                /* FALLTHROUGH */
 
             case NUL:
                 pzDest--;
@@ -362,6 +363,7 @@ emit_quote(char ** ppzText, char * pzOut)
         case '\\':
             if ((*pzOut++ = *pzText++) != NUL)
                 break;
+            /* FALLTHROUGH */
 
         case NUL:
             pzText--;
@@ -577,6 +579,7 @@ subblock_str(char ** ppzText, uint_t sepChar, char * pzOut)
             switch (ch) {
             case '\'':
                 *pzOut++ = '\\';
+                /* FALLTHROUGH */
             default:
                 *pzOut++ = ch;
                 break;

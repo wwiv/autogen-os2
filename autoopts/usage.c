@@ -154,6 +154,7 @@ parse_usage_flags(ao_flag_names_t const * fnt, char const * txt)
         case ',':
             txt = SPN_WHITESPACE_CHARS(txt + 1);
             /* Something must follow the comma */
+            /* FALLTHROUGH */
 
         default:
             continue;

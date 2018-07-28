@@ -1000,6 +1000,7 @@ open_ag_proc_pipe(char ** pzBase)
 
     case -1:
         fserr_die("on fork()\n");
+        /* FALLTHROUGH */ /* NOTREACHED */
 
     default:
         /*

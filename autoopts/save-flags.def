@@ -1,0 +1,23 @@
+AutoGen definitions str2mask;
+
+cmd = default, usage, update;
+mask = { m-name = usage-default; m-bit = usage, default; };
+zero-name = none;
+partial;
+
+#ifdef IGNORED
+static void cfmstat_save(struct cache_file_mtime *cfmtime, struct stat *statbuf)
+{
+	cfmtime->stat_size = statbuf->st_size;
+#if defined(HAVE_STRUCT_STAT_ST_MTIM)
+	cfmtime->stat_mtime_nsec = statbuf->st_mtim.tv_nsec;
+#elif defined(HAVE_STRUCT_STAT_ST_MTIMENSEC)
+	cfmtime->stat_mtime_nsec = statbuf->st_mtimensec;
+#elif defined(HAVE_STRUCT_STAT_ST_MTIMESPEC)
+	cfmtime->stat_mtime_nsec = statbuf->st_mtimespec.tv_nsec;
+#else
+	cfmtime->stat_mtime_nsec = 0;
+#endif
+	cfmtime->stat_mtime = statbuf->st_mtime;
+}
+#endif

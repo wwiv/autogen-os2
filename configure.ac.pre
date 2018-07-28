@@ -111,27 +111,6 @@ AC_CHECK_SIZEOF(int,   4)
 AC_CHECK_SIZEOF(long,  4)
 AC_CHECK_SIZEOF(short, 2)
 # ----------------------------------------------------------------------
-AC_CHECK_FUNCS(strchr strlcpy snprintf dlopen utimensat clock_gettime)
-AC_SEARCH_LIBS(copysign, [m],
-               [AC_DEFINE(HAVE_COPYSIGN, 1,
-                          [Define to 1 if you have the `copysign' function.])])
-AC_SEARCH_LIBS(copysignl, [m],
-               [AC_DEFINE(HAVE_COPYSIGNL, 1,
-                          [Define to 1 if you have the `copysignl' function.])])
-AC_SEARCH_LIBS(modfl, [m],
-               [AC_DEFINE(HAVE_MODFL, 1,
-                          [Define to 1 if you have the `modfl' function.])])
-
-# ----------------------------------------------------------------------
-# Check for the functions needed from libgen and libdl
-# ----------------------------------------------------------------------
-
-AM_CONDITIONAL([NEED_PATHFIND], [test X$ac_cv_func_pathfind = Xyes])
-[if test X$ac_cv_func_dlopen = Xyes
-then DYNAMIC_AG=-export-dynamic
-else DYNAMIC_AG=""
-fi]
-AC_SUBST(DYNAMIC_AG)
 
 # ----------------------------------------------------------------------
 # Do all our own macros

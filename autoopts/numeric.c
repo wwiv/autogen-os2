@@ -136,14 +136,14 @@ optionNumericVal(tOptions * opts, tOptDesc * od)
     if ((od->fOptState & OPTST_SCALED_NUM) != 0)
         switch (*(pz++)) {
         case NUL:  pz--; break;
-        case 't':  val *= 1000;
-        case 'g':  val *= 1000;
-        case 'm':  val *= 1000;
+        case 't':  val *= 1000; /* FALLTHROUGH */
+        case 'g':  val *= 1000; /* FALLTHROUGH */
+        case 'm':  val *= 1000; /* FALLTHROUGH */
         case 'k':  val *= 1000; break;
 
-        case 'T':  val *= 1024;
-        case 'G':  val *= 1024;
-        case 'M':  val *= 1024;
+        case 'T':  val *= 1024; /* FALLTHROUGH */
+        case 'G':  val *= 1024; /* FALLTHROUGH */
+        case 'M':  val *= 1024; /* FALLTHROUGH */
         case 'K':  val *= 1024; break;
 
         default:   goto bad_number;

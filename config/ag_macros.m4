@@ -2,6 +2,32 @@
 dnl do always before generated macros:
 dnl
 AC_DEFUN([INVOKE_AG_MACROS_FIRST],[
+  stat_nsec_found=no
+  AC_CHECK_MEMBERS(
+    [struct stat.st_mtim, struct stat.st_mtimensec, struct stat.st_mtimespec],
+    [stat_nsec_found=yes], [], [[#include <sys/stat.h>]])
+  AC_CHECK_FUNCS(strchr strlcpy snprintf dlopen utimensat clock_gettime)
+  AC_SEARCH_LIBS(copysign, [m],
+                 [AC_DEFINE(HAVE_COPYSIGN, 1,
+                            [Define to 1 if you have the `copysign' function.])])
+  AC_SEARCH_LIBS(copysignl, [m],
+                 [AC_DEFINE(HAVE_COPYSIGNL, 1,
+                            [Define to 1 if you have the `copysignl' function.])])
+  AC_SEARCH_LIBS(modfl, [m],
+                 [AC_DEFINE(HAVE_MODFL, 1,
+                            [Define to 1 if you have the `modfl' function.])])
+
+  # ----------------------------------------------------------------------
+  # Check for the functions needed from libgen and libdl
+  # ----------------------------------------------------------------------
+
+  AM_CONDITIONAL([NEED_PATHFIND], [test X$ac_cv_func_pathfind = Xyes])
+  [if test X$ac_cv_func_dlopen = Xyes
+  then DYNAMIC_AG=-export-dynamic
+  else DYNAMIC_AG=""
+  fi]
+  AC_SUBST(DYNAMIC_AG)
+
   AC_CHECK_HEADERS([libio.h ctype.h assert.h sys/resource.h])
   AC_CHECK_DECLS([sigsetjmp],,, [#include <setjmp.h>])
   AC_DECL_SYS_SIGLIST

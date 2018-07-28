@@ -53,9 +53,6 @@ typedef struct {
  * SUCH DAMAGE.
  */
 #if defined(HAVE_FOPENCOOKIE)
-#  if defined(HAVE_LIBIO_H)
-#    include <libio.h>
-#  endif
 
    typedef off64_t * seek_off_t;
    typedef int       seek_ret_t;
