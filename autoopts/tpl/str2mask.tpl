@@ -400,9 +400,13 @@ DEFINE init-header                  =][=
 (if (exist? "alias")
     (error "bit name aliases are not allowed"))
 
-(define enum-type "bit")            =][=
+(define enum-type (if (exist? "prefix") "" "bit"))
 
-INCLUDE "str2init.tlib"             =][=
+=][=
+
+INCLUDE "str2init.tlib"
+
+=][=
 
 (out-move ".Str2Mask-Set-Aside")
 (define bit-enum-type
@@ -433,6 +437,7 @@ FOR cmd     =][=
 ENDFOR      =][=
 (if (exist? "no-code") (emit "no-code;\n"))
 (if (exist? "partial") (emit "partial;\n"))
+(if (exist? "no-name") (emit "no-name;\n"))
 (out-pop)
 (shell assign-vals
 "{ ${AGexe} -L" (dirname (tpl-file #t)) " ${tmp_dir}/" base-file-name ".def"

@@ -90,7 +90,8 @@ find_gnulib() {
     test -z "$GNULIBDIR" && {
         local gld=$(command -v gnulib-tool)
         test "X$gld" = "X" || gld=$(dirname "$gld")
-        for d in ~gnu/proj/gnulib /usr/share/gnulib ${gld:+"$gld"}
+        for d in $HOME/tools/gnulib ~gnu/proj/gnulib /usr/share/gnulib \
+                                    ${gld:+"$gld"}
         do
             test -d "$d" && GNULIBDIR=$d && break
         done
@@ -106,15 +107,17 @@ find_gnulib() {
 }
 
 set_ag_ver() {
-    declare ver=$(${GL_GIT_VERSION_GEN} ZZJUNK) cmt=
+    local cmt= ver=$(
+        \cd ${SOURCE_DIR}
+        ${GL_GIT_VERSION_GEN} ZZJUNK)
 
     export AG_MAJOR_VERSION=${ver%%.*}
     ver=${ver#${AG_MAJOR_VERSION}.}
-    declare scmd="s/^AG_MAJOR_VERSION=.*/AG_MAJOR_VERSION=${AG_MAJOR_VERSION}/"
+    local scmd="s/^AG_MAJOR_VERSION=.*/AG_MAJOR_VERSION=${AG_MAJOR_VERSION}/"
 
     export AG_MINOR_VERSION=${ver%%.*}
     ver=${ver#${AG_MINOR_VERSION}}
-    declare scmd+=";s/^AG_MINOR_VERSION=.*/AG_MINOR_VERSION=${AG_MINOR_VERSION}/"
+    scmd+=";s/^AG_MINOR_VERSION=.*/AG_MINOR_VERSION=${AG_MINOR_VERSION}/"
 
     ver=${ver#.}
     export AG_PATCHLEVEL=
@@ -129,7 +132,7 @@ set_ag_ver() {
             AG_PATCHLEVEL+=.$(printf %03u ${ver%%-*})
         }
     fi
-    declare scmd+=";s/^AG_PATCHLEVEL=.*/AG_PATCHLEVEL=${AG_PATCHLEVEL}/"
+    scmd+=";s/^AG_PATCHLEVEL=.*/AG_PATCHLEVEL=${AG_PATCHLEVEL}/"
     sed "$scmd" VERSION.pre > VERSION
     eval "$(egrep '^[A-Z][A-Z0-9_]+=' VERSION | sed 's/^/export /')"
     test ${#AGexe} -eq 0 && AGexe=autogen
@@ -186,6 +189,7 @@ config_versions() {
 	--m4-base=config
         --lgpl=2'
     glmods='parse-duration gendocs gettext-h extensions stdnoreturn'
+    glmods+=" havelib"
     cmd=$(echo ${GL_GNULIB_TOOL} $glopts $glmods)
     echo GNULIB-TOOL: $cmd
     ${cmd}

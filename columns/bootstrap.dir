@@ -31,9 +31,8 @@ targets="$*"
 test -z "$targets" && targets='opts.h proto.h'
 
 test "X${mainpid}" = X && {
-    PS4='>bsl> '
-    . ${top_srcdir}/config/bootstrap.shlib
-    PS4='>bsd> '
+    PS4='+bsl=${FUNCNAME:-=}-$LINENO> ' \
+      . ${top_srcdir}/config/bootstrap.shlib
     free_trap=true
 } || {
     free_trap=false

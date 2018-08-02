@@ -49,7 +49,8 @@ misc_extra     = \
     config/lib-link.m4        config/libopts.m4 \
     config/liboptschk.m4      config/mk-shdefs.in \
     config/pkg.m4             config/snprintfv.m4 \
-    config/unlocked-io.m4
+    config/unlocked-io.m4     build-aux/run-ag.sh
+
 EXTRA_DIST     = $(misc_extra) $(pkgdata_DATA)
 DISTCLEANFILES = stamp-h
 

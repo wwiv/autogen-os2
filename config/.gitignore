@@ -15,3 +15,7 @@
 /stdnoreturn.m4
 /test-driver
 /texinfo.tex
+/asm-underscore.m4
+/host-cpu-c-abi.m4
+/lib-ld.m4
+/lib-prefix.m4

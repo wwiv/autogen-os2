@@ -87,10 +87,18 @@ extern [=
 (define find-arg-list (string-append "char const * str" len-arg))
 (string-append enum-name "\n"
 find-func-name "(" find-arg-list ");\n")
-=][= IF (not (exist? "no-name")) =]
+=][=
+
+IF (not (exist? "no-name"))
+
+=]
 extern char const *
 [=(. base-type-name)=]_name([= (. enum-name) =] id);
-[=  ENDIF no-name               =][=
+[=
+
+ENDIF no-name
+
+=][=
 
     IF (define disp-text "")
        (exist? "dispatch")      =][=

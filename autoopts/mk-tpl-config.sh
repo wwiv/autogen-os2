@@ -70,7 +70,7 @@ extension_defines() {
 
     test -f tpl-config.tlib || die "tpl-config.tlib not configured"
     test -f ${top_builddir}/config.h || die "config.h missing"
-    ${GREP} 'extension-defines' tpl-config.tlib >/dev/null && return
+    ${GREP:-grep} 'extension-defines' tpl-config.tlib >/dev/null && return
 
     txt=`sed -n '/POSIX.*SOURCE/,/does not conform to ANSI C/{
 	    /^#/p

@@ -1336,4 +1336,9 @@ DEFINE emit-opt-desc    =][=
 
 ENDDEF opt-desc
 
+## Local Variables:
+## mode: text
+## indent-tabs-mode: nil
+## End:
+
 optlib.tlib ends here \=]

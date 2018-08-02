@@ -93,6 +93,7 @@ stamp-env :
 ../snprintfv/libsnprintfv.la :
 	cd ../snprintfv ; $(MAKE) libsnprintfv.la
 
+.PHONY : stamp-env
 .NOTPARALLEL:
 
 # start-generated-text

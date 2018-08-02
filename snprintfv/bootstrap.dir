@@ -41,15 +41,16 @@ init() {
 do_all_headers() {
     # Generate the header files
     #
-    local PS4='>dah> '
+    local sv_PS4="$PS4"
+    PS4='+hdr=${FUNCNAME:-=}-$LINENO> '
     for file in [abd-z]*.in
     do
         gen_hdr `echo $file | sed 's/\.in$//'`
     done
+    PS4="$sv_PS4"
 }
 
 protoize() {
-    local PS4='>pt> '
     state=do_comment
 
     while IFS='' read -r line
@@ -91,7 +92,6 @@ protoize() {
 }
 
 gen_hdr() {
-    local PS4='>gh> '
     line_no=1
     hdr=${1}.h
     inf=${1}.in

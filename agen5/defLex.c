@@ -374,7 +374,7 @@ scan_again:
         if (lex_dollar() == SUCCESS)
             break;
         goto bad_token;
-        
+
     case '<':
         switch (lex_here_string()) {
         case SUCCESS: break;

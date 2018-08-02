@@ -30,7 +30,8 @@ ag_top_builddir=`pwd`]
 AM_INIT_AUTOMAKE([gnu check-news 1.5 dist-xz])
 AC_USE_SYSTEM_EXTENSIONS
 AC_CONFIG_MACRO_DIR([config])
-AC_LIBTOOL_WIN32_DLL    m4_define(AC_PROVIDE_AC_LIBTOOL_WIN32_DLL)
+AC_LIBTOOL_WIN32_DLL
+m4_define(AC_PROVIDE_AC_LIBTOOL_WIN32_DLL)
 AC_PROG_LIBTOOL
 ifdef([AC_REVISION],AC_REVISION($Revision: 4.34 $),)dnl
 [config_start_time=`date +%s 2>/dev/null`]

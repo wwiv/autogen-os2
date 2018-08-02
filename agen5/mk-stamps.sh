@@ -259,11 +259,17 @@ dispatch()
     pid_list="$pid_list $!"
 }
 
+make_dep_file() {
+    local d=`dirname "$1"`
+    test -d "$d" || mkdir -p "$d" || exit 1
+    touch -t 197001020000 "$1"
+}
+
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
 #  M A I N
 #
-PS4='>stmp-${FUNCNAME}> '
+export PS4='+stmp=${FUNCNAME:-=}-$LINENO> '
 set_defaults ${1+"$@"}
 rmlist=`mktemp ${TMPDIR:-/tmp}/rmlist-XXXXXX`
 test -f "$rmlist" || {
@@ -310,6 +316,10 @@ do
 
     functions.h )
         dispatch func ;;
+
+    *dep-*.mk )
+        make_dep_file "$t"
+        ;;
 
     *)  if test `type -t make_$t` = function 2>/dev/null 1>&2
         then dispatch $t

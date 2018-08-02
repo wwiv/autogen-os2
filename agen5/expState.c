@@ -459,7 +459,7 @@ ag_scm_get(SCM v_name, SCM alt_v_name)
     } else if (OPT_VALUE_TRACE > TRACE_NOTHING)
         fprintf(trace_fp, GET_NOTHING_FMT, current_tpl->td_file,
                 (unsigned)cur_macro->md_line);
-    
+
     if (scm_is_string(alt_v_name))
         return alt_v_name;
     return scm_from_latin1_string(zNil);

@@ -463,10 +463,11 @@ ag_scm_join(SCM sep, SCM list)
  *
  * doc:
  *  Prefix every line in the second string with the first string.
- *  This includes empty lines, though trailing white space will
- *  be removed if the line consists only of the "prefix".
- *  Also, if the last character is a newline, then *two* prefixes will
- *  be inserted into the result text.
+ *  This includes empty lines.  Trailing white space will be removed
+ *  so if the prefix is all horizontal white space, then it will be
+ *  removed from otherwise blank lines.  Also, if the last character
+ *  is a newline, then *two* prefixes will be inserted into the result
+ *  text.
  *
  *  For example, if the first string is "# " and the second contains:
  *  @example
@@ -507,6 +508,9 @@ ag_scm_prefix(SCM prefx, SCM txt)
         r_str = scan = scribble_get((ssize_t)out_size);
     }
 
+    /*
+     * If the text starts with a newline, then do not apply
+     */
     memcpy(scan, prefix, pfx_size);
     scan += pfx_size;
     pfx_size++;

@@ -1,9 +1,21 @@
 AutoGen definitions str2mask;
 
-cmd = default, usage, update;
-mask = { m-name = usage-default; m-bit = usage, default; };
+prefix    = svfl;
+mask-type = uint32_t;
 zero-name = none;
-partial;
+no-name;
+partial; // partial matches are allowed
+
+cmd  = default;
+what = 'include default values in commentary';
+
+cmd  = usage;
+what = 'include usage text in commentary';
+
+cmd  = update;
+what = 'replace or append state';
+
+mask = { m-name = usage-default; m-bit = usage, default; };
 
 #ifdef IGNORED
 static void cfmstat_save(struct cache_file_mtime *cfmtime, struct stat *statbuf)

@@ -35,3 +35,6 @@ mk-stamp : char-mapper.c map-text.def mk-opt-table.sh
 
 $(EXE) : $(OBJ)
 	$(CC) $(CFLAGS) -o $@ $(OBJ) $(LDFLAGS)
+
+clean :
+	rm -f $(OBJ) $(EXE) $(GEN)

@@ -24,9 +24,8 @@
 #  AutoGen before building AutoGen.  (Like I had to do long ago :)
 
 test "X${mainpid}" = X && {
-    PS4='>bsl> '
-    source ${top_srcdir}/config/bootstrap.shlib
-    PS4='>bsd> '
+    PS4='+slb=${FUNCNAME:-=}-$LINENO> ' \
+      source ${top_srcdir}/config/bootstrap.shlib
     free_trap=true
 } || {
     free_trap=false

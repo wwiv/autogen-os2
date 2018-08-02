@@ -57,6 +57,9 @@ cols.c : Makefile
 	echo '#include "autoopts/project.h"' ; \
 	for f in $(csrc) ; do echo "#include \"$$f\"" ; done
 
+$(LO_LIB) :
+	( cd $(top_builddir)/autoopts ; $(MAKE) libopts.la )
+
 stamp-agtexi : opts.def columns$(EXEEXT)
 	top_builddir=$(top_builddir) \
 	$(RUNAG) -Tagtexi-cmd.tpl $(DOC_TIMEOUT) $(srcdir)/opts.def

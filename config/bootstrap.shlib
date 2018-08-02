@@ -221,13 +221,12 @@ make_proto()
         case ${ct} in
         ( 2 )
             rm -f $f.[XY]
-
             exec 4> $f.X
             sed '/START-STATIC-FORWARD/q' $f >&4
-            sed -n '/END-STATIC-FORWARD/,$p' $f > $f.Y
-            sed -n '/^static /,/^{/p' $f.Y | \
+            sed -n '/END-STATIC-FORWARD/,$p' $f > ${TEMP_DIR}/$f.Y
+            sed -n '/^static /,/^{/p' ${TEMP_DIR}/$f.Y | \
                 sed 's/^{.*//;s/)$/);/;$d' >&4
-            cat $f.Y >&4
+            cat ${TEMP_DIR}/$f.Y >&4
             exec 4>&-
 
             cmp -s $f.X $f || {
@@ -235,7 +234,7 @@ make_proto()
                 mv -f $f.X $f
             }
 
-            rm -f $f.[XY]
+            rm -f ${TEMP_DIR}/$f.Y $f.X
             deplist=$deplist' \'$nl$ht$f
             ;;
 
@@ -256,8 +255,10 @@ make_proto()
         echo "${proto_h}  : stamp-proto"
         echo "stamp-proto : $deplist"
     } > $DEPDIR/stamp-proto.d
+    cat >&5 <<- _EOF
 
-    echo "#endif /* ${marker} */" >&5
+	#endif /* ${marker} */
+	_EOF
     exec 5>&-
 
     if test -f ${proto_h} && cmp -s ${temp_proto} ${proto_h}

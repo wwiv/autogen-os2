@@ -297,11 +297,6 @@ utxt = { ut-i18n = msg;
 };
 
 utxt = { ut-i18n = msg;
-         ut-name = NotDef;
-         ut-text = "'%s' not defined\n";
-};
-
-utxt = { ut-i18n = msg;
          ut-name = NotDuration;
          ut-text = "%s error:  '%s' is not a recognizable time duration.\n";
 };

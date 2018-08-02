@@ -1,14 +1,6 @@
-New in __CURRENT_VERSION__ May 2016
+New in __CURRENT_VERSION__ August 2018
 
-* several configury fixes to enable cross platform building.
-* fompletion of a change in "char-mapper" to enable bootstrapping
-* Guile 1.8 support was removed
-* Replace AG_SCM_STR02SCM with scm_from_latin1_string
-  this breaks Guile 1.8.
-* adaptations for cross compiling
-* no more generating autoconf macros
-* fix internal implementation of forking off autogen in xml2ag
-* when calling abort() causes problems, exit() can now be
-  called (via an option) instead.
-* add support for nanosecond precision in file times
-* suppress dumb warnings about embedded NUL bytes in formats.
+Bootstrap and configure code has been revamped to work with the
+new flavors of the autotools.
+
+Guile 2.2 works like 2.0, so accept it, too.

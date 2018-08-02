@@ -672,7 +672,7 @@ get_opt_arg(tOptions * opts, tOptState * o_st)
         o_st->pzOptArg = o_st->pOD->optArg.argString;
         return res;
     }
-            
+
     case OPARG_TYPE_NONE:
         return get_opt_arg_none(opts, o_st);
     }

@@ -144,7 +144,8 @@ typedef enum {
     OPARG_TYPE_FLOAT        =  9, ///< opt arg is a floating point num
     OPARG_TYPE_DOUBLE       = 10, ///< opt arg is a double prec. float
     OPARG_TYPE_LONG_DOUBLE  = 11, ///< opt arg is a long double prec.
-    OPARG_TYPE_LONG_LONG    = 12  ///< opt arg is a long long int
+    OPARG_TYPE_LONG_LONG    = 12, ///< opt arg is a long long int
+    OPARG_TYPE_STATIC       = 13  ///< 
 } teOptArgType;
 
 /**

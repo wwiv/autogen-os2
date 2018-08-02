@@ -52,7 +52,7 @@ end_of_directive(char * scan)
 
         if (s == NULL)
             return scan + strlen(scan);
-        
+
         cctx->scx_line++;
 
         if (s[-1] != '\\') {

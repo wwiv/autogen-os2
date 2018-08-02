@@ -45,9 +45,10 @@ GENMAN          = $(PATHFIND_MAN) \
 
 GENHDRS         = autoopts/options.h autoopts/usage-txt.h genshell.h \
 		option-xat-attribute.h option-value-type.h ao-strs.h \
-		ag-char-map.h
+		ag-char-map.h save-flags.h
 HDRS            = $(GENHDRS) autoopts.h project.h proto.h
-GEN_SRC         = ao-strs.c option-value-type.c option-xat-attribute.c
+GEN_SRC         = ao-strs.c option-value-type.c option-xat-attribute.c \
+		save-flags.c
 
 ## The primary source (autoopts.c) must be by itself on the first line after
 ## "CSRC".  'sed' does some magic here to get the list of source files for the
