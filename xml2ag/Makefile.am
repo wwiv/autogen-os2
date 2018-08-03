@@ -28,7 +28,7 @@ gsrcs           = xmlopts.c fork.c
 BUILT_SOURCES   = x.c
 nodist_xml2ag_SOURCES = $(BUILT_SOURCES)
 SUBDIRS         = test
-EXTRA_DIST      = xmlopts.def fork.tpl fork.c $(csrcs)
+EXTRA_DIST      = xmlopts.def fork.tpl $(gsrcs) $(csrcs)
 xml2ag_LDADD    = $(top_builddir)/autoopts/libopts.la $(LIBXML2_LIBS)
 man_MANS        = $(TARG).1
 TEXI_FILES      = invoke-$(TARG).texi invoke-$(TARG).menu
@@ -80,19 +80,19 @@ AGARG_FORK      = -MF$(DEPFL_FORK) -MT$@ -MP -L$(srcdir) -Tfork.tpl
 
 $(getdefs_OBJECTS) xmlopts.c xmlopts.h : stamp-opts
 stamp-opts  : xmlopts.def
-	$(RUNAG) $(AGARG_OPTS) "$(srcdir)/xmlopts.def"
+	$(RUN_AG) $(AGARG_OPTS) "$(srcdir)/xmlopts.def"
 
 $(TARG).1   : stamp-man
 stamp-man   : xmlopts.def $(TARG)$(EXEEXT) ../columns/columns$(EXEEXT)
-	$(RUNAG) $(AGARG_MAN) "$(srcdir)/xmlopts.def"
+	$(RUN_AG) $(AGARG_MAN) "$(srcdir)/xmlopts.def"
 
 invoke-$(TARG).texi invoke-$(TARG).menu : stamp-texi
 stamp-texi  : xmlopts.def $(TARG)$(EXEEXT) ../columns/columns$(EXEEXT)
-	$(RUNAG) $(AGARG_TEXI) "$(srcdir)/xmlopts.def"
+	$(RUN_AG) $(AGARG_TEXI) "$(srcdir)/xmlopts.def"
 
 fork.c      : stamp-fork
 stamp-fork  : fork.tpl xmlopts.def $(CLexe)
-	$(RUNAG) $(AGARG_FORK) "$(srcdir)/xmlopts.def"
+	$(RUN_AG) $(AGARG_FORK) "$(srcdir)/xmlopts.def"
 
 $(CLexe)    :
 	cd ../columns ; $(MAKE) $(CLnam)

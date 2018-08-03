@@ -83,7 +83,15 @@ test -z "${BASH_VERSION}" && \
     local() { "$@" ; }
 
 # Setup run_ag
+test ${#top_srcdir} -eq 0 && {
+    echo "NO TOP DIRECTORY in $PWD"
+    exit 1
+} 1>&2
 f=$(\cd ${top_srcdir}/autoopts/tpl >/dev/null && pwd)
+test ${#top_builddir} -eq 0 && {
+    echo "NO BUILD DIRECTORY in $PWD"
+    exit 1
+} 1>&2
 g=$(\cd ${top_builddir}/autoopts/tpl >/dev/null && pwd)
 tpl_dir='-L'$f
 test "X$f" = "X$g" || tpl_dir=$tpl_dir' -L'$g

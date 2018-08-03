@@ -29,39 +29,29 @@ find_exe() {
   eval local exe=\${$1}
   test -x "$exe" && return 0
   case "$2" in
-    autogen )
-      exe=`cd ../agen5 > /dev/null ; pwd`/autogen
-      test -x "$exe" || \
-        exe=`command -v autogen`
-      test -x "$exe" || {
-        echo "cannot locate autogen"
-        return 1
-      } 1>&2
-      eval $1=$exe
-      return 0
-      ;;
-
-    columns )
-      exe=`cd ../agen5 > /dev/null ; pwd`/autogen
-      test -x "$exe" || \
-        exe=`command -v autogen`
-      test -x "$exe" || {
-        echo "cannot locate autogen"
-        return 1
-      } 1>&2
-      eval $1=$exe
-      return 0
-      ;;
+    autogen ) exe=`cd ../agen5   > /dev/null ; pwd`/$2 ;;
+    columns ) exe=`cd ../columns > /dev/null ; pwd`/$2 ;;
 
     * ) echo "wrong executable: '$2'" >&2
-        exit 1
-        ;;
+        exit 1 ;;
   esac
+  test -x "$exe" || exe=`command -v $2`
+  test -x "$exe" || {
+    echo "cannot locate $2"
+    return 1
+  } 1>&2
+  eval $1=$exe
+  return 0
 }
+
+STAMP_TEMP_DIR=$(mktemp --suffix=.tdir -d /tmp/run-ag-XXXXXXXX)
+exec 9>&2 2>> ${STAMP_TEMP_DIR}/mk-stamps.log
+VERBOSE=1
 
 test "X$VERBOSE" = X1 && {
   PS4='+run-ag-$LINENO> '
   set -x
+  : in $PWD
 }
 
 stamp_file=''

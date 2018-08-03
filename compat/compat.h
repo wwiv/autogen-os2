@@ -182,9 +182,9 @@
 #  include <unistd.h>
 #endif
 
-#ifdef HAVE_STDBOOL_H
+#if defined(HAVE_STDBOOL_H)
 #  include <stdbool.h>
-#else
+#elif ! defined(bool)
    typedef enum { false = 0, true = 1 } _Bool;
 #  define bool _Bool
 

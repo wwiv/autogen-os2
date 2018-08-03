@@ -68,7 +68,7 @@ assemble_Makefile() {
             depfl=DEPFL_${f^^}
             depfl=${depfl//-/_}
             printf '%-12s= $(DEPDIR)/dep-%s.mk\n' $depfl $f
-            printf '$(%s) :\n\t$(SHELL) mk-stamps.sh "$@"\n' $depfl
+            printf '$(%s) :\n\t$(SHELL) $(stamp_script) "$@"\n' $depfl
             printf 'include $(%s)\n' $depfl
             depfl_list+=$(printf '%-12s= "$@"' $depfl)$'\n'
         done

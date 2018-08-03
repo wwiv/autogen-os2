@@ -110,6 +110,7 @@ main(int argc, char ** argv)
                 pzFile = *argv;
                 break;
             }
+            /* FALLTHROUGH */
         case 0:
             if (   HAVE_OPT( DEFINITIONS )
                && (strcmp( OPT_ARG( DEFINITIONS ), "-" ) != 0) )

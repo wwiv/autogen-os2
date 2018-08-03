@@ -76,8 +76,9 @@ usage-txt.po: gettext
 gettext     :
 	cd autoopts && $(MAKE) usage-txt.po
 
-all         : config/shdefs
-config/shdefs: config/mk-shdefs
+all         : $(top_builddir)/config/shdefs
+shdefs      : $(top_builddir)/config/shdefs
+$(top_builddir)/config/shdefs: $(top_builddir)/config/mk-shdefs
 	$(SHELL) $< $@
 
 if HAVE_XML_LIB
@@ -89,6 +90,6 @@ release     :
 endif
 
 .NOTPARALLEL:
-.PHONY: pkg package docs gnudoc gnudocs
+.PHONY: pkg package docs gnudoc gnudocs shdefs
 
 ## Makefile.am ends here
