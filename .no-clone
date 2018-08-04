@@ -1,0 +1,7 @@
+cscope.*
+\.git.*
+.*~
+\.no-clone
+patches
+CVS
+.*,v

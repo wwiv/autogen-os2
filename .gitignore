@@ -71,3 +71,4 @@ invoke-*.texi
 libtool
 stamp*
 test-*.log
+/.no-clone
