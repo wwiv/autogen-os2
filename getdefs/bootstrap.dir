@@ -25,7 +25,7 @@
 
 test "X${mainpid}" = X && {
     PS4='+slb=${FUNCNAME:-=}-$LINENO> ' \
-      source ${top_srcdir}/config/bootstrap.shlib
+      source ${top_srcdir:-..}/config/bootstrap.shlib
     free_trap=true
 } || {
     free_trap=false

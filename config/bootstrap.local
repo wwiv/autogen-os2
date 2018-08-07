@@ -180,26 +180,48 @@ config_versions() {
     } > TODO
     cd ${top_srcdir}
 
-    glopts='--local-dir=tmp --source-base=autoopts --lib=do_not_make_me
+    glopts='
 	--import
-	--makefile-name=gnulib.mk
+        --lgpl=2
+	--lib=do_not_make_me
 	--libtool
-	--no-changelog
-	--symlink
+	--local-dir=tmp
 	--m4-base=config
-        --lgpl=2'
-    glmods='parse-duration gendocs gettext-h extensions stdnoreturn'
-    glmods+=" havelib"
+	--makefile-name=gnulib.mk
+	--no-changelog
+	--source-base=autoopts
+	--symlink'
+    glmods='
+	extensions 
+	gendocs 
+	gettext-h 
+	havelib
+	parse-duration 
+	snippet/_Noreturn
+	stdnoreturn'
     cmd=$(echo ${GL_GNULIB_TOOL} $glopts $glmods)
     echo GNULIB-TOOL: $cmd
     ${cmd}
     sed -i 's/do_not_make_me_.*_SOURCES/EXTRA_DIST/;/do_not_make_me/d' \
         autoopts/gnulib.mk
+    sedcmd=$(cat <<- \_EndOfSed
+		s@/config/snippet/@/compat/@
+		\@begin .*snippet/_Noreturn@,\@end .*snippet/_Noreturn@ {
+		    /^##/d
+		    p
+		  }
+		\@begin .* module stdnoreturn@,\@end .* module stdnoreturn@ {
+		    /^##/d
+		    p
+		  }
+		_EndOfSed
+          )
     sedcmd='s@/config/snippet/@/compat/@'
-    sedcmd="${sedcmd}${nl}"'\@begin .*snippet/_Noreturn@,\@end .*snippet/_Noreturn@ p'
-    sedcmd="${sedcmd}${nl}"'\@begin .* module stdnoreturn@,\@end .* module stdnoreturn@ p'
+    sedcmd+=$'\n\@begin .*snippet/_Noreturn@,\@end .*snippet/_Noreturn@ p'
+    sedcmd+=$'\n\@begin .* module stdnoreturn@,\@end .* module stdnoreturn@ p'
     sed -n "$sedcmd" autoopts/gnulib.mk | \
-        grep -v '^##' > pkg/libopts/stdnoreturn.mk
+      grep -v '^##' > pkg/libopts/stdnoreturn.mk
+    cp autoopts/gnulib.mk /tmp
     cp ${GNULIBDIR}/build-aux/config.rpath ${GNULIBDIR}/m4/lib-link.m4 config/.
 
     ${GNULIBDIR}/build-aux/gitlog-to-changelog | \

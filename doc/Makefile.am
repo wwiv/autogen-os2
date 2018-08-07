@@ -53,6 +53,7 @@ agdoc.texi      : # self-depends upon all executables
 
 autogen.dvi     : agdoc.texi
 autogen.texi    : agdoc.texi mk-agen-texi.sh
+	@test -f $@ || { $(run_mktexi) $@ ; }
 
 # Special rule for generating all the GNU standard formats.
 #

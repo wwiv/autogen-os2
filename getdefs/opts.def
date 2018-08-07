@@ -35,6 +35,7 @@ package       = 'GNU AutoGen';
 version       = "1.5"; version-type = copyright;
 homerc        = /dev/null;
 no-xlate      = anything;
+die-code;
 
 explain       = <<- EndExplanation
 	If no @code{input} argument is provided or is set to simply "-", and if
@@ -372,6 +373,12 @@ flag = {
  *
  *  Program Documentation
  */
+
+exit-name[2]  = invalid-input;
+exit-desc[2]  = 'An input file was specified that is not a file';
+
+exit-name[3]  = no-mem;
+exit-desc[3]  = 'Insufficient memory for operation';
 
 /* * * * * MAN PAGE DESCRIPTION * * * * * * * * * * * * * * * * * * * */
 

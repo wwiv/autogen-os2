@@ -32,50 +32,6 @@
  */
 #include "save-flags.h"
 
-/* = = = START-STATIC-FORWARD = = = */
-static char const *
-find_dir_name(tOptions * opts, int * p_free);
-
-static char const *
-find_file_name(tOptions * opts, int * p_free_name);
-
-static void
-prt_entry(FILE * fp, tOptDesc * od, char const * l_arg, save_flags_mask_t save_fl);
-
-static void
-prt_value(FILE * fp, int depth, tOptDesc * od, tOptionValue const * ovp);
-
-static void
-prt_string(FILE * fp, char const * name, char const * pz);
-
-static void
-prt_val_list(FILE * fp, char const * name, tArgList * al);
-
-static void
-prt_nested(FILE * fp, tOptDesc * od, save_flags_mask_t save_fl);
-
-static void
-remove_settings(tOptions * opts, char const * fname);
-
-static FILE *
-open_sv_file(tOptions * opts, save_flags_mask_t save_fl);
-
-static void
-prt_no_arg_opt(FILE * fp, tOptDesc * vod, tOptDesc * pod, save_flags_mask_t save_fl);
-
-static void
-prt_str_arg(FILE * fp, tOptDesc * od, save_flags_mask_t save_fl);
-
-static void
-prt_enum_arg(FILE * fp, tOptDesc * od, save_flags_mask_t save_fl);
-
-static void
-prt_set_arg(FILE * fp, tOptDesc * od, save_flags_mask_t save_fl);
-
-static void
-prt_file_arg(FILE * fp, tOptDesc * od, tOptions * opts, save_flags_mask_t save_fl);
-/* = = = END-STATIC-FORWARD = = = */
-
 /**
  * find the config file directory name
  *

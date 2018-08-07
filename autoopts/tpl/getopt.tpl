@@ -4,7 +4,7 @@
    c=%s-temp.c  +][+
 
 `stamp=\`sed 's,.*stamp: *",,;s,".*,,' <<\_EOF_
-  Time-stamp:        "2015-01-01 11:08:35 bkorb"
+  Time-stamp:        "2018-08-08 17:59:09 bkorb"
 _EOF_
 \` `            +][+
 
@@ -250,7 +250,7 @@ static char z_opts[] = "[+ # close quote for emacs " +][+
 /*
  *  AutoOpts library replacement routines:
  */
-void
+noreturn void
 optionUsage (tOptions * pOptions, int status)
 {
   if (status != 0)
@@ -265,7 +265,7 @@ optionUsage (tOptions * pOptions, int status)
   exit (status);
 }
 
-void
+noreturn void
 optionPrintVersion (tOptions * pOptions, tOptDesc * pOptDesc)
 {
   char const * pz_by =

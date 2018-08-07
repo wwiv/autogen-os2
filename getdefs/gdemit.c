@@ -25,29 +25,6 @@
  *  with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* = = = START-STATIC-FORWARD = = = */
-static void
-compress_def(char * pz);
-
-static char *
-list_attrib(char * pzText, char * pzOut);
-
-static char *
-emit_quote(char ** ppzText, char * pzOut);
-
-static void
-next_def_entry(char ** txt_pp, char const ** def_pp);
-
-static void
-emit_attribute(char const ** def_pp, char ** out_pp);
-
-static char *
-emit_subblock(char const * pzDefList, char * pzText, char * pzOut);
-
-static char *
-subblock_str(char ** ppzText, uint_t sepChar, char * pzOut);
-/* = = = END-STATIC-FORWARD = = = */
-
 /*
  *  compress_def
  *
@@ -188,7 +165,7 @@ compress_def(char * pz)
 /*
  *  emitDefinition
  */
-LOCAL char *
+MOD_LOCAL char *
 emitDefinition(char * pzDef, char * pzOut)
 {
     char sep_char;
@@ -205,7 +182,8 @@ emitDefinition(char * pzDef, char * pzOut)
             *p++ = *pzOut++ = *pzDef++;
 
         if (p >= zEntryName + sizeof(zEntryName))
-            die("names are constrained to %d bytes\n", MAXNAMELEN);
+            die(GETDEFS_EXIT_USAGE_ERROR, "names are constrained to %d bytes\n",
+                MAXNAMELEN);
 
         *p = NUL;
     }

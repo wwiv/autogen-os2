@@ -24,18 +24,7 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* = = = START-STATIC-FORWARD = = = */
-static char const *
-load_extract_file(char const * new_fil);
-
-static SCM
-mk_empty_text(char const * start, char const * end, SCM def);
-
-static SCM
-get_text(char const * text, char const * start, char const * end, SCM def);
-/* = = = END-STATIC-FORWARD = = = */
-
-LOCAL char *
+static char *
 load_file(char const * fname)
 {
     char * res = NULL;

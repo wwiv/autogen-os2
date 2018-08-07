@@ -26,29 +26,6 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* = = = START-STATIC-FORWARD = = = */
-static size_t
-stringify_for_sh(char * pzNew, uint_t qt, char const * pzDta);
-
-static SCM
-shell_stringify(SCM obj, uint_t qt);
-
-static int
-sub_count(char const * haystack, char const * needle);
-
-static void
-do_substitution(
-    char const * src_str,
-    ssize_t      str_len,
-    SCM          match,
-    SCM          repl,
-    char **      ppz_res,
-    ssize_t *    res_len);
-
-static inline void
-tr_char_range(unsigned char * ch_map, unsigned char * from, unsigned char * to);
-/* = = = END-STATIC-FORWARD = = = */
-
 static size_t
 stringify_for_sh(char * pzNew, uint_t qt, char const * pzDta)
 {
@@ -219,14 +196,13 @@ do_substitution(
     }
 }
 
-
-/*
+/**
  *  Recursive routine.  It calls itself for list values and calls
  *  "do_substitution" for string values.  Each substitution will
  *  be done in the order found in the tree walk of list values.
  *  The "match" and "repl" trees *must* be identical in structure.
  */
-LOCAL void
+static void
 do_multi_subs(char ** ppzStr, ssize_t * pStrLen, SCM match, SCM repl)
 {
     char * pzStr = *ppzStr;

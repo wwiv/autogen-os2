@@ -76,7 +76,7 @@ usage-txt.po: gettext
 gettext     :
 	cd autoopts && $(MAKE) usage-txt.po
 
-all         : $(top_builddir)/config/shdefs
+all         : shdefs
 shdefs      : $(top_builddir)/config/shdefs
 $(top_builddir)/config/shdefs: $(top_builddir)/config/mk-shdefs
 	$(SHELL) $< $@
@@ -90,6 +90,6 @@ release     :
 endif
 
 .NOTPARALLEL:
-.PHONY: pkg package docs gnudoc gnudocs shdefs
+.PHONY: all pkg package docs gnudoc gnudocs shdefs doxydocs gettext usage-txt.po
 
 ## Makefile.am ends here

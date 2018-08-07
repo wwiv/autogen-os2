@@ -29,20 +29,6 @@
  *  13aa749a5b0a454917a944ed8fffc530b784f5ead522b1aacaf4ec8aa55a6239  COPYING.mbsd
  */
 
-/* = = = START-STATIC-FORWARD = = = */
-static tSuccess
-must_arg(tOptions * opts, char * arg_txt, tOptState * pOS,
-         char ** opt_txt, uint32_t * opt_idx);
-
-static tSuccess
-maybe_arg(tOptions * opts, char * arg_txt, tOptState * pOS,
-          char ** opt_txt, uint32_t * opt_idx);
-
-static tSuccess
-short_opt_ck(tOptions * opts, char * arg_txt, tOptState * pOS,
-             char ** opt_txt, uint32_t * opt_idx);
-/* = = = END-STATIC-FORWARD = = = */
-
 /*
  *  "must_arg" and "maybe_arg" are really similar.  The biggest
  *  difference is that "may" will consume the next argument only if it
@@ -178,7 +164,7 @@ short_opt_ck(tOptions * opts, char * arg_txt, tOptState * pOS,
  *  If the program wants sorted options (separated operands and options),
  *  then this routine will to the trick.
  */
-LOCAL void
+static void
 optionSort(tOptions * opts)
 {
     char **  opt_txt;

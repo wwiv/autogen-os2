@@ -109,15 +109,14 @@ dp_do_indexed_name(te_dp_state initial, te_dp_state maybe_next,
     return maybe_next;
 }
 
-static te_dp_state
+noreturn static te_dp_state
 dp_do_invalid(te_dp_state initial, te_dp_state maybe_next,
               te_dp_event trans_evt)
 {
     (void)maybe_next;
     dp_invalid_transition(initial, trans_evt);
     yyerror(VOIDP("invalid transition"));
-    /* NOTREACHED */
-    return DP_ST_INVALID;
+    NOT_REACHED
 }
 
 static te_dp_state

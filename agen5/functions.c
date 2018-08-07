@@ -75,7 +75,7 @@ mFunc_Break(templ_t * tpl, macro_t * mac)
  * @returns either LOOP_JMP_OKAY (0) or LOOP_JMP_BREAK (the caller should
  * exit the loop).
  */
-LOCAL loop_jmp_type_t
+static loop_jmp_type_t
 call_gen_block(jmp_buf jbuf, templ_t * tpl, macro_t * mac, macro_t * end_mac)
 {
     switch (setjmp(jbuf)) {
@@ -126,7 +126,7 @@ mFunc_Return(templ_t * tpl, macro_t * mac)
  *
  * @param[in] tpl new template block (included or invoked).
  */
-LOCAL void
+static void
 gen_new_block(templ_t * tpl)
 {
     templ_t *   oldt = current_tpl;

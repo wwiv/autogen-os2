@@ -35,45 +35,7 @@
 #define UPPER(_c) (toupper(to_uchar(_c)))
 #define LOWER(_c) (tolower(to_uchar(_c)))
 
-/* = = = START-STATIC-FORWARD = = = */
-static void
-emit_var_text(char const * prog, char const * var, int fdin);
-
-static void
-text_to_var(tOptions * opts, teTextTo which, tOptDesc * od);
-
-static void
-emit_usage(tOptions * opts);
-
-static void
-emit_wrapup(tOptions * opts);
-
-static void
-emit_setup(tOptions * opts);
-
-static void
-emit_action(tOptions * opts, tOptDesc * od);
-
-static void
-emit_inaction(tOptions * opts, tOptDesc * od);
-
-static void
-emit_flag(tOptions * opts);
-
-static void
-emit_match_expr(char const * name, tOptDesc * cod, tOptions * opts);
-
-static void
-emit_long(tOptions * opts);
-
-static char *
-load_old_output(char const * fname, char const * pname);
-
-static void
-open_out(char const * fname, char const * pname);
-/* = = = END-STATIC-FORWARD = = = */
-
-LOCAL noreturn void
+noreturn static void
 option_exits(int exit_code)
 {
     if (print_exit)
@@ -81,21 +43,21 @@ option_exits(int exit_code)
     exit(exit_code);
 }
 
-LOCAL noreturn void
+noreturn static void
 ao_bug(char const * msg)
 {
     fprintf(stderr, zao_bug_msg, msg);
     option_exits(EX_SOFTWARE);
 }
 
-LOCAL void
+static void
 fserr_warn(char const * prog, char const * op, char const * fname)
 {
     fprintf(stderr, zfserr_fmt, prog, errno, strerror(errno),
             op, fname);
 }
 
-LOCAL noreturn void
+noreturn static void
 fserr_exit(char const * prog, char const * op, char const * fname)
 {
     fserr_warn(prog, op, fname);

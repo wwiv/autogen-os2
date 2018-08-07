@@ -31,36 +31,6 @@
  *  13aa749a5b0a454917a944ed8fffc530b784f5ead522b1aacaf4ec8aa55a6239  COPYING.mbsd
  */
 
-/* = = = START-STATIC-FORWARD = = = */
-static int
-parse_opt(char const ** nm_pp, char ** arg_pp, char * buf, size_t bufsz);
-
-static void
-opt_ambiguities(tOptions * opts, char const * name, int nm_len);
-
-static int
-opt_match_ct(tOptions * opts, char const * name, int nm_len,
-             int * ixp, bool * disable);
-
-static tSuccess
-opt_set(tOptions * opts, char * arg, int idx, bool disable, tOptState * st);
-
-static tSuccess
-opt_unknown(tOptions * opts, char const * name, char * arg, tOptState * st);
-
-static tSuccess
-opt_ambiguous(tOptions * opts, char const * name, int match_ct);
-
-static tSuccess
-get_opt_arg_must(tOptions * opts, tOptState * o_st);
-
-static tSuccess
-get_opt_arg_may(tOptions * pOpts, tOptState * o_st);
-
-static tSuccess
-get_opt_arg_none(tOptions * pOpts, tOptState * o_st);
-/* = = = END-STATIC-FORWARD = = = */
-
 /**
  * find the name and name length we are looking for
  */
@@ -367,7 +337,7 @@ optionVendorOption(tOptions * pOpts, tOptDesc * pOD)
  *
  * @return success status
  */
-LOCAL tSuccess
+static tSuccess
 opt_find_long(tOptions * opts, char const * opt_name, tOptState * state)
 {
     char    name_buf[128];
@@ -408,7 +378,7 @@ opt_find_long(tOptions * opts, char const * opt_name, tOptState * state)
  * @param optValue   option flag character
  * @param pOptState  state about current option
  */
-LOCAL tSuccess
+static tSuccess
 opt_find_short(tOptions * pOpts, uint_t optValue, tOptState * pOptState)
 {
     tOptDesc * pRes = pOpts->pOptDesc;
@@ -649,7 +619,7 @@ get_opt_arg_none(tOptions * pOpts, tOptState * o_st)
  *  @param[in,out] o_st  the option processing state
  *  @returns SUCCESS or FAILURE
  */
-LOCAL tSuccess
+static tSuccess
 get_opt_arg(tOptions * opts, tOptState * o_st)
 {
     o_st->flags |= (o_st->pOD->fOptState & OPTST_PERSISTENT_MASK);
@@ -690,7 +660,7 @@ get_opt_arg(tOptions * opts, tOptState * o_st)
  *  @param[in,out] o_st  the option processing state
  *  @returns SUCCESS or FAILURE
  */
-LOCAL tSuccess
+static tSuccess
 find_opt(tOptions * opts, tOptState * o_st)
 {
     /*

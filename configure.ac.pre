@@ -107,10 +107,10 @@ fi]
 AC_DEFINE_UNQUOTED([SNV_LONG_DOUBLE],$snv_long_double,
                    [Define this to the long+double type])
 AC_CHECK_TYPES([long long, uintmax_t, size_t, wchar_t])
-AC_CHECK_SIZEOF(char*, 4)
-AC_CHECK_SIZEOF(int,   4)
-AC_CHECK_SIZEOF(long,  4)
-AC_CHECK_SIZEOF(short, 2)
+AC_CHECK_SIZEOF(char*)
+AC_CHECK_SIZEOF(int)
+AC_CHECK_SIZEOF(long)
+AC_CHECK_SIZEOF(short)
 # ----------------------------------------------------------------------
 
 # ----------------------------------------------------------------------

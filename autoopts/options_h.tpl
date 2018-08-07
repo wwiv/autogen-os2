@@ -495,6 +495,7 @@ struct options {
     void *                      pSavedState;
 
     /// The procedure to call to print usage text
+    /* __attribute__((__noreturn__)) */
     // coverity[+kill]
     tpUsageProc                 pUsageProc;
     /// The procedure to call to translate translatable option messages

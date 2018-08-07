@@ -40,61 +40,6 @@
 #define GRAPH_CH(_ch) \
     ((((unsigned)_ch) <= 0x7E) && (((unsigned)_ch) > ' '))
 
-/* = = = START-STATIC-FORWARD = = = */
-static unsigned int
-parse_usage_flags(ao_flag_names_t const * fnt, char const * txt);
-
-static inline bool
-do_gnu_usage(tOptions * pOpts);
-
-static inline bool
-skip_misuse_usage(tOptions * pOpts);
-
-static void
-print_offer_usage(tOptions * opts);
-
-static void
-print_usage_details(tOptions * opts, int exit_code);
-
-static void
-print_one_paragraph(char const * text, bool plain, FILE * fp);
-
-static void
-prt_conflicts(tOptions * opts, tOptDesc * od);
-
-static void
-prt_one_vendor(tOptions *    opts,  tOptDesc *   od,
-               arg_types_t * argtp, char const * usefmt);
-
-static void
-prt_vendor_opts(tOptions * opts, char const * title);
-
-static void
-prt_extd_usage(tOptions * opts, tOptDesc * od, char const * title);
-
-static void
-prt_ini_list(char const * const * papz, char const * ini_file,
-             char const * path_nm);
-
-static void
-prt_preamble(tOptions * opts, tOptDesc * od, arg_types_t * at);
-
-static void
-prt_one_usage(tOptions * opts, tOptDesc * od, arg_types_t * at);
-
-static void
-prt_opt_usage(tOptions * opts, int ex_code, char const * title);
-
-static void
-prt_prog_detail(tOptions * opts);
-
-static int
-setGnuOptFmts(tOptions * opts, char const ** ptxt);
-
-static int
-setStdOptFmts(tOptions * opts, char const ** ptxt);
-/* = = = END-STATIC-FORWARD = = = */
-
 /**
  * Parse the option usage flags string.  Any parsing problems yield
  * a zero (no flags set) result.  This function is internal to
@@ -171,7 +116,7 @@ parse_usage_flags(ao_flag_names_t const * fnt, char const * txt)
  *                      environment variable is parsed.
  * @param[in,out] opts  the program option descriptor
  */
-LOCAL void
+static void
 set_usage_flags(tOptions * opts, char const * flg_txt)
 {
 #   define _aof_(_n, _f)   { sizeof(#_n)-1, _f, #_n },
@@ -569,7 +514,7 @@ optionPrintParagraphs(char const * text, bool plain, FILE * fp)
  *  If "exitCode" is "AO_EXIT_REQ_USAGE" (normally 64), then output will to
  *  to stdout and the actual exit code will be "EXIT_SUCCESS".
 =*/
-void
+noreturn void
 optionUsage(tOptions * opts, int usage_exit_code)
 {
     int exit_code = (usage_exit_code == AO_EXIT_REQ_USAGE)

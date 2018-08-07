@@ -1260,15 +1260,14 @@ IF (exist? "usage-message")     =]
  * @param[in] ap  the var-arg list.
  * @noreturn
  */
-void
-[=(. lc-prefix)=]vusage_message(char const * fmt, va_list ap)
+[=(. no-return-str)=]vusage_message(char const * fmt, va_list ap)
 {
     char const * er_leader = _("[= prog-name =] usage error:\n");
     fputs(er_leader, stderr);
     vfprintf(stderr, fmt, ap);
-    [= (string-append usage-proc "(&" pname "Options, " usage-err-name ");") =]
-    /* NOTREACHED */
-    exit(1);
+    [= (string-append usage-proc "(&" pname "Options, " usage-err-name ")") =];
+    /* NOTREACHED, but C11 compilers cannot tell. */
+    abort();
 }
 
 /**
@@ -1279,14 +1278,11 @@ void
  * @param[in] ... the argument list for the message
  * @noreturn
  */
-void
-[=(. lc-prefix)=]usage_message(char const * fmt, ...)
+[=(. no-return-str)=]usage_message(char const * fmt, ...)
 {
     va_list ap;
     va_start(ap, fmt);
     [=(. lc-prefix)=]vusage_message(fmt, ap);
-    /* NOTREACHED */
-    va_end(ap);
 }
 [=
 
@@ -1303,8 +1299,7 @@ IF (exist? "die-code")
  * @param[in] ap         the argument list for the message
  * @noreturn
  */
-void
-[=(. lc-prefix)=]vdie(int exit_code, char const * fmt, va_list ap)
+[=(. no-return-str)=]vdie(int exit_code, char const * fmt, va_list ap)
 {
     char const * die_leader = _("[= prog-name =] fatal error:\n");[=
   (set! tmp-text (get "die-code"))
@@ -1315,7 +1310,6 @@ void
     vfprintf(stderr, fmt, ap);
     fflush(stderr);
     exit(exit_code);
-    /* NOTREACHED */
 }
 
 /**
@@ -1326,14 +1320,11 @@ void
  * @param[in] ...        the list of arguments for the message
  * @noreturn
  */
-void
-[=(. lc-prefix)=]die(int exit_code, char const * fmt, ...)
+[=(. no-return-str)=]die(int exit_code, char const * fmt, ...)
 {
     va_list ap;
     va_start(ap, fmt);
     vdie(exit_code, fmt, ap);
-    /* NOTREACHED */
-    va_end(ap);
 }
 
 /**
@@ -1344,12 +1335,10 @@ void
  * @param[in] fname      the file name the operation was on.
  * @noreturn
  */
-void
-[=(. lc-prefix)=]fserr(int exit_code, char const * op, char const * fname)
+[=(. no-return-str)=]fserr(int exit_code, char const * op, char const * fname)
 {
     char const * fserr_fmt = _("fserr %d (%s) performing '%s' on %s\n");
     die(exit_code, fserr_fmt, errno, strerror(errno), op, fname);
-    /* NOTREACHED */
 }
 [=
 ENDIF die-code              =][=

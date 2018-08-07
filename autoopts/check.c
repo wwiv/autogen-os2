@@ -100,7 +100,7 @@ occurs_enough(tOptions * pOpts, tOptDesc * pOD)
  *
  *  Make sure that the argument list passes our consistency tests.
  */
-LOCAL bool
+static bool
 is_consistent(tOptions * pOpts)
 {
     tOptDesc * pOD   = pOpts->pOptDesc;

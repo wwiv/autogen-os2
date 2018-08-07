@@ -31,19 +31,8 @@ struct if_stack {
     macro_t * pElse;
 };
 
-static tIfStack  current_if;
-static load_proc_t mLoad_Elif, mLoad_Else;
-
-/* = = = START-STATIC-FORWARD = = = */
-static bool
-eval_true(void);
-
-static macro_t *
-mLoad_Elif(templ_t * pT, macro_t * pMac, char const ** ppzScan);
-
-static macro_t *
-mLoad_Else(templ_t * pT, macro_t * pMac, char const ** ppzScan);
-/* = = = END-STATIC-FORWARD = = = */
+ static tIfStack  current_if;
+ static load_proc_t mLoad_Elif, mLoad_Else;
 
 /*
  *  eval_true - should a string be interpreted as TRUE?

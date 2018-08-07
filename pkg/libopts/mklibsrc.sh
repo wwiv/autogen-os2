@@ -1,6 +1,9 @@
-#! /bin/sh
+#! /bin/echo thils-file-should-not-be-directly-executed
 ##  -*- Mode: shell-script -*-
+##
 ## mklibsrc.sh --   make the libopts tear-off library source tarball
+##
+## This file is called via $(POSIX_SHELL) in autoopts/Makefile
 ##
 ##  This file is part of AutoGen.
 ##  AutoGen Copyright (C) 1992-2018 by Bruce Korb - all rights reserved
@@ -19,6 +22,10 @@
 ##  with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 test ${#CDPATH} -gt 0 && CDPATH=''
+test -d "${top_builddir}" && test -d "${top_srcdir}" || {
+  echo top_builddir and top_srcdir must specify a directory >&2
+  exit 1
+}
 top_builddir=`cd $top_builddir ; pwd`
 top_srcdir=`cd $top_srcdir ; pwd`
 
@@ -39,7 +46,7 @@ tagd=`pwd`/${tag}
 #
 cd ${top_builddir}/autoopts
 files='libopts.c gettext.h parse-duration.c parse-duration.h
-	stdnoreturn.in.h '$(
+	stdnoreturn.in.h _Noreturn.h '$(
     fgrep '#include' libopts.c | \
        sed -e 's,"$,,;s,#.*",,' )
 
@@ -80,7 +87,7 @@ touch MakeDefs.inc
 
 vers=${AO_CURRENT}:${AO_REVISION}:${AO_AGE}
 {
-  sed $'s/^\t//' << EOMakefile
+  cat <<- EOMakefile
 	## LIBOPTS Makefile
 	MAINTAINERCLEANFILES    = Makefile.in
 	if INSTALL_LIBOPTS
@@ -98,11 +105,14 @@ vers=${AO_CURRENT}:${AO_REVISION}:${AO_AGE}
 	libopts.c:		\$(BUILT_SOURCES)
 		@: do-nothing rule to avoid default SCCS get
 
-EOMakefile
+	EOMakefile
 
   printf '\n# Makefile fragment from gnulib-s stdnoreturn module:\n#\n'
   sed '/^#/d;/^$/d;s/top_srcdir/srcdir/' \
     ${top_srcdir}/pkg/libopts/stdnoreturn.mk
+  sed '1,/^Makefile.am:/d;/^[A-Z][a-z0-9-]*:/,$d' \
+    ${top_srcdir}/pkg/libopts/_Noreturn
+
   printf '\nEXTRA_DIST += \\\n'
   find $(ls -A) -type f \
     | env LC_COLLATE=C sort \

@@ -52,7 +52,7 @@ cat  >&3 <<- _EOF_
 if ${VERBOSE}
 then
     cat  >&3 <<- _EOF_
-	PS4='>${testname}-\${FUNCNAME-mkexp}> '
+	PS4='+${testname}-\${FUNCNAME-mkexp}-\$LINENO> '
 	set -x
 	run_ag()
 	{

@@ -23,7 +23,8 @@
 TARG = getdefs
 
 bin_PROGRAMS    = getdefs
-gdsrcs          = getdefs.h proto.h getdefs.c gdemit.c gdinit.c
+getdefs_LDFLAGS = -no-install
+gdsrcs          = getdefs.h proto.h gdemit.c gdinit.c getdefs.c
 getdefs_SOURCES = proto.h
 BUILT_SOURCES   = gd.c
 nodist_getdefs_SOURCES = $(BUILT_SOURCES)
@@ -36,8 +37,6 @@ RUN_AG          = $(AG_ENV) $(SHELL) "${top_srcdir}/build-aux/run-ag.sh"
 
 all : gen
 gen : $(BUILT_SOURCES) $(DOCFILES)
-
-
 
 if AMDEP
 DEPFL_OPTS = $(DEPDIR)/opts-dep.mk

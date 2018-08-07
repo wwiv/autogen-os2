@@ -48,7 +48,7 @@ v_list="$*"
 r_list=$(ix=$# ; while (( ix > 0 )) ; do eval echo \${$ix}
          (( ix = ix - 1 )) ; done)
 i_list="[= (join " " (stack "iface.i-name")) =]"
-PS4='>${FUNC_NAME:-ag}> '
+PS4='+ag=${FUNC_NAME:-=}-$LINENO> '
 
 fill_in() {
   for v in $r_list

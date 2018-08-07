@@ -63,6 +63,8 @@
 #pragma  GCC diagnostic pop
 #endif
 
+#define DEFINE_FSM
+
 #include "ag-text.h"
 #include "opts.h"
 #include "expr.h"
@@ -70,6 +72,7 @@
 #include "directive.h"
 #include "snprintfv/printf.h"
 #include "scribble.h"
+#include "pseudo-fsm.h"
 
 #define  LOG10_2to32  10  /* rounded up */
 
@@ -584,7 +587,6 @@ MODE v2c_t p2p VALUE( { NULL } );
  *  Code variations based on the version of Guile:
  */
 #include "guile-iface.h"
-
 #include "proto.h"
 
 /**
@@ -627,7 +629,6 @@ static inline SCM ag_eval(char const * str)
  */
 #define HIDE_FN(_t)  _t
 
-#define LOCAL static
 #endif /* AUTOGEN_BUILD */
 /** @}
  *

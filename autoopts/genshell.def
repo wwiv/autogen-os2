@@ -30,7 +30,7 @@ autogen definitions options;
  */
 
 copyright = {
-    date  = "1999-2017";
+    date  = "1999-2018";
     owner = "Bruce Korb";
     eaddr = "autogen-users@lists.sourceforge.net";
     type  = lgplv2;
@@ -75,3 +75,9 @@ detail =<<- _EOF_
 	will be replaced by the newly generated text.  The first @code{#!}
 	line will be regenerated.
 	_EOF_;
+
+export = <<- EndOfText
+	#define ch_t  unsigned char
+	#define cc_t  const unsigned char
+	#define cch_t char const
+	EndOfText;

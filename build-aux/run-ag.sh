@@ -25,6 +25,7 @@
 # any containing directory must be created. The target is created with a
 # very old time stamp.
 #
+AGexe=/u/bkorb/tools/ag/autogen-bld/agen5/.libs/autogen
 find_exe() {
   eval local exe=\${$1}
   test -x "$exe" && return 0

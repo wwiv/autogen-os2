@@ -2015,8 +2015,8 @@ This attribute will cause two procedures to be added to the code file:
 (see @code{prefix}, below).  They are declared in the
 generated header, thus:
 @example
-extern void vusage_message(char const * fmt, va_list ap);
-extern void usage_message(char const * fmt, ...);
+noreturn extern void vusage_message(char const * fmt, va_list ap);
+noreturn extern void usage_message(char const * fmt, ...);
 @end example
 @noindent
 These functions print the message to @file{stderr} and invoke the usage
@@ -2033,22 +2033,12 @@ message.
 
 The profiles for these functions are:
 @example
-extern void vdie( int exit_code, char const * fmt, va_list);
-extern void die(  int exit_code, char const * fmt, ...);
-extern void fserr(int exit_code, char const * op, char const * fname);
-static inline void
+noreturn extern void vdie( int exit_code, char const * fmt, va_list);
+noreturn extern void die(  int exit_code, char const * fmt, ...);
+noreturn extern void fserr(int exit_code, char const * op, char const * fname);
+noreturn static inline void
 nomem_err(size_t sz, char const * what) @{...@}
 @end example
-
-@item no-return
-@vindex no-return
-If @code{usage-message} or @code{die-code} are specified, you may also
-specify that the generated functions are marked as ``noreturn'' with
-this attribute.  If this attribute is not empty, then the specified string
-is used instead of ``noreturn''.  If ``noreturn'' has not been defined
-before these functions are declared, then it will be ``#define''-d to the
-empty string.  No such protection is made for any non-default value.
-These functions will be declared ``extern noreturn void''.
 
 @item export
 @vindex export
@@ -2056,7 +2046,7 @@ This string is inserted into the .h interface file.  Generally used for
 global variables or @code{#include} directives required by
 @code{flag-code} text and shared with other program text.
 Do not specify your configuration header (@file{config.h}) in this
-attribute or the @code{include} attribute, however.  Instead, use
+attribute or the @code{include} attribute.  Instead, use
 @code{config-header}, above.
 
 @item guard-option-names

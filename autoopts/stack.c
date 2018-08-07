@@ -176,7 +176,7 @@ optionUnstackArg(tOptions * opts, tOptDesc * od)
  *  a pointer to the argument list structure.  It gets passed around
  *  as an opaque address.
  */
-LOCAL void
+static void
 addArgListEntry(void ** ppAL, void * entry)
 {
     tArgList * pAL = *(void **)ppAL;

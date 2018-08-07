@@ -74,6 +74,7 @@ typedef int tSuccess;
 #undef NUL
 #define NUL '\0'
 
+#define MOD_LOCAL static
 #define parse_duration option_parse_duration
 
 #endif /* AUTOGEN_PROJECT_H */

@@ -243,7 +243,7 @@ static char z_opts[] = "o:s:FXM2hv";
 /*
  *  AutoOpts library replacement routines:
  */
-void
+noreturn void
 optionUsage (tOptions * pOptions, int status)
 {
   if (status != 0)
@@ -267,7 +267,7 @@ Usage:  test_getopt { -<flag> [<val>] }...\n\n\
   exit (status);
 }
 
-void
+noreturn void
 optionPrintVersion (tOptions * pOptions, tOptDesc * pOptDesc)
 {
   char const * pz_by =
@@ -475,7 +475,7 @@ static char z_opts[] = "o:s:h";
 /*
  *  AutoOpts library replacement routines:
  */
-void
+noreturn void
 optionUsage (tOptions * pOptions, int status)
 {
   if (status != 0)
@@ -501,7 +501,7 @@ hyphen and the flag character.\n\
   exit (status);
 }
 
-void
+noreturn void
 optionPrintVersion (tOptions * pOptions, tOptDesc * pOptDesc)
 {
   char const * pz_by =

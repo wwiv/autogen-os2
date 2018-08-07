@@ -17,6 +17,11 @@
 ##  You should have received a copy of the GNU General Public License along
 ##  with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+PS4='+mtx=${FUNCNAME:-=}-$LINENO> '
+exec 2> ${0%.sh}.log
+
+set -x
+
 typeset -r prog=$(basename "$0" .sh)
 typeset -r progdir=$(\cd $(dirname "$0") && pwd -P)
 typeset -r program=${progdir}/$(basename "$0")
@@ -260,7 +265,7 @@ build_gnudocs()
   title=`sed -n 's/^@title  *//p' agdoc.texi`
   email=--email' '`sed -n "$sedcmd" agdoc.texi`
   opts="--texi2html ${email}"
-  PS4='>${FUNCNAME:-gd}> ' ${SHELL} ${dashx} \
+  PS4='+gd=${FUNCNAME:-=}-$LINENO> ' ${SHELL} ${dashx} \
     ${top_srcdir}/config/gendocs.sh $opts autogen "$title"
 }
 
@@ -285,7 +290,7 @@ mk_autogen_texi() {
   fi
 }
 
-PS4='>agt-${FUNCNAME}> '
+PS4='+agt=${FUNCNAME:-=}-$LINENO> '
 set -x
 GEN_BASE=agdoc
 test "X$1" = X--force && {

@@ -31,7 +31,7 @@
  *  13aa749a5b0a454917a944ed8fffc530b784f5ead522b1aacaf4ec8aa55a6239  COPYING.mbsd
  */
 
-LOCAL tSuccess
+static tSuccess
 too_many_occurrences(tOptions * opts, tOptDesc * od)
 {
     if ((opts->fOptSet & OPTPROC_ERRSTOP) != 0) {

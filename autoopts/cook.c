@@ -29,14 +29,6 @@
  *  13aa749a5b0a454917a944ed8fffc530b784f5ead522b1aacaf4ec8aa55a6239  COPYING.mbsd
  */
 
-/* = = = START-STATIC-FORWARD = = = */
-static char *
-nl_count(char * start, char * end, int * lnct_p);
-
-static bool
-contiguous_quote(char ** pps, char * pq, int * lnct_p);
-/* = = = END-STATIC-FORWARD = = = */
-
 /*=export_func  ao_string_cook_escape_char
  * private:
  *

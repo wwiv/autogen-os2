@@ -434,7 +434,10 @@ log=${tmp_dir}/../genshellopt.log
   test $? -eq 0 || die "autogen failed to create genshellopt.c - See ${log}"
 
   ${CC} ${CFLAGS} ${opts} genshellopt.c ${LIBS}
-  test $? -eq 0 || die "could not compile genshellopt.c - See ${log}"
+  test $? -eq 0 || {
+    head -n 50000 genshellopt.[ch]
+    die "could not compile genshellopt.c - See ${log}"
+  }
 ) > ${log} 2>&1
 
 test -x ${tmp_dir}/genshellopt || \

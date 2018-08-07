@@ -197,7 +197,7 @@ AUTOOPTS.PC Generator script     =][=
 (out-switch "mk-autoopts-pc.in") =][=
 
 INVOKE script-preamble \=]
-PS4='>mk-aopc> '
+PS4='+aoc=${FUNCNAME:-=}-$LINENO> '
 dirname=`dirname ${1}`
 test -d ${dirname} || mkdir -p ${dirname} || exit 1
 

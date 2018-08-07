@@ -25,17 +25,6 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* = = = START-STATIC-FORWARD = = = */
-static void
-trace_macro(templ_t * tpl, macro_t * mac);
-
-static void
-do_stdout_tpl(templ_t * tpl);
-
-static void
-open_output(out_spec_t * spec);
-/* = = = END-STATIC-FORWARD = = = */
-
 /**
  *  Generate all the text within a block.
  *  The caller must know the exact bounds of the block.
@@ -44,7 +33,7 @@ open_output(out_spec_t * spec);
  * @param mac   first macro in series
  * @param emac  one past last macro in series
  */
-LOCAL void
+static void
 gen_block(templ_t * tpl, macro_t * mac, macro_t * emac)
 {
     /*
@@ -175,7 +164,7 @@ do_stdout_tpl(templ_t * tpl)
  * pop the current output spec structure.  Deallocate it and the
  * file name, too, if necessary.
  */
-LOCAL out_spec_t *
+static out_spec_t *
 next_out_spec(out_spec_t * os)
 {
     out_spec_t * res = os->os_next;
@@ -187,7 +176,7 @@ next_out_spec(out_spec_t * os)
     return res;
 }
 
-LOCAL void
+static void
 process_tpl(templ_t * tpl)
 {
     /*
@@ -284,7 +273,7 @@ process_tpl(templ_t * tpl)
     } while (output_specs != NULL);
 }
 
-LOCAL void
+static void
 set_utime(char const * fname)
 {
 #ifdef HAVE_UTIMENSAT
@@ -328,7 +317,7 @@ set_utime(char const * fname)
  * is also freed. The current output is set to the next in the
  * stack.
  */
-LOCAL void
+static void
 out_close(bool purge)
 {
     if ((cur_fpstack->stk_flags & FPF_NOCHMOD) == 0)

@@ -30,7 +30,7 @@ die() {
 }
 
 init() {
-    PS4='>tpc-${FUNCNAME}> '
+    PS4='+tpc-${FUNCNAME:-=}-$LINENO> '
     progpid=$$
     prog=`basename $0`
     progdir=`\cd \`dirname $0\` >/dev/null ; pwd`
@@ -53,7 +53,7 @@ collect_src() {
     cat 1>&8 <<- _EOF_
 	#define  AUTOOPTS_INTERNAL 1
 	#include "autoopts/project.h"
-	#define  LOCAL static
+
 	#include "ao-strs.h"
 	static char const ao_ver_string[] =
 	    "${AO_CURRENT}:${AO_REVISION}:${AO_AGE}\n";
@@ -232,6 +232,9 @@ fix_guile() {
     noret='\([^a-zA-Z0-9_]\)noreturn\([^a-zA-Z0-9_]\)'
     nores='\1__noreturn__\2'
     sedex="s@${noret}@${nores}@"
+
+    echo "Patching files to remove bare 'noreturn' keyword in" \
+	 $list >&2
 
     for f in $list
     do

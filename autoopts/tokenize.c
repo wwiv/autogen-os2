@@ -28,23 +28,6 @@
  *  13aa749a5b0a454917a944ed8fffc530b784f5ead522b1aacaf4ec8aa55a6239  COPYING.mbsd
  */
 
-#include <errno.h>
-#include <stdlib.h>
-
-#define cc_t   const unsigned char
-#define ch_t   unsigned char
-
-/* = = = START-STATIC-FORWARD = = = */
-static void
-copy_cooked(ch_t ** ppDest, char const ** ppSrc);
-
-static void
-copy_raw(ch_t ** ppDest, char const ** ppSrc);
-
-static token_list_t *
-alloc_token_list(char const * str);
-/* = = = END-STATIC-FORWARD = = = */
-
 static void
 copy_cooked(ch_t ** ppDest, char const ** ppSrc)
 {

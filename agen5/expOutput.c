@@ -39,10 +39,10 @@ typedef struct {
     out_stack_t * pOutDesc;
 } tSuspendName;
 
-static int            suspendCt   = 0;
-static int            suspAllocCt = 0;
-static tSuspendName * pSuspended  = NULL;
-static int            outputDepth = 1;
+ static int            suspendCt   = 0;
+ static int            suspAllocCt = 0;
+ static tSuspendName * pSuspended  = NULL;
+ static int            outputDepth = 1;
 
 /**
  * return the current line number
@@ -100,7 +100,7 @@ do_output_file_line(int line_delta, char const * fmt)
 /**
  * chmod a-w on a file descriptor.
  */
-LOCAL void
+static void
 make_readonly(void)
 {
 #if defined(HAVE_FSTAT) || defined(HAVE_FCHMOD)
@@ -146,7 +146,7 @@ make_readonly(void)
 /**
  * Some common code for creating a new file
  */
-LOCAL void
+static void
 open_output_file(char const * fname, size_t nmsz, char const * mode, int flags)
 {
     char *    pz;

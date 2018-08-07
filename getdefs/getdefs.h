@@ -113,7 +113,6 @@ size_t  blkUseCt   = 0;
 size_t  blkAllocCt = 0;
 pid_t   agPid      = -1;
 
-#define LOCAL static
 #endif /* GETDEFS_HEADER */
 
 /** @}

@@ -33,31 +33,6 @@
  *  13aa749a5b0a454917a944ed8fffc530b784f5ead522b1aacaf4ec8aa55a6239  COPYING.mbsd
  */
 
-/* = = = START-STATIC-FORWARD = = = */
-static void
-enum_err(tOptions * pOpts, tOptDesc * pOD,
-         char const * const * paz_names, int name_ct);
-
-static uintptr_t
-find_name(char const * name, tOptions * pOpts, tOptDesc * pOD,
-          char const * const *  paz_names, unsigned int name_ct);
-
-static void
-set_memb_shell(tOptions * pOpts, tOptDesc * pOD, char const * const * paz_names,
-               unsigned int name_ct);
-
-static void
-set_memb_names(tOptions * opts, tOptDesc * od, char const * const * nm_list,
-               unsigned int nm_ct);
-
-static uintptr_t
-check_membership_start(tOptDesc * od, char const ** argp, bool * invert);
-
-static uintptr_t
-find_member_bit(tOptions * opts, tOptDesc * od, char const * pz, int len,
-                char const * const * nm_list, unsigned int nm_ct);
-/* = = = END-STATIC-FORWARD = = = */
-
 static void
 enum_err(tOptions * pOpts, tOptDesc * pOD,
          char const * const * paz_names, int name_ct)

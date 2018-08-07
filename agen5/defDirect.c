@@ -32,13 +32,13 @@ AG_ABEND(aprf(DIRECT_NOMATCH_FMT, cctx->scx_fname, cctx->scx_line, _typ))
  * the value.  Thus, transitioning from skip mode to process mode increments
  * it, and the reverse decrements it.
  */
-static int  ifdef_lvl = 0;
+ static int  ifdef_lvl = 0;
 
 /**
  * Set "true" when inside of a "#if" block making "#elif" directives
  * ignorable.  When "false", "#elif" triggers an error.
  */
-static bool skip_if_block = false;
+ static bool skip_if_block = false;
 
 static char *
 end_of_directive(char * scan)
@@ -79,7 +79,7 @@ end_of_directive(char * scan)
  *  Decide what to do and return a pointer to the character
  *  where scanning is to resume.
  */
-LOCAL char *
+static char *
 processDirective(char * scan)
 {
     char * eodir = end_of_directive(scan);

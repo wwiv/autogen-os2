@@ -33,26 +33,15 @@ typedef enum {
     INPUT_FILE
 } def_input_mode_t;
 
-static def_ent_t * free_de_list = NULL;
-static void *      de_blocks    = NULL;
+ static def_ent_t * free_de_list = NULL;
+ static void *      de_blocks    = NULL;
 
 #define ENTRY_SPACE        (4096 - sizeof(void *))
 #define ENTRY_ALLOC_CT     (ENTRY_SPACE / sizeof(def_ent_t))
 #define ENTRY_ALLOC_SIZE   \
     ((ENTRY_ALLOC_CT * sizeof(def_ent_t)) + sizeof(void *))
 
-/* = = = START-STATIC-FORWARD = = = */
-static void
-free_def_ent(def_ent_t * de);
-
 static def_ent_t *
-insert_ent(def_ent_t * de);
-
-static def_input_mode_t
-ready_def_input(char const ** ppzfile, size_t * psz);
-/* = = = END-STATIC-FORWARD = = = */
-
-LOCAL def_ent_t *
 new_def_ent(void)
 {
     def_ent_t * res = free_de_list;
@@ -106,7 +95,7 @@ free_def_ent(def_ent_t * de)
  * Append a new entry at the end of a sibling (or twin) list.
  * @param de  new definition
  */
-LOCAL void
+static void
 print_ent(def_ent_t * de)
 {
     int ix = 32 - (2 * ent_stack_depth);
@@ -133,7 +122,7 @@ print_ent(def_ent_t * de)
  *
  * @param[in]  de  dead definition
  */
-LOCAL void
+static void
 delete_ent(def_ent_t * de)
 {
     def_ent_t * de_list = ent_stack[ ent_stack_depth ];
@@ -202,7 +191,7 @@ delete_ent(def_ent_t * de)
  * @returns usually, the input, but sometimes it is necessary to move
  *  the data, so returns the address of the incoming data regardless.
  */
-static def_ent_t *
+MOD_LOCAL def_ent_t *
 insert_ent(def_ent_t * de)
 {
     def_ent_t * de_list = ent_stack[ ent_stack_depth ];
@@ -326,7 +315,7 @@ insert_ent(def_ent_t * de)
 /**
  * Figure out where to insert an entry in a list of twins.
  */
-LOCAL def_ent_t *
+static def_ent_t *
 number_and_insert_ent(char * name, char const * idx_str)
 {
     def_ent_t * ent = new_def_ent();
@@ -356,7 +345,7 @@ number_and_insert_ent(char * name, char const * idx_str)
 /**
  * set the output file times to now.
  */
-LOCAL void
+static void
 mod_time_is_now(void)
 {
 #ifdef HAVE_UTIMENSAT
@@ -372,7 +361,7 @@ mod_time_is_now(void)
 /**
  * figure out which file descriptor to use for reading definitions.
  */
-static def_input_mode_t
+MOD_LOCAL def_input_mode_t
 ready_def_input(char const ** ppzfile, size_t * psz)
 {
     struct stat stbf;
@@ -449,7 +438,7 @@ ready_def_input(char const ** ppzfile, size_t * psz)
 /**
  *  Suck in the entire definitions file and parse it.
  */
-LOCAL void
+static void
 read_defs(void)
 {
     char const *  def_fname;
@@ -576,8 +565,7 @@ read_defs(void)
     dp_run_fsm();
 }
 
-
-LOCAL void
+static void
 unload_defs(void)
 {
     return;

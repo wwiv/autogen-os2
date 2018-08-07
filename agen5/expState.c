@@ -45,28 +45,11 @@
 # endif
 #endif
 
-/* = = = START-STATIC-FORWARD = = = */
-static int
-entry_length(char * name);
-
-static int
-count_entries(char * name);
-
-static SCM
-find_entry_value(SCM op, SCM obj, SCM test);
-
-static ver_type_t
-str2int_ver(char * pz);
-
-static SCM
-do_tpl_file_line(int line_delta, char const * fmt);
-/* = = = END-STATIC-FORWARD = = = */
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *  EXPRESSION EVALUATION SUPPORT ROUTINES
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-static int
+MOD_LOCAL int
 entry_length(char * name)
 {
     def_ent_t ** defs = find_def_ent_list(name);
@@ -87,8 +70,7 @@ entry_length(char * name)
     return res;
 }
 
-
-static int
+MOD_LOCAL int
 count_entries(char * name)
 {
     def_ent_t ** defs = find_def_ent_list(name);
@@ -109,7 +91,7 @@ count_entries(char * name)
 /**
  * Find a definition with a specific value
  */
-static SCM
+MOD_LOCAL SCM
 find_entry_value(SCM op, SCM obj, SCM test)
 {
     bool        has_idx;
@@ -247,7 +229,7 @@ ag_scm_base_name(void)
  *       (version-compare > "5.8.5-pre10" "5.8.5-pre4")
  *       @end example
 =*/
-static ver_type_t
+MOD_LOCAL ver_type_t
 str2int_ver(char * pz)
 {
     char * pzStr = pz;
@@ -671,7 +653,7 @@ ag_scm_tpl_file(SCM full)
 /**
  * guts of the template file/line functions
  */
-static SCM
+MOD_LOCAL SCM
 do_tpl_file_line(int line_delta, char const * fmt)
 {
     unsigned int ln_no = (unsigned int)cur_macro->md_line;

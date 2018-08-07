@@ -63,7 +63,7 @@ SNV_LIB         = $(top_builddir)/snprintfv/libsnprintfv.la
 nodist_autogen_SOURCES = ag.c
 autogen_SOURCES = $(gen_csrc)
 autogen_LDADD   = $(LO_LIB) $(SNV_LIB) $(GUILE_LIBS)
-autogen_LDFLAGS = $(DYNAMIC_AG) $(AG_STATIC_AUTOGEN)
+autogen_LDFLAGS = $(DYNAMIC_AG) $(AG_STATIC_AUTOGEN) -no-install
 autogen_CFLAGS  = $(GUILE_CFLAGS)
 stamp_script    = $(srcdir)/mk-stamps.sh
 
@@ -78,7 +78,8 @@ ag.c : Makefile
 	mk=`set -- $(MAKE) ; command -v $$1` ; \
 	echo 'static char const make_prog[] = "'$$mk'";' ; \
 	printf '\n#define  DEFINING 1\n' ; \
-	printf '#include "%s"\n' autoopts/project.h autogen.h $(csrc)
+	printf '#include "%s"\n' autoopts/project.h autogen.h ; \
+	printf '#include "%s"\n' $(csrc)
 
 STAMPENV = top_srcdir="$(top_srcdir)" top_builddir="$(top_builddir)" \
 	srcdir="$(srcdir)" AGexe="$(AGexe)" GDexe="$(GDexe)" CLexe="$(CLexe)" \

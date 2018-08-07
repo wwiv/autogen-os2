@@ -61,33 +61,13 @@ FILE * ag_pipe_fp;
 
 #define CHUNK_SZ  4096
 
-/* = = = START-STATIC-FORWARD = = = */
-/* static forward declarations maintained by :mkfwd */
-static char *
-loadFile(FILE * fp, size_t * pzSize);
-
-static void
-emitIndentation(void);
-
-static char *
-trim(char const * pzSrc, size_t * pSz);
-
-static xmlNodePtr
-printHeader(xmlDocPtr pDoc);
-
-static void
-printAttrs(xmlAttrPtr pAttr);
-
-static void
-printNode(xmlNodePtr pNode);
-
-static void
-printChildren(xmlNodePtr pNode);
-/* = = = END-STATIC-FORWARD = = = */
 #define TRIM(s,psz) trim( (char const *)(s), (size_t *)(psz) )
 
-extern void fork_ag(char const * pzInput);
-
+extern void       fork_ag(char const * pzInput);
+static char *     loadFile(FILE * fp, size_t * pzSize);
+static xmlNodePtr printHeader(xmlDocPtr pDoc);
+static void       printAttrs(xmlAttrPtr pAttr);
+static void       printChildren(xmlNodePtr pNode);
 
 int
 main(int argc, char ** argv)
@@ -465,7 +445,7 @@ printNode(xmlNodePtr pNode)
 
 
 static void
-printChildren( xmlNodePtr pNode )
+printChildren(xmlNodePtr pNode)
 {
     while (pNode != NULL) {
         printNode( pNode );

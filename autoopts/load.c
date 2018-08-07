@@ -31,26 +31,6 @@
  *  13aa749a5b0a454917a944ed8fffc530b784f5ead522b1aacaf4ec8aa55a6239  COPYING.mbsd
  */
 
-/* = = = START-STATIC-FORWARD = = = */
-static bool
-get_realpath(char * buf, size_t b_sz);
-
-static bool
-add_prog_path(char * buf, int b_sz, char const * fname, char const * prg_path);
-
-static bool
-add_env_val(char * buf, int buf_sz, char const * name);
-
-static char *
-assemble_arg_val(char * txt, tOptionLoadMode mode);
-
-static char *
-trim_quotes(char * arg);
-
-static bool
-direction_ok(opt_state_mask_t f, int dir);
-/* = = = END-STATIC-FORWARD = = = */
-
 static bool
 get_realpath(char * buf, size_t b_sz)
 {
@@ -314,7 +294,7 @@ add_env_val(char * buf, int buf_sz, char const * name)
  * @param[in,out] txt  the input and output string
  * @param[in]     mode the handling mode (cooking method)
  */
-LOCAL void
+static void
 munge_str(char * txt, tOptionLoadMode mode)
 {
     char * end;
@@ -486,7 +466,7 @@ direction_ok(opt_state_mask_t f, int dir)
  * @param[in]     direction  current processing direction (preset or not)
  * @param[in]     load_mode  option loading mode (OPTION_LOAD_*)
  */
-LOCAL void
+static void
 load_opt_line(tOptions * opts, tOptState * opt_state, char * line,
               tDirection direction, tOptionLoadMode load_mode )
 {

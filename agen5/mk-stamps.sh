@@ -55,9 +55,9 @@ then
         \\cd ..
         pwd`
     export top_srcdir top_builddir
-    . ${top_srcdir:-..}/config/bootstrap.shlib
+    . ${top_srcdir}/config/bootstrap.shlib
 
-    test -f ${top_builddir:-..}/config/shdefs || {
+    test -f ${top_builddir}/config/shdefs || {
 
         test -f ${top_builddir:-..}/config/mk-shdefs || {
             echo "mk-shdefs has not beein configured in ${top_builddir:-$PWD/..}"

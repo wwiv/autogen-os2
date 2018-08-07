@@ -28,50 +28,6 @@
  *  13aa749a5b0a454917a944ed8fffc530b784f5ead522b1aacaf4ec8aa55a6239  COPYING.mbsd
  */
 
-/* = = = START-STATIC-FORWARD = = = */
-static void
-file_preset(tOptions * opts, char const * fname, int dir);
-
-static char *
-handle_comment(char * txt);
-
-static char *
-handle_cfg(tOptions * opts, tOptState * ost, char * txt, int dir);
-
-static char *
-handle_directive(tOptions * opts, char * txt);
-
-static char *
-aoflags_directive(tOptions * opts, char * txt);
-
-static char *
-program_directive(tOptions * opts, char * txt);
-
-static char *
-handle_section(tOptions * opts, char * txt);
-
-static int
-parse_xml_encoding(char ** ppz);
-
-static char *
-trim_xml_text(char * intxt, char const * pznm, tOptionLoadMode mode);
-
-static void
-cook_xml_text(char * pzData);
-
-static char *
-handle_struct(tOptions * opts, tOptState * ost, char * txt, int dir);
-
-static char const *
-parse_keyword(tOptions * opts, char const * txt, tOptionValue * typ);
-
-static char const *
-parse_set_mem(tOptions * opts, char const * txt, tOptionValue * typ);
-
-static char const *
-parse_value(char const * txt, tOptionValue * typ);
-/* = = = END-STATIC-FORWARD = = = */
-
 /**
  *  Skip over some unknown attribute
  *  @param[in] txt   start of skpped text
@@ -997,7 +953,7 @@ handle_struct(tOptions * opts, tOptState * ost, char * txt, int dir)
  *  scanning the "homerc" list, or from a specific file request.
  *  (see "optionFileLoad()", the implementation for --load-opts)
  */
-LOCAL void
+static void
 intern_file_load(tOptions * opts)
 {
     uint32_t  svfl;
@@ -1198,7 +1154,7 @@ optionLoadOpt(tOptions * opts, tOptDesc * odesc)
  *
  * @returns NULL on failure, otherwise the scan point
  */
-LOCAL char const *
+static char const *
 parse_attrs(tOptions * opts, char const * txt, tOptionLoadMode * pMode,
             tOptionValue * pType)
 {
