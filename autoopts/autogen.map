@@ -63,6 +63,7 @@ option-name     "^-"          +variable-name
 value-name      +colon        +option-name
 name-sep        "[.]"
 compound-name   +value-name   +name-sep +horiz-white
+compact-name    +variable-name +name-sep
 scheme-note     +parentheses  +quote
 
 unquotable      "!-~"         -"#,;<=>[\\]`{}?*" -quote -parentheses

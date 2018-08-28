@@ -26,6 +26,14 @@
  *  with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef NUL
+#define NUL                     '\0'
+#endif
+
+#ifndef NL
+#define NL                      '\n'
+#endif
+
 MOD_LOCAL char const zBogusDef[] = "Bogus definition:\n%s\n";
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -43,86 +51,10 @@ MOD_LOCAL compar_func compar_text, compar_defname;
 #  include "compat/chmod.c"
 #endif
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *
- *   Main
- */
-int
-main(int argc, char ** argv)
-{
-    FILE * outFp;
-
-    optionProcess(&getdefsOptions, argc, argv);
-    validate_opts();
-
-    outFp = startAutogen();
-
-    doPreamble(outFp);
-
-    /*
-     *  Process each input file
-     */
-    {
-        int    ct  = STACKCT_OPT(INPUT);
-        char const ** ppz = STACKLST_OPT(INPUT);
-
-        do  {
-            processFile(*ppz++);
-        } while (--ct > 0);
-    }
-
-    /*
-     *  IF we don't have an ordering file, but we do have a "first index",
-     *  THEN alphabetize by definition name.
-     */
-    if ((pzIndexText == NULL) && HAVE_OPT(FIRST_INDEX)) {
-        qsort(VOIDP(papzBlocks), blkUseCt, sizeof(char *), compar_defname);
-        set_first_idx();
-    }
-
-    else if (ENABLED_OPT(ORDERING) && (blkUseCt > 1))
-        qsort(VOIDP(papzBlocks), blkUseCt, sizeof(char *), &compar_text);
-
-    printEntries(outFp);
-#ifdef HAVE_FCHMOD
-    fchmod(fileno(outFp), S_IRUSR|S_IRGRP|S_IROTH);
-#endif
-    fclose(outFp);
-
-    /*
-     *  IF output is to a file
-     *  THEN set the permissions and modification times
-     */
-    if (  (WHICH_IDX_AUTOGEN == INDEX_OPT_OUTPUT)
-       && (outFp != stdout) )  {
-        struct utimbuf tbuf;
-        tbuf.actime  = time((time_t *)NULL);
-        tbuf.modtime = modtime + 1;
-        utime(OPT_ARG(OUTPUT), &tbuf);
-#ifndef HAVE_CHMOD
-        chmod(OPT_ARG(OUTPUT), S_IRUSR|S_IRGRP|S_IROTH);
-#endif
-    }
-
-    /*
-     *  IF we are keeping a database of indexes
-     *     AND we have augmented the contents,
-     *  THEN append the new entries to the file.
-     */
-    if ((pzIndexText != NULL) && (pzEndIndex != pzIndexEOF))
-        update_db();
-
-    if (agPid != -1)
-        return awaitAutogen();
-
-    return EXIT_SUCCESS;
-}
-
-
-/*
+/**
  *  assignIndex
  */
-static char *
+MOD_LOCAL char *
 assignIndex(char * pzOut, char * pzDef)
 {
     char * pzMatch;
@@ -222,11 +154,10 @@ assignIndex(char * pzOut, char * pzDef)
     return pzOut;
 }
 
-
-/*
+/**
  *  awaitAutogen
  */
-static int
+MOD_LOCAL int
 awaitAutogen(void)
 {
     int  status;
@@ -252,11 +183,122 @@ awaitAutogen(void)
     return EXIT_FAILURE;
 }
 
+/**
+ *  buildPreamble
+ */
+MOD_LOCAL tSuccess
+buildPreamble(char ** def_scan_p, char ** out_scan_p, char const * fname, int line)
+{
+    char * def_scan = *def_scan_p;
+    char * out_scan = *out_scan_p;
 
-/*
+    char   def_bf[  MAXNAMELEN * 2 ];
+    char   name_bf[ MAXNAMELEN ];
+    char * def_str  = def_bf;
+    char * if_text  = NULL;
+
+    /*
+     *  Copy out the name of the entry type
+     */
+    *def_str++ = '`';
+    if (! IS_VAR_FIRST_CHAR(*def_scan))
+        goto fail_return;
+
+    {
+        char * end = SPN_COMPACT_NAME_CHARS(def_scan + 1);
+        size_t len = end - def_scan;
+        if (len >= MAXNAMELEN)
+            goto fail_return;
+        memcpy(def_str, def_scan, len);
+        def_str += len;
+        *def_str = NUL;
+        def_scan = end;
+    }
+
+    def_scan += (int)strspn(def_scan, "* \t");
+
+    /*
+     *  Copy out the name for this entry of the above entry type.
+     */
+    if (! IS_VAR_FIRST_CHAR(*def_scan))
+        goto fail_return;
+    {
+        char * end = SPN_VARIABLE_NAME_CHARS(def_scan + 1);
+        size_t len = end - def_scan;
+        if (len >= MAXNAMELEN)
+            goto fail_return;
+        memcpy(name_bf, def_scan, len);
+        name_bf[len] = NUL;
+        def_scan = end;
+    }
+
+    def_scan = SPN_HORIZ_WHITE_CHARS(def_scan);
+
+    /*
+     *  IF these names are followed by a comma and an "if" clause,
+     *  THEN we emit the definition with "#if..."/"#endif" around it
+     */
+    if (*def_scan == ',') {
+        def_scan++;
+        def_scan = SPN_HORIZ_WHITE_CHARS(def_scan);
+        if ((def_scan[0] == 'i') && (def_scan[1] == 'f'))
+            if_text = def_scan;
+    }
+
+    def_scan = strchr(def_scan, NL);
+    if (def_scan == NULL)
+        goto fail_return;
+
+    *def_scan = NUL;
+
+    /*
+     *  Now start the output.  First, the "#line" directive,
+     *  then any "#ifdef..." line and finally put the
+     *  entry type name into the output.
+     */
+    out_scan += sprintf(out_scan, zLineId, line, fname);
+    if (if_text != NULL)
+        out_scan += sprintf(out_scan, "#%s\n", if_text);
+    {
+        char * pz = def_bf+1;
+        while (*pz != NUL)
+            *out_scan++ = *pz++;
+    }
+
+    /*
+     *  IF we are indexing the entries,
+     *  THEN build the string by which we are indexing
+     *       and insert the index into the output.
+     */
+    if (pzIndexText != NULL) {
+        sprintf(def_str, "  %s'", name_bf);
+        out_scan = assignIndex(out_scan, def_bf);
+    }
+
+    /*
+     *  Now insert the name with a consistent name string prefix
+     *  that we use to locate the sort key later.
+     */
+    out_scan  += sprintf(out_scan, "%s%s';\n", zNameTag, name_bf);
+    *out_scan_p = out_scan;
+    *def_scan_p = def_scan;
+    *def_scan   = NL;  /* restore the newline.  Used in pattern match */
+
+    /*
+     *  Returning "PROBLEM" means the caller must emit the "#endif\n"
+     *  at the end of the definition.
+     */
+    return (if_text != NULL) ? PROBLEM : SUCCESS;
+
+ fail_return:
+    fprintf(stderr, zNoData, fname, line);
+    return FAILURE;
+}
+
+/**
  *  buildDefinition
  */
-static void
+MOD_LOCAL void
 buildDefinition(char * pzDef, char const * pzFile, int line, char * pzOut)
 {
     static char const zSrcFile[] = "    %s = '%s';\n";
@@ -364,115 +406,10 @@ buildDefinition(char * pzDef, char const * pzFile, int line, char * pzOut)
     else strcpy(pzOut, "};\n");
 }
 
-
-/*
- *  buildPreamble
- */
-static tSuccess
-buildPreamble(char ** ppzDef, char ** ppzOut, char const * fname, int line)
-{
-    char * pzDef      = *ppzDef;
-    char * pzOut      = *ppzOut;
-
-    char   def_bf[  MAXNAMELEN ];
-    char   name_bf[ MAXNAMELEN ];
-    char * def_str    = def_bf;
-    char * pzIfText   = NULL;
-
-    /*
-     *  Copy out the name of the entry type
-     */
-    *def_str++ = '`';
-    while (isalnum(*pzDef) || (*pzDef == '_') || (*pzDef == '.')
-          || (*pzDef == '[') || (*pzDef == ']'))
-        *def_str++ = *pzDef++;
-
-    *def_str = NUL;
-
-    pzDef += (int)strspn(pzDef, "* \t");
-
-    /*
-     *  Copy out the name for this entry of the above entry type.
-     */
-    {
-        char * name_str = name_bf;
-        while (isalnum(*pzDef) || (*pzDef == '_'))
-            *name_str++ = *pzDef++;
-        *name_str = NUL;
-    }
-
-    if (  (def_bf[1]  == NUL)
-       || (name_bf[0] == NUL) )  {
-        fprintf(stderr, zNoData, fname, line);
-        return FAILURE;
-    }
-
-    pzDef += (int)strspn(pzDef, " \t");
-
-    /*
-     *  IF these names are followed by a comma and an "if" clause,
-     *  THEN we emit the definition with "#if..."/"#endif" around it
-     */
-    if (*pzDef == ',') {
-        pzDef++;
-        pzDef += strspn(pzDef, " \t");
-        if ((pzDef[0] == 'i') && (pzDef[1] == 'f'))
-            pzIfText = pzDef;
-    }
-
-    pzDef = strchr(pzDef, '\n');
-    if (pzDef == NULL) {
-        fprintf(stderr, zNoData, fname, line);
-        return FAILURE;
-    }
-
-    *pzDef = NUL;
-
-    /*
-     *  Now start the output.  First, the "#line" directive,
-     *  then any "#ifdef..." line and finally put the
-     *  entry type name into the output.
-     */
-    pzOut += sprintf(pzOut, zLineId, line, fname);
-    if (pzIfText != NULL)
-        pzOut += sprintf(pzOut, "#%s\n", pzIfText);
-    {
-        char * pz = def_bf+1;
-        while (*pz != NUL)
-            *pzOut++ = *pz++;
-    }
-
-    /*
-     *  IF we are indexing the entries,
-     *  THEN build the string by which we are indexing
-     *       and insert the index into the output.
-     */
-    if (pzIndexText != NULL) {
-        sprintf(def_str, "  %s'", name_bf);
-        pzOut = assignIndex(pzOut, def_bf);
-    }
-
-    /*
-     *  Now insert the name with a consistent name string prefix
-     *  that we use to locate the sort key later.
-     */
-    pzOut  += sprintf(pzOut, "%s%s';\n", zNameTag, name_bf);
-    *ppzOut = pzOut;
-    *ppzDef = pzDef;
-    *pzDef  = '\n';  /* restore the newline.  Used in pattern match */
-
-    /*
-     *  Returning "PROBLEM" means the caller must emit the "#endif\n"
-     *  at the end of the definition.
-     */
-    return (pzIfText != NULL) ? PROBLEM : SUCCESS;
-}
-
-
-/*
+/**
  *  compar_defname
  */
-static int
+MOD_LOCAL int
 compar_defname(const void * p1, const void * p2)
 {
     char const * pzS1 = *(char const * const *)p1;
@@ -503,8 +440,7 @@ compar_defname(const void * p1, const void * p2)
     return strcmp(pz1, pz2);
 }
 
-
-/*
+/**
  *  compar_text
  *
  *  merely returns the relative ordering of two input strings.
@@ -513,7 +449,7 @@ compar_defname(const void * p1, const void * p2)
  *  earlier.  When we get here, we wil fail to find the "zNameTag"
  *  string and EXIT_FAILURE.
  */
-static int
+MOD_LOCAL int
 compar_text(const void * p1, const void * p2)
 {
     char * pz1 = strstr(*(char const * const *)p1, zNameTag);
@@ -568,7 +504,7 @@ compar_text(const void * p1, const void * p2)
 /*
  *  doPreamble
  */
-static void
+MOD_LOCAL void
 doPreamble(FILE * outFp)
 {
     /*
@@ -698,7 +634,7 @@ loadFile(char const * pzFname)
 /*
  *  printEntries
  */
-static void
+MOD_LOCAL void
 printEntries(FILE * fp)
 {
     size_t  ct  = blkUseCt;
@@ -722,16 +658,13 @@ printEntries(FILE * fp)
 /*
  *  processFile
  */
-static void
+MOD_LOCAL void
 processFile(char const * fname)
 {
     char * pzText = loadFile(fname); /* full text */
     char * pzScan;  /* Scanning Pointer  */
-    char * pzDef;   /* Def block start   */
     char * pzNext;  /* start next search */
-    char * pzDta;   /* data value        */
     int    lineNo = 1;
-    char * pzOut;
     regmatch_t  matches[MAX_SUBMATCH+1];
 
     if (pzText == NULL) {
@@ -751,6 +684,9 @@ processFile(char const * fname)
             "Warning: entry type not found on line %d in %s:\n\t%s\n";
 
         int  linesInDef = 0;
+        char * pzDef;   /* Def block start   */
+        char * pzDta;   /* data value        */
+        char * pzOut;
 
         /*
          *  Make sure there is a subexpression match!!
@@ -791,6 +727,12 @@ processFile(char const * fname)
             lineNo++;
         }
 
+        /*
+         * Allocate way more space than can possibly be used.
+         * There can be some increase in size due to reformatting the
+         * input text as AutoGen definitions, but it won't be double
+         * and the fixed overhead won't be 8K.
+         */
         pzOut = pzDta = (char *)malloc(2 * strlen(pzDef) + 8000);
 
         /*
@@ -835,7 +777,7 @@ processFile(char const * fname)
  *  of each different name, check for an index value.  If not supplied,
  *  then insert ''[OPT_VALUE_FIRST_INDEX]'' after the object name.
  */
-static void
+MOD_LOCAL void
 set_first_idx(void)
 {
     char    zNm[ 128 ] = { NUL };
@@ -884,7 +826,7 @@ set_first_idx(void)
     }
 }
 
-static FILE *
+MOD_LOCAL FILE *
 open_ag_file(char ** pzBase)
 {
     switch (WHICH_IDX_AUTOGEN) {
@@ -933,7 +875,7 @@ open_ag_file(char ** pzBase)
     return NULL;
 }
 
-static FILE *
+MOD_LOCAL FILE *
 open_ag_proc_pipe(char ** pzBase)
 {
     FILE * agFp;
@@ -976,7 +918,7 @@ open_ag_proc_pipe(char ** pzBase)
     return NULL;
 }
 
-static void
+MOD_LOCAL void
 exec_autogen(char ** pzBase)
 {
     char const ** paparg;
@@ -1032,7 +974,7 @@ exec_autogen(char ** pzBase)
 /*
  *  startAutogen
  */
-static FILE *
+MOD_LOCAL FILE *
 startAutogen(void)
 {
     char * pz;
@@ -1125,7 +1067,7 @@ startAutogen(void)
 /*
  *  update_db
  */
-static void
+MOD_LOCAL void
 update_db(void)
 {
     FILE * fp;
@@ -1150,6 +1092,81 @@ update_db(void)
     fclose(fp);
     chmod(OPT_ARG(ORDERING), 0444);
 #endif
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *
+ *   Main
+ */
+int
+main(int argc, char ** argv)
+{
+    FILE * outFp;
+
+    optionProcess(&getdefsOptions, argc, argv);
+    validate_opts();
+
+    outFp = startAutogen();
+
+    doPreamble(outFp);
+
+    /*
+     *  Process each input file
+     */
+    {
+        int    ct  = STACKCT_OPT(INPUT);
+        char const ** ppz = STACKLST_OPT(INPUT);
+
+        do  {
+            processFile(*ppz++);
+        } while (--ct > 0);
+    }
+
+    /*
+     *  IF we don't have an ordering file, but we do have a "first index",
+     *  THEN alphabetize by definition name.
+     */
+    if ((pzIndexText == NULL) && HAVE_OPT(FIRST_INDEX)) {
+        qsort(VOIDP(papzBlocks), blkUseCt, sizeof(char *), compar_defname);
+        set_first_idx();
+    }
+
+    else if (ENABLED_OPT(ORDERING) && (blkUseCt > 1))
+        qsort(VOIDP(papzBlocks), blkUseCt, sizeof(char *), &compar_text);
+
+    printEntries(outFp);
+#ifdef HAVE_FCHMOD
+    fchmod(fileno(outFp), S_IRUSR|S_IRGRP|S_IROTH);
+#endif
+    fclose(outFp);
+
+    /*
+     *  IF output is to a file
+     *  THEN set the permissions and modification times
+     */
+    if (  (WHICH_IDX_AUTOGEN == INDEX_OPT_OUTPUT)
+       && (outFp != stdout) )  {
+        struct utimbuf tbuf;
+        tbuf.actime  = time((time_t *)NULL);
+        tbuf.modtime = modtime + 1;
+        utime(OPT_ARG(OUTPUT), &tbuf);
+#ifndef HAVE_CHMOD
+        chmod(OPT_ARG(OUTPUT), S_IRUSR|S_IRGRP|S_IROTH);
+#endif
+    }
+
+    /*
+     *  IF we are keeping a database of indexes
+     *     AND we have augmented the contents,
+     *  THEN append the new entries to the file.
+     */
+    if ((pzIndexText != NULL) && (pzEndIndex != pzIndexEOF))
+        update_db();
+
+    if (agPid != -1)
+        return awaitAutogen();
+
+    return EXIT_SUCCESS;
 }
 
 /** @}
