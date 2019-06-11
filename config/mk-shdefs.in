@@ -130,7 +130,7 @@ configure() {
 
 set -x
 exec 9>&2
-tmp=$(mktemp --suffix=.tdir -d /tmp/shdefs-XXXXXXXXX)
+tmp=$(mktemp -d /tmp/shdefs-XXXXXXXXX)
 exec 2>> $tmp/mk-shdef.log
 init $0 $1
 mk_config

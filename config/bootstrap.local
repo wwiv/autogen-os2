@@ -198,6 +198,7 @@ config_versions() {
 	havelib
 	parse-duration 
 	snippet/_Noreturn
+	stat-time
 	stdnoreturn'
     cmd=$(echo ${GL_GNULIB_TOOL} $glopts $glmods)
     echo GNULIB-TOOL: $cmd

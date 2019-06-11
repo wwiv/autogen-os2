@@ -137,93 +137,170 @@ make_absolute( char const * string, char const * dot_path )
 }
 
 /*
+ *    Multiple `/'s     are collapsed to a single `/'.
+ *    Leading `./'s     are removed.
+ */
+static char *
+trim_path_leader( char * path )
+{
+    for (;;) {
+        switch (*path) {
+        case NUL:
+            return NULL;
+
+        case '.':
+            if (path[1] != '/')
+                return path;
+            path += 2;
+            continue;
+
+        case '/':
+            while (path[1] == '/')
+                path++;
+            return path;
+        }
+    }
+}
+
+/*
+ *    Trailing `/.'s    are removed.
+ *    Trailing `xxx/..'s   are removed.
+ *    Trailing `/'s     are removed.
+ */
+static size_t
+real_path_length( char * path )
+{
+    size_t res = strlen(path);
+
+    for (;;) {
+        char * end = path + res;
+        switch (res) {
+        default: // res >= 3
+            if ((end[-1] == '.') &&
+                (end[-2] == '.') &&
+                (end[-3] == '/')) {
+                res -= 3;
+                while ((res > 0) && (path[res - 1] == '/'))
+                    res--;
+                continue;
+            }
+            /* FALLTHROUGH: */
+
+        case 2:
+            if ((res > 1) &&
+                (end[-1] == '.') &&
+                (end[-2] == '/')) {
+                res -= 2;
+                while ((res > 0) && (path[res - 1] == '/'))
+                    res--;
+                continue;
+            }
+            /* FALLTHROUGH: */
+
+        case 1:
+            if ((end[-1] == '/')) {
+                res--;
+                while ((res > 0) && (path[res - 1] == '/'))
+                    res--;
+                continue;
+            }
+            /* FALLTHROUGH: */
+
+        case 0:
+            return res;
+        }
+    }
+}
+
+static void
+strip_up_dirs(char * path)
+{
+    static char const up_dir[] = "/../";
+    static size_t const skip_up_dir_sz = sizeof(up_dir) - 1;
+
+    char * scn;
+ restart:
+    scn = path;
+
+    for (;;) {
+        char * upone = scn = strstr(scn, up_dir);
+
+        if (scn == NULL)
+            return;
+
+        upone += skip_up_dir_sz;
+
+        /*
+         * scan backward for DIR character or start of path.
+         * IF start of path, then everything after "/../" is
+         * the canonical path. Otherwise, remove the directory
+         * name, "/" and the two dots.
+         */
+        for (;;) {
+            if (scn <= path) {
+                memmove(path, upone, strlen(upone) + 1);
+                goto restart;
+            }
+            if (*(--scn) == '/')
+                break;
+        }
+        /*
+         * We found a "/", so remove the directory name
+         */
+        memmove(++scn, upone, strlen(upone) + 1);
+    }
+}
+
+/*
  * Canonicalize PATH, and return a  new path.  The new path differs from
  * PATH in that:
  *
  *    Multiple `/'s     are collapsed to a single `/'.
  *    Leading `./'s     are removed.
  *    Trailing `/.'s    are removed.
+ *    Trailing `/..'s   are removed.
  *    Trailing `/'s     are removed.
  *    Non-leading `../'s and trailing `..'s are handled by removing
  *                    portions of the path.
  */
 static char *
-canonicalize_pathname( char *path )
+canonicalize_pathname(char const * path)
 {
-    int i, start;
-    char stub_char, *result;
+    size_t psz;
+    char * scn;
+    char * res;
 
-    /* The result cannot be larger than the input PATH. */
-    result = strdup( path );
+    path = trim_path_leader(path);
+    if (path == NULL)
+        goto leave_empty_handed;
 
-    stub_char = (*path == '/') ? '/' : '.';
+    psz = real_path_length(path);
+    if (psz == 0)
+        goto leave_empty_handed;
 
-    /* Walk along RESULT looking for things to compact. */
-    i = 0;
-    while (result[i]) {
-        while (result[i] != '\0' && result[i] != '/')
-            i++;
+    res = scn = malloc(psz + 1);
+    memcpy(res, path, psz);
+    res[psz] = '\0';
 
-        start = i++;
-
-        /* If we didn't find any  slashes, then there is nothing left to
-         * do.
-         */
-        if (!result[start])
+    /*
+     * Strip no-op dirs
+     */
+    for (;;) {
+        char * noop = strstr(scn, "/./");
+        if (noop == NULL)
             break;
-
-        /* Handle multiple `/'s in a row. */
-        while (result[i] == '/')
-            i++;
-
-#if !defined (apollo)
-        if ((start + 1) != i)
-#else
-        if ((start + 1) != i && (start != 0 || i != 2))
-#endif /* apollo */
-        {
-            strcpy( result + start + 1, result + i );
-            i = start + 1;
-        }
-
-        /* Handle backquoted `/'. */
-        if (start > 0 && result[start - 1] == '\\')
-            continue;
-
-        /* Check for trailing `/', and `.' by itself. */
-        if ((start && !result[i])
-            || (result[i] == '.' && !result[i+1])) {
-            result[--i] = '\0';
-            break;
-        }
-
-        /* Check for `../', `./' or trailing `.' by itself. */
-        if (result[i] == '.') {
-            /* Handle `./'. */
-            if (result[i + 1] == '/') {
-                strcpy( result + i, result + i + 1 );
-                i = (start < 0) ? 0 : start;
-                continue;
-            }
-
-            /* Handle `../' or trailing `..' by itself. */
-            if (result[i + 1] == '.' &&
-                (result[i + 2] == '/' || !result[i + 2])) {
-                while (--start > -1 && result[start] != '/')
-                    ;
-                strcpy( result + start + 1, result + i + 2 );
-                i = (start < 0) ? 0 : start;
-                continue;
-            }
-        }
+        memmove(noop, noop + 2, strlen(noop + 1));
+        scn = noop;
     }
 
-    if (!*result) {
-        *result = stub_char;
-        result[1] = '\0';
-    }
+    strip_up_dirs(res);
+    return res;
 
-    return result;
+ leave_empty_handed:
+    res  = malloc(2);
+    res[0] = (*path == '/') ? '/' : '.';
+    res[1] = NUL;
+    return res;
 }
 
 /*

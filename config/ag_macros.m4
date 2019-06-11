@@ -39,6 +39,14 @@ AC_DEFUN([INVOKE_AG_MACROS_FIRST],[
   AC_PROG_GREP
   AC_PROG_EGREP
   AC_PROG_FGREP
+  stat_nsec_found=no
+  AC_CHECK_MEMBERS([struct stat.st_mtim, struct stat.st_mtimensec,
+      struct stat.st_mtimespec], [stat_nsec_found=yes], [],
+      [[#include <sys/stat.h>]])
+
+  if test "${stat_nsec_found}" != yes; then
+	AC_MSG_WARN(Cannot determine nanosecond field of struct stat)
+  fi
 ])
 
 

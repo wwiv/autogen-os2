@@ -425,12 +425,7 @@ MODE struct timespec    outfile_time, maxfile_time;
     || (  (((_f).tv_sec == (_s).tv_sec))        \
        && (((_f).tv_nsec < (_s).tv_nsec)) )     \
     )
-#undef  st_atime
-#define st_atime st_atim
-#undef  st_mtime
-#define st_mtime st_mtim
-#undef  st_ctime
-#define st_ctime st_ctim
+
 #endif // HAVE_UTIMENSAT
 
 /**

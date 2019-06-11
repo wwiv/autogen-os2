@@ -39,6 +39,13 @@ cd ${top_builddir}/pkg
 [ ! -d ${tag} ] || rm -rf ${tag}
 mkdir ${tag} ${tag}/compat ${tag}/autoopts ${tag}/m4
 tagd=`pwd`/${tag}
+prog=${0##*/}
+
+die() {
+    echo "$prog fatal error:  $*"
+    kill -TERM $progpid
+    exit 1
+} >&2
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
@@ -68,7 +75,8 @@ cp -f ${top_srcdir}/pkg/libopts/COPYING.* ${tagd}/.
 
 cd ${top_srcdir}/compat
 cp windows-config.h compat.h pathfind.c snprintf.c strdup.c strchr.c \
-   ../config/snippet/_Noreturn.h ${tagd}/compat/.
+   ../config/snippet/_Noreturn.h ${tagd}/compat/. || \
+  die "compat sources could not be found"
 #
 #  END WORK IN SOURCE DIRECTORY
 #
