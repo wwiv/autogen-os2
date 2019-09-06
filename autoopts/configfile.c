@@ -802,10 +802,9 @@ trim_xml_text(char * intxt, char const * pznm, tOptionLoadMode mode)
         pz[1] = '/';
         memcpy(pz+2, pznm, nm_len);
         nm_len  += 2;
-        pz[nm_len++] = '>';
+        pz[nm_len++] = '>'; // nm_len is now length of end mark
         pz[nm_len]   = NUL;
 
-        *intxt = ' ';
         etext = strstr(intxt, pz);
         if (pz != z) AGFREE(pz);
     }
@@ -825,6 +824,7 @@ trim_xml_text(char * intxt, char const * pznm, tOptionLoadMode mode)
 }
 
 /**
+ * process hex and amphersand encoded characters.
  */
 static void
 cook_xml_text(char * pzData)
