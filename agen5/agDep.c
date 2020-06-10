@@ -294,6 +294,8 @@ tidy_dep_file(void)
     /*
      * Trim off the temporary suffix and rename the dependency file into
      * place.  We used a mkstemp name in case autogen failed.
+     * NOTE: if there is another autogen running concurrently producing
+     * the same-named dependency file, renaming might fail. Guard against it.
      */
     do  {
         char * pze = strrchr(dep_file, '-');
@@ -308,7 +310,8 @@ tidy_dep_file(void)
         pzn[len] = NUL;
 
         unlink(pzn);
-        rename(dep_file, pzn);
+        if (rename(dep_file, pzn) != 0)
+            fserr(AUTOGEN_EXIT_FS_ERROR, "rename", pzn);
         AGFREE(dep_file);
         dep_file = pzn;
     } while (false);

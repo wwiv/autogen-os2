@@ -251,7 +251,8 @@ ag_scm_out_move(SCM new_file)
 
     if (strcmp(pz, cur_fpstack->stk_fname) != 0) {
 
-        rename(cur_fpstack->stk_fname, pz);
+        if (rename(cur_fpstack->stk_fname, pz) != 0)
+            fserr(AUTOGEN_EXIT_FS_ERROR, "rename", pz);
 
         if (dep_fp != NULL) {
             rm_target_file(cur_fpstack->stk_fname);

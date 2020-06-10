@@ -30,10 +30,22 @@
 #
 :+][+:
 (out-push-new)  :+]
-if test -z "${MAN_PAGE_DATE}"
-then LC_ALL=C date '+%d %b %Y' | sed 's/  */ /g'
-else echo "${MAN_PAGE_DATE}"
-fi
+  if test -n "${MAN_PAGE_DATE}"
+  then mpdate="${MAN_PAGE_DATE}"
+
+  elif test -n "${SOURCE_DATE_EPOCH}"
+  then mpdate=$(
+    LC_ALL=C
+    date -u -d@${SOURCE_DATE_EPOCH} '+%d %b %Y' | \
+      sed 's/  */ /g'
+    )
+
+  else mpdate=$(date +%Y-%m-%d)
+  fi
+  if test -z "$mpdate"
+  then date +%Y-%m-%d
+  else echo "$mpdate"
+  fi
 [+:
 (define mpage-date (shell (out-pop #t)))
 

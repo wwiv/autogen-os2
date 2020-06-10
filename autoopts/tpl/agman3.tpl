@@ -50,9 +50,19 @@ FOR export-func                +}{+
          (get "name") ".3" ))
 
 +}.TH {+name+} 3 {+ `
-  if test -z "${MAN_PAGE_DATE}"
+  if test -n "${MAN_PAGE_DATE}"
+  then mpdate="${MAN_PAGE_DATE}"
+
+  elif test -n "${SOURCE_DATE_EPOCH}"
+  then mpdate=$(
+    date -u -d@${SOURCE_DATE_EPOCH:-$(date +%s)} +%Y-%m-%d )
+
+  else mpdate=$(date +%Y-%m-%d)
+  fi
+  if test -z "$mpdate"
   then date +%Y-%m-%d
-  else echo "${MAN_PAGE_DATE}"; fi
+  else echo "$mpdate"
+  fi
 ` +} "" "Programmer's Manual"
 {+
 

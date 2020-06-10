@@ -95,8 +95,12 @@ config_tools()
         i_made_temp_dir=false
 
     else
-        TEMP_DIR=`mktemp -d ${TMPDIR:-/tmp}/bs-XXXXXX`
-        i_made_temp_dir=true
+        rm -rf ${TMPDIR:-/tmp}/bs-ag-??????
+        TEMP_DIR=`mktemp -d ${TMPDIR:-/tmp}/bs-ag-XXXXXX`
+        case "X$-" in
+            *x* ) i_made_temp_dir=false ;;
+            *   ) i_made_temp_dir=true ;;
+        esac
         export TEMP_DIR
     fi
     test -d "$TEMP_DIR" || {
