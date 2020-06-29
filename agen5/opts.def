@@ -127,6 +127,8 @@ exit-desc[5]  = 'a file system error stopped the program.';
 exit-name[6]  = no-mem;
 exit-desc[6]  = 'Insufficient memory to operate.';
 
+#include optexits.def
+
 exit-name[128] = signal;
 exit-desc[128] = <<- _EndDesc_
 	#PROG# exited due to catching a signal.  If your template includes

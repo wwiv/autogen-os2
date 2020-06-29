@@ -431,7 +431,7 @@ ag_scm_get(SCM v_name, SCM alt_v_name)
         char * vnm = ag_scm2zchars(v_name, "vname");
         def_ent_t * de  = find_def_ent(vnm, &x);
         if ((de != NULL) && (de->de_type == VALTYP_TEXT))
-            return scm_from_latin1_string(de->de_val.dvu_text);
+            return scm_from_locale_string(de->de_val.dvu_text);
         if (OPT_VALUE_TRACE >= TRACE_EXPRESSIONS)
             fprintf(trace_fp, GOT_NOTHING_FMT, vnm,
                     (de != NULL) ? "non text value" : "no value at all",
@@ -444,7 +444,7 @@ ag_scm_get(SCM v_name, SCM alt_v_name)
 
     if (scm_is_string(alt_v_name))
         return alt_v_name;
-    return scm_from_latin1_string(zNil);
+    return scm_from_locale_string(zNil);
 }
 
 /*=gfunc get_c_name
