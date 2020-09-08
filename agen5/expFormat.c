@@ -241,7 +241,7 @@ ag_scm_dne(SCM prefix, SCM first, SCM opt)
     if (pzFirst != zNil)
         AGFREE(pzFirst);
     {
-        SCM res = scm_from_latin1_string(date_str);
+        SCM res = AG_SCM_FROM_STR(date_str);
         AGFREE(date_str);
 
         return res;
@@ -588,12 +588,12 @@ construct_license(
             MK_LIC_PROG, MK_LIC_PFX, MK_LIC_OWN, MK_LIC_YRS
         };
         subs = scm_gc_protect_object(
-            scm_list_4(scm_from_latin1_string(slst[0]),
-                       scm_from_latin1_string(slst[1]),
-                       scm_from_latin1_string(slst[2]),
-                       scm_from_latin1_string(slst[3])));
+            scm_list_4(AG_SCM_FROM_STR(slst[0]),
+                       AG_SCM_FROM_STR(slst[1]),
+                       AG_SCM_FROM_STR(slst[2]),
+                       AG_SCM_FROM_STR(slst[3])));
 
-        empty = scm_gc_protect_object(scm_from_latin1_string(""));
+        empty = scm_gc_protect_object(AG_SCM_FROM_STR(""));
     }
 
     if (! scm_is_string(lic))
@@ -610,7 +610,7 @@ construct_license(
     do_multi_subs(&lic_text, &text_len, subs, vals);
 
     trim_trailing_white(lic_text);
-    return scm_from_latin1_string(lic_text);
+    return AG_SCM_FROM_STR(lic_text);
 }
 
 /*=gfunc license_full
@@ -743,7 +743,7 @@ ag_scm_license_name(SCM lic)
         txt = SPN_WHITESPACE_CHARS(txt);
         e   = SPN_WHITESPACE_BACK(txt, txt);
         *e  = NUL;
-        lic = scm_from_latin1_string(txt);
+        lic = AG_SCM_FROM_STR(txt);
     }
     return lic;
 }
@@ -768,7 +768,7 @@ ag_scm_gpl(SCM prog_name, SCM prefix)
 
     if (lic == SCM_UNDEFINED)
         lic = scm_gc_protect_object(
-            scm_from_latin1_string(FIND_LIC_TEXT_LGPL+1));
+            AG_SCM_FROM_STR(FIND_LIC_TEXT_LGPL+1));
     return ag_scm_license_description(lic, prog_name, prefix, SCM_UNDEFINED);
 }
 
@@ -792,7 +792,7 @@ ag_scm_agpl(SCM prog_name, SCM prefix)
 
     if (lic == SCM_UNDEFINED)
         lic = scm_gc_protect_object(
-            scm_from_latin1_string(FIND_LIC_TEXT_AGPL));
+            AG_SCM_FROM_STR(FIND_LIC_TEXT_AGPL));
     return ag_scm_license_description(lic, prog_name, prefix, SCM_UNDEFINED);
 }
 
@@ -817,7 +817,7 @@ ag_scm_lgpl(SCM prog_name, SCM owner, SCM prefix)
 
     if (lic == SCM_UNDEFINED)
         lic = scm_gc_protect_object(
-            scm_from_latin1_string(FIND_LIC_TEXT_LGPL));
+            AG_SCM_FROM_STR(FIND_LIC_TEXT_LGPL));
     return ag_scm_license_description(lic, prog_name, prefix, owner);
 }
 
@@ -843,7 +843,7 @@ ag_scm_bsd(SCM prog_name, SCM owner, SCM prefix)
 
     if (lic == SCM_UNDEFINED)
         lic = scm_gc_protect_object(
-            scm_from_latin1_string(FIND_LIC_TEXT_MBSD));
+            AG_SCM_FROM_STR(FIND_LIC_TEXT_MBSD));
     return ag_scm_license_description(lic, prog_name, prefix, owner);
 }
 
@@ -991,7 +991,7 @@ ag_scm_license(SCM license, SCM prog_name, SCM owner, SCM prefix)
          */
         AGFREE(pzRes);
 
-        return scm_from_latin1_stringn(
+        return AG_SCM_FROM_STRN(
             pzSaveRes, (size_t)((pzOut - pzSaveRes) - 1));
     }
 }

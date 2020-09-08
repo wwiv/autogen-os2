@@ -89,7 +89,7 @@ ag_scm_shell(SCM cmd)
     if (! scm_is_string(cmd)) {
         static SCM joiner = SCM_UNDEFINED;
         if (joiner == SCM_UNDEFINED)
-            joiner = scm_gc_protect_object(scm_from_latin1_string(""));
+            joiner = scm_gc_protect_object(AG_SCM_FROM_STR(""));
 
         cmd = ag_scm_join(joiner, cmd);
         if (! scm_is_string(cmd))
@@ -98,7 +98,7 @@ ag_scm_shell(SCM cmd)
 
     {
         char * pz = shell_cmd(ag_scm2zchars(cmd, "command"));
-        cmd   = scm_from_latin1_string(pz);
+        cmd   = AG_SCM_FROM_STR(pz);
         AGFREE(pz);
         return cmd;
     }
@@ -127,7 +127,7 @@ ag_scm_shellf(SCM fmt, SCM alist)
     pz = shell_cmd(ag_scm2zchars(fmt, "shell script"));
     if (pz == NULL)
         AG_ABEND(SHELL_RES_NULL_MSG);
-    fmt = scm_from_latin1_string(pz);
+    fmt = AG_SCM_FROM_STR(pz);
     AGFREE(pz);
 #endif
     return fmt;

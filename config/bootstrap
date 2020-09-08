@@ -56,6 +56,27 @@ PS4='+shlib=${FUNCNAME:-=}-$LINENO> ' \
 
 config_tools()
 {
+    if test -d "$TEMP_DIR"
+    then
+        TMPDIR="$TEMP_DIR"
+        i_made_temp_dir=false
+
+    elif shopt -qo xtrace
+    then
+        TMPDIR=${TMP:-/tmp}
+        i_made_temp_dir=false
+
+    else
+        TMPDIR=${TMP:-/tmp}/ag-bs-????????.tdir
+        rm -rf $TMPDIR
+        TMPDIR=$(mktemp -d ${TMPDIR//\?/X})
+        : REDIRECT to  ${TMPDIR}/bs-log.txt
+        exec 2> ${TMPDIR}/bs-log.txt
+        i_made_temp_dir=true
+        trap "rm -rf ${TMPDIR}" 0
+    fi
+    export TMPDIR
+
     config_file=configure.ac
     conf_dir=${top_srcdir}/config
     test -f "${top_srcdir}/${config_file}.pre" || \
@@ -90,27 +111,7 @@ config_tools()
     export char_mapper
 
     echo bootstrapping in ${PWD}
-    if test -d "${TEMP_DIR}"
-    then
-        i_made_temp_dir=false
 
-    else
-        rm -rf ${TMPDIR:-/tmp}/bs-ag-??????
-        TEMP_DIR=`mktemp -d ${TMPDIR:-/tmp}/bs-ag-XXXXXX`
-        case "X$-" in
-            *x* ) i_made_temp_dir=false ;;
-            *   ) i_made_temp_dir=true ;;
-        esac
-        export TEMP_DIR
-    fi
-    test -d "$TEMP_DIR" || {
-        temp_dir=${TMP:-/tmp}/bs-$$
-        rm -rf ${TEMP_DIR}
-        mkdir ${TEMP_DIR}
-        chmod 700 ${TEMP_DIR}
-    }
-
-    trap "rm -rf ${TEMP_DIR}" 0
     set +e
 }
 
@@ -140,6 +141,7 @@ pre_local()
     unset REQUEST_METHOD
     source_bs pbs  ${conf_dir}/bootstrap.local pre
     source_bs aobs autoopts/bootstrap.dir aoconf
+    :
 }
 
 post_local()
@@ -147,6 +149,7 @@ post_local()
     bslist=`find . -name bootstrap.dir`
     for f in ${bslist}
     do
+        echo START $f $(date) > /dev/tty
         source_bs ${f%/bootstrap.dir} $f recursive
     done
 
@@ -154,14 +157,14 @@ post_local()
 }
 
 filter_chaff() {
-    cat > ${TEMP_DIR}/config-log.txt
     if test -f configure
     then
         sedcmd='/configure.ac:.*no .* detected/,/configure.ac:.*top level/d'
-        sed "$sedcmd" ${TEMP_DIR}/config-log.txt
+        sed "$sedcmd" "${tool_out_file}"
     else
-        cat ${TEMP_DIR}/config-log.txt
-    fi
+        cat "${tool_out_file}"
+    fi 1>&2
+    rm -f "${tool_out_file}"
 }
 
 run_autotools()
@@ -169,6 +172,7 @@ run_autotools()
     cd ${top_builddir}
     # remove any stale config.cache
     doit rm -f config.cache
+    :
 
     test -n "$auxdir" || auxdir=${top_srcdir}
     test -d $auxdir   || auxdir=.
@@ -195,13 +199,16 @@ run_autotools()
 {
     config_tools
     pre_local
-    ( run_autotools 2>&1 ) | filter_chaff
+    tool_out_file=${TMPDIR}/autotool-out.txt
+    run_autotools 1> ${tool_out_file} 2>&1
+    filter_chaff ${tool_out_file}
+
     post_local
 
     trap '' 0
     echo 'bootstrap complete'
-    ${i_made_temp_dir} && rm -rf ${TEMP_DIR}
-    : ; exit
+    ${i_made_temp_dir} && rm -rf ${TMPDIR}
+    : ; exit 0
 }
 # Local Variables:
 # mode:shell-script

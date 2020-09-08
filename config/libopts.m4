@@ -31,7 +31,13 @@ AC_DEFUN([INVOKE_LIBOPTS_MACROS_FIRST],[
   AC_CHECK_HEADERS([inttypes.h   stdint.h],
       [lo_have_typ_hdr=true;break],
       [lo_have_typ_hdr=false])
+  gl_HEADER_ERRNO_H
+  gl_HEADER_TIME_H
+  gl_CHECK_TYPE_STRUCT_TIMESPEC
+  gl_FUNC_NANOSLEEP
+  gl_STDDEF_H
   gl_STDNORETURN_H
+  gl_TIMESPEC
 
   # ----------------------------------------------------------------------
   # check for various programs used during the build.
@@ -45,10 +51,10 @@ AC_DEFUN([INVOKE_LIBOPTS_MACROS_FIRST],[
   ])
 
   AC_ARG_ENABLE([nls],
-  AS_HELP_STRING([--disable-nls],[disable nls support in libopts]))
+    AS_HELP_STRING([--disable-nls],[disable nls support in libopts]))
   AS_IF([test "x$enable_nls" != "xno" && \
-  test "X${ac_cv_header_libintl_h}" = Xyes], [
-  AC_DEFINE([ENABLE_NLS],[1],[nls support in libopts])])
+    test "X${ac_cv_header_libintl_h}" = Xyes], [
+    AC_DEFINE([ENABLE_NLS],[1],[nls support in libopts])])
 
   # --------------------------------------------
   # Verify certain entries from AC_CHECK_HEADERS
@@ -368,10 +374,10 @@ return (fp == NULL) ? 1 : fclose(fp); }] )],
   if test "X${libopts_cv_run_fopen_binary}" != Xno
   then
     AC_DEFINE([FOPEN_BINARY_FLAG],"b",
-	[fopen(3) accepts a 'b' in the mode flag])
+        [fopen(3) accepts a 'b' in the mode flag])
   else
     AC_DEFINE([FOPEN_BINARY_FLAG],"",
-	[fopen(3) accepts a 'b' in the mode flag])
+        [fopen(3) accepts a 'b' in the mode flag])
   fi
 
 ]) # end of AC_DEFUN of LIBOPTS_RUN_FOPEN_BINARY
@@ -391,10 +397,10 @@ return (fp == NULL) ? 1 : fclose(fp); }] )],
   if test "X${libopts_cv_run_fopen_text}" != Xno
   then
     AC_DEFINE([FOPEN_TEXT_FLAG],"t",
-	[fopen(3) accepts a 't' in the mode flag])
+        [fopen(3) accepts a 't' in the mode flag])
   else
     AC_DEFINE([FOPEN_TEXT_FLAG],"",
-	[fopen(3) accepts a 't' in the mode flag])
+        [fopen(3) accepts a 't' in the mode flag])
   fi
 
 ]) # end of AC_DEFUN of LIBOPTS_RUN_FOPEN_TEXT

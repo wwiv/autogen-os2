@@ -403,16 +403,6 @@ MODE char const *   curr_sfx         VALUE( NULL );
 /**
  * The time to set for the modification times of the output files.
  */
-#ifndef HAVE_CLOCK_GETTIME
-#undef  HAVE_UTIMENSAT
-#endif
-
-#ifndef HAVE_UTIMENSAT
-MODE time_t             outfile_time     VALUE( 0 );
-MODE time_t             maxfile_time     VALUE( 0 );
-#define time_is_before(_f, _s) ((_f) < (_s))
-
-#else  // HAVE_UTIMENSAT
 #ifdef DEFINING
 MODE struct timespec    outfile_time     = {0, UTIME_OMIT};
 MODE struct timespec    maxfile_time     = {0, UTIME_OMIT};
@@ -420,13 +410,17 @@ MODE struct timespec    maxfile_time     = {0, UTIME_OMIT};
 MODE struct timespec    outfile_time, maxfile_time;
 #endif
 
-#define time_is_before(_f, _s) (                \
-    ((_f).tv_sec < (_s).tv_sec)                 \
-    || (  (((_f).tv_sec == (_s).tv_sec))        \
-       && (((_f).tv_nsec < (_s).tv_nsec)) )     \
-    )
+#ifdef HAVE_STRUCT_STAT_ST_MTIME_NSEC
+# define ST_MTIME_NSEC(_t) ((_t).st_mtime_nsec)
+#else
+# define ST_MTIME_NSEC(_t) 0
+#endif
 
-#endif // HAVE_UTIMENSAT
+#define time_is_before(_f, _s) (                    \
+    ((_f).tv_sec < (_s).st_mtime)                   \
+    || (  (((_f).tv_sec == (_s).st_mtime))          \
+       && (((_f).tv_nsec < ST_MTIME_NSEC(_s))) )    \
+    )
 
 /**
  * The original time autogen started
@@ -579,9 +573,8 @@ MODE v2c_t p2p VALUE( { NULL } );
 #endif
 
 /*
- *  Code variations based on the version of Guile:
+ *  Derived function prototypes
  */
-#include "guile-iface.h"
 #include "proto.h"
 
 /**
@@ -605,8 +598,8 @@ static inline SCM ag_eval(char const * str)
 }
 
 /**
- *  Extracted from guile-iface stuff.  Seems to be stable since for at least
- *  1.6.0 through 2.0.0.  1.4.x is thoroughly dead now (May, 2011).
+ *  Converted fromthe deprecated guile-iface stuff.
+ *  Older versions of Guile are not supported.
  */
 #define AG_SCM_DISPLAY(_s) \
     scm_display(_s, scm_current_output_port())
@@ -618,6 +611,16 @@ static inline SCM ag_eval(char const * str)
     scm_apply(_op, _f, scm_cons(_tst, scm_list_1(SCM_EOL)))
 
 #define AG_SCM_CHAR_P(_c)            SCM_CHARP(_c)
+
+#define AG_SCM_IS_PROC(_p)           scm_is_true( scm_procedure_p(_p))
+#define AG_SCM_LIST_P(_l)            scm_is_true( scm_list_p(_l))
+#define AG_SCM_PAIR_P(_p)            scm_is_true( scm_pair_p(_p))
+#define AG_SCM_TO_LONG(_v)           scm_to_long(_v)
+#define AG_SCM_TO_ULONG(_v)          ((unsigned long)scm_to_ulong(_v))
+#define AG_SCM_FROM_STR(_z)          scm_from_latin1_string(_z)
+#define AG_SCM_FROM_STRN(_z,_l)      scm_from_latin1_stringn((_z),(_l))
+#define AG_SCM_TO_STR(_z)            scm_to_latin1_string(_z)
+#define AG_SCM_TO_STRN(_z,_l)        scm_to_latin1_stringn((_z),(_l))
 
 /**
  * Hide dummy functions from complexity measurement tools

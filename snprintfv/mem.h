@@ -37,22 +37,22 @@
 
 #ifdef _WIN32
 #  ifdef DLL_EXPORT
-#    define SNV_SCOPE	extern __declspec(dllexport)
+#    define SNV_SCOPE   extern __declspec(dllexport)
 #  else
 #    ifdef LIBSNPRINTFV_DLL_IMPORT
-#      define SNV_SCOPE	extern __declspec(dllimport)
+#      define SNV_SCOPE extern __declspec(dllimport)
 #    endif
 #  endif
 #else
-#  define SNV_SCOPE	extern
+#  define SNV_SCOPE     extern
 #endif
 
 /* This is the API we use throughout libsnprintfv. */
-#define snv_new(type, count)		\
-		((type*)snv_malloc(sizeof(type) * (size_t)(count)))
-#define snv_renew(type, ptr, count)	\
-    		((type*)snv_xrealloc((ptr), sizeof(type) * (size_t)(count)))
-#define snv_delete(old)	snv_free(old)
+#define snv_new(type, count)            \
+                ((type*)snv_malloc(sizeof(type) * (size_t)(count)))
+#define snv_renew(type, ptr, count)     \
+                ((type*)snv_xrealloc((ptr), sizeof(type) * (size_t)(count)))
+#define snv_delete(old) snv_free(old)
 
 #ifdef __cplusplus
 extern "C" {

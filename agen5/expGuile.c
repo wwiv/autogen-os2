@@ -45,7 +45,7 @@ ag_scm2zchars(SCM s, const char * type)
     if (! scm_is_string(s))
         AG_ABEND(aprf(NOT_STR_FMT, type));
 
-    str = scm_to_locale_stringn(s, &len);
+    str = AG_SCM_TO_STRN(s, &len);
     if (len == 0) {
         static char z = NUL;
         return &z;
@@ -66,15 +66,15 @@ ag_scm2zchars(SCM s, const char * type)
 static teGuileType
 ag_scm_type_e(SCM typ)
 {
-    if (scm_is_bool(    typ)) return GH_TYPE_BOOLEAN;
-    if (scm_is_symbol(   typ)) return GH_TYPE_SYMBOL;
-    if (scm_is_string(typ)) return GH_TYPE_STRING;
-    if (AG_SCM_IS_PROC( typ)) return GH_TYPE_PROCEDURE;
-    if (AG_SCM_CHAR_P(  typ)) return GH_TYPE_CHAR;
-    if (scm_is_vector(   typ)) return GH_TYPE_VECTOR;
-    if (AG_SCM_PAIR_P(  typ)) return GH_TYPE_PAIR;
-    if (scm_is_number(  typ)) return GH_TYPE_NUMBER;
-    if (AG_SCM_LIST_P(  typ)) return GH_TYPE_LIST;
+    if (scm_is_bool(    typ))  return GH_TYPE_BOOLEAN;
+    if (scm_is_symbol(  typ))  return GH_TYPE_SYMBOL;
+    if (scm_is_string(  typ))  return GH_TYPE_STRING;
+    if (AG_SCM_IS_PROC( typ))  return GH_TYPE_PROCEDURE;
+    if (AG_SCM_CHAR_P(  typ))  return GH_TYPE_CHAR;
+    if (scm_is_vector(  typ))  return GH_TYPE_VECTOR;
+    if (AG_SCM_PAIR_P(  typ))  return GH_TYPE_PAIR;
+    if (scm_is_number(  typ))  return GH_TYPE_NUMBER;
+    if (AG_SCM_LIST_P(  typ))  return GH_TYPE_LIST;
 
     return GH_TYPE_UNDEFINED;
 }
@@ -83,7 +83,7 @@ static SCM
 ag_scm_c_eval_string_from_file_line(
     char const * pzExpr, char const * pzFile, int line)
 {
-    SCM port = scm_open_input_string(scm_from_latin1_string(pzExpr));
+    SCM port = scm_open_input_string(AG_SCM_FROM_STR(pzExpr));
 
     if (OPT_VALUE_TRACE >= TRACE_EVERYTHING)
         fprintf(trace_fp, TRACE_EVAL_STRING, pzFile, line, pzExpr);
@@ -96,7 +96,7 @@ ag_scm_c_eval_string_from_file_line(
             if (pzOldFile != NULL)
                 AGFREE(pzOldFile);
             AGDUPSTR(pzOldFile, pzFile, "scheme source");
-            file = scm_from_latin1_string(pzFile);
+            file = AG_SCM_FROM_STR(pzFile);
         }
 
         {
@@ -372,7 +372,7 @@ ag_scm_string_upcase(SCM str)
     if (! scm_is_string(str))
         return SCM_UNDEFINED;
 
-    res = scm_from_latin1_stringn(
+    res = AG_SCM_FROM_STRN(
         scm_i_string_chars(str), scm_c_string_length(str));
     scm_string_upcase_x(res);
     return res;
@@ -440,7 +440,7 @@ ag_scm_string_capitalize(SCM str)
     if (! scm_is_string(str))
         return SCM_UNDEFINED;
 
-    res = scm_from_latin1_stringn(
+    res = AG_SCM_FROM_STRN(
         scm_i_string_chars(str), scm_c_string_length(str));
     ag_scm_string_capitalize_x(res);
     return res;
@@ -495,7 +495,7 @@ ag_scm_string_downcase(SCM str)
     if (! scm_is_string(str))
         return SCM_UNDEFINED;
 
-    res = scm_from_latin1_stringn(
+    res = AG_SCM_FROM_STRN(
         scm_i_string_chars(str), scm_c_string_length(str));
     ag_scm_string_downcase_x(res);
     return res;
@@ -553,7 +553,7 @@ ag_scm_string_to_camelcase(SCM str)
         *(pzd++) = (char)ch;
     }
 
-    return scm_from_latin1_stringn(res, (size_t)(pzd - res));
+    return AG_SCM_FROM_STRN(res, (size_t)(pzd - res));
 }
 /**
  * @}

@@ -17,7 +17,6 @@ agen5/expr.ini
 agen5/fmemopen.def
 agen5/functions.def
 agen5/functions.h
-agen5/guile-iface.h
 agen5/invoke-autogen.menu
 agen5/invoke-autogen.texi
 agen5/opts.c

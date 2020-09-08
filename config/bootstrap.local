@@ -192,11 +192,12 @@ config_versions() {
 	--source-base=autoopts
 	--symlink'
     glmods='
-	extensions 
-	gendocs 
-	gettext-h 
+	extensions
+	errno
+	gendocs
+	gettext-h
 	havelib
-	parse-duration 
+	parse-duration
 	snippet/_Noreturn
 	stat-time
 	stdnoreturn'
@@ -205,24 +206,11 @@ config_versions() {
     ${cmd}
     sed -i 's/do_not_make_me_.*_SOURCES/EXTRA_DIST/;/do_not_make_me/d' \
         autoopts/gnulib.mk
-    sedcmd=$(cat <<- \_EndOfSed
-		s@/config/snippet/@/compat/@
-		\@begin .*snippet/_Noreturn@,\@end .*snippet/_Noreturn@ {
-		    /^##/d
-		    p
-		  }
-		\@begin .* module stdnoreturn@,\@end .* module stdnoreturn@ {
-		    /^##/d
-		    p
-		  }
-		_EndOfSed
-          )
     sedcmd='s@/config/snippet/@/compat/@'
     sedcmd+=$'\n\@begin .*snippet/_Noreturn@,\@end .*snippet/_Noreturn@ p'
     sedcmd+=$'\n\@begin .* module stdnoreturn@,\@end .* module stdnoreturn@ p'
     sed -n "$sedcmd" autoopts/gnulib.mk | \
       grep -v '^##' > pkg/libopts/stdnoreturn.mk
-    cp autoopts/gnulib.mk /tmp
     cp ${GNULIBDIR}/build-aux/config.rpath ${GNULIBDIR}/m4/lib-link.m4 config/.
 
     ${GNULIBDIR}/build-aux/gitlog-to-changelog | \
@@ -255,6 +243,7 @@ tweak_Makefile_am()
 }
 
 cd ${top_srcdir}
+: START BOOTSTRAP-LOCAL $1
 
 case "${1}" in
 ( pre )
@@ -268,6 +257,8 @@ case "${1}" in
     rm -f doc/autogen.texi
     ;;
 esac
+
+: FIN BOOTSTRAP-LOCAL $1
 
 # Local Variables:
 # mode: shell-script

@@ -427,10 +427,15 @@ ready_def_input(char const ** ppzfile, size_t * psz)
     *psz = (size_t)stbf.st_size;
 
     if (ENABLED_OPT(SOURCE_TIME))
-        outfile_time = stbf.st_mtime;
+        outfile_time = (struct timespec) {
+            .tv_sec  = (unsigned long)stbf.st_mtime,
+            .tv_nsec = ST_MTIME_NSEC(stbf) };
     else
         mod_time_is_now();
-    maxfile_time = stbf.st_mtime;
+    
+    maxfile_time = (struct timespec) {
+        .tv_sec  = (unsigned long)stbf.st_mtime,
+        .tv_nsec = ST_MTIME_NSEC(stbf) };
 
     return INPUT_FILE;
 }

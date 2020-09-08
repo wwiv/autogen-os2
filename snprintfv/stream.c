@@ -193,7 +193,7 @@ stream_puts (char *s, STREAM *stream)
       ch_or_errorcode = (*stream->put_func) ((unsigned char) *s, stream);
 
       if (ch_or_errorcode < 0)
-	return ch_or_errorcode;
+        return ch_or_errorcode;
     }
 
   return num;

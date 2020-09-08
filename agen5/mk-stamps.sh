@@ -28,8 +28,13 @@
 #  because some of the rules are complex and we don't want to
 #  deal with the dual update problem.
 
-STAMP_TEMP_DIR=$(mktemp -d /tmp/mk-stamps-XXXXXXXX)
-exec 9>&2 2>> ${STAMP_TEMP_DIR}/mk-stamps.log
+test -z "$TEMP_DIR" && {
+    TEMP_DIR=${TMPDIR:-/tmp}/mk-stamp-????????.tdir
+    rm -rf ${TEMP_DIR}
+    TEMP_DIR=$(mktemp -d ${TEMP_DIR//\?/X})
+    export TEMP_DIR
+}
+exec 9>&2 2>> ${TEMP_DIR}/mk-stamps.log
 stop_tracing=:
 if (shopt -qo xtrace)
 then
@@ -246,6 +251,15 @@ make_texi()
 #
 # Construct the ag-text strings
 #
+make_opts()
+{
+    run_ag opts ${srcdir}/opts.def
+}
+
+# # # # # # # # # # # # # # # # # # #
+#
+# Construct the ag-text strings
+#
 make_ag_text()
 {
     run_ag ag_text ${srcdir}/ag-text.def
@@ -279,12 +293,6 @@ make_func()
     run_ag func functions.def
 }
 
-make_gver()
-{
-    test -f guile-iface.def || make_func
-    run_ag gver guile-iface.def
-}
-
 # make_proto() -- comes from bootstrap.shlib
 
 dispatch()
@@ -310,13 +318,8 @@ conf_time_make_dep_file() {
 #
 export PS4='+stmp=${FUNCNAME:-=}-$LINENO> '
 set_defaults ${1+"$@"}
-rmlist=`mktemp ${TMPDIR:-/tmp}/rmlist-XXXXXX`
-test -f "$rmlist" || {
-    rmlist=${TMPDIR:-/tmp}/rmlist-$$
-    rm -f $rmlist
-}
+rmlist=${TEMP_DIR}/rm-list.txt
 exec 5> $rmlist
-echo $rmlist >&5
 pid_list=''
 
 #  FOR each output target,
@@ -368,8 +371,7 @@ do
 done
 
 wait $pid_list
-rmlist=`cat $rmlist`
-rm -f $rmlist ag-*.log
+rm -f ag-*.log `cat $rmlist`
 $stop_tracing
 exec 2>&9 9>&-
 trap '' 0

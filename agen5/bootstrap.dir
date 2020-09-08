@@ -30,7 +30,7 @@
 #  because some of the rules are complex and we don't want to
 #  deal with the dual update problem.
 
-readonly stamp_list=$(echo "stamp-opts${nl}stamp-proto"
+readonly stamp_list=$(echo "stamp-proto"
     sed -n '/^make_[a-z_]*[(]/{;s/^make_/stamp-/;s/[()].*//;p;}' \
         ${top_srcdir}/agen5/mk-stamps.sh)
 
@@ -58,54 +58,51 @@ set_defaults()
 }
 
 assemble_Makefile() {
-    {
-        sed '/# *start-generated-text/q' ${srcdir}/Makefile.am.pre
-        printf '\nif AMDEP\n'
+    sed '/# *start-generated-text/q' ${srcdir}/Makefile.am.pre
+    printf '\nif AMDEP\n'
 
-        depfl_list=
-        for f in $stamp_list
-        do
-            depfl=DEPFL_${f^^}
-            depfl=${depfl//-/_}
-            printf '%-12s= $(DEPDIR)/dep-%s.mk\n' $depfl $f
-            printf '$(%s) :\n\t$(SHELL) $(stamp_script) "$@"\n' $depfl
-            printf 'include $(%s)\n' $depfl
-            depfl_list+=$(printf '%-12s= "$@"' $depfl)$'\n'
-        done
-        echo else$'\n'"${depfl_list}endif"
+    depfl_list=
+    for f in $stamp_list
+    do
+        depfl=DEPFL_${f^^}
+        depfl=${depfl//-/_}
+        printf '%-12s= $(DEPDIR)/dep-%s.mk\n' $depfl $f
+        printf '$(%s) :\n\t$(SHELL) $(stamp_script) "$@"\n' $depfl
+        printf 'include $(%s)\n' $depfl
+        depfl_list+=$(printf '%-12s= "$@"' $depfl)$'\n'
+    done
+    echo else$'\n'"${depfl_list}endif"
 
-        echo list_stamps = '\'
-        sflist=''
-        for f in $stamp_list
-        do sflist=${sflist}$f${nl}
-        done
-        printf %s "$sflist" | \
-            ${CLexe} --spread=1 -I4 --line=' \'
+    echo list_stamps = '\'
+    sflist=''
+    for f in $stamp_list
+    do sflist=${sflist}$f${nl}
+    done
+    printf %s "$sflist" | \
+        ${CLexe} --spread=1 -I4 --line=' \'
 
-        fmt='\n%s:\n\t@target="$(AUTOGEN_%s_TList)" \\\n'
-        fmt+='\t$(MAKE_STAMP)\n'
-        for f in $stamp_list
-        do
-            g=$(echo $f | sed 's/[^a-zA-Z0-9]/_/g')
-            printf "$fmt" $f $g
-        done
-        printf '.PHONY: stamps\nstamps: $(list_stamps)\n%s' \
-            $'\n# end-generated-text\n# end of Makefile.am\n'
-
-    } > Makefile.am
-}
+    fmt='\n%s:\n\t@target="$(AUTOGEN_%s_TList)" \\\n'
+    fmt+='\t$(MAKE_STAMP)\n'
+    for f in $stamp_list
+    do
+        g=$(echo $f | sed 's/[^a-zA-Z0-9]/_/g')
+        printf "$fmt" $f $g
+    done
+    printf '.PHONY: stamps\nstamps: $(list_stamps)\n%s' \
+           $'\n# end-generated-text\n# end of Makefile.am\n'
+} > Makefile.am
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
 #  M A I N
 #
 set_defaults ${1+"$@"}
-DEPDIR=
 
 if ${skip_gen:-false}
 then
     untar_touch agen5.tgz
 else
+    export TEMP_DIR
     . ${srcdir}/mk-stamps.sh $stamp_list
     assemble_Makefile
 fi
@@ -114,6 +111,9 @@ fi
 #  THEN it is time to unlink them
 #
 test -z "$rmlist" || rm -f $rmlist
+echo STAMPS COMPLETED: $stamp_list > /dev/tty
+date > /dev/tty
+sleep 1
 
 # Local Variables:
 # mode:shell-script

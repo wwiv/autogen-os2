@@ -111,11 +111,7 @@ ENDIF =]
  */
 [=(make-header-guard  "GUILE_PROCS")=]
 
-#if GUILE_VERSION >= 108000
-# include <libguile.h>
-#else
-# include <guile/gh.h>
-#endif
+#include <libguile.h>
 
 typedef enum {
     GH_TYPE_UNDEFINED = 0,
@@ -226,30 +222,21 @@ agrelay_scm_[= (get "name")     =]([=
     return ag_scm_[= name =]([= (. pass-list) =]);
 }
 [= ENDFOR  gfunc                =]
-#if GUILE_VERSION >= 108000
+
 #define NEW_PROC(_As, _Ar, _Ao, _Ax, _An)   \
   scm_c_define_gsubr((char *)(_As),          \
                    _Ar, _Ao, _Ax, (scm_callback_t)VOIDP(agrelay_scm_ ## _An))
-#else
-#define NEW_PROC(_As, _Ar, _Ao, _Ax, _An)                                    \
-  gh_new_procedure((char *)(_As), (scm_callback_t)VOIDP(agrelay_scm_ ## _An), \
-                   _Ar, _Ao, _Ax)
-#endif
 
 #else /* DEBUG_ENABLED *not* */[=
 
 ENDIF debug-enabled exists
 
 =]
-#if GUILE_VERSION >= 108000
+
 #define NEW_PROC(_As, _Ar, _Ao, _Ax, _An)   \
   scm_c_define_gsubr((char *)(_As),          \
                    _Ar, _Ao, _Ax, (scm_callback_t)VOIDP(ag_scm_ ## _An))
-#else
-#define NEW_PROC(_As, _Ar, _Ao, _Ax, _An)                                   \
-  gh_new_procedure((char *)(_As), (scm_callback_t)VOIDP(ag_scm_ ## _An),     \
-                   _Ar, _Ao, _Ax)
-#endif
+
 [= (if (exist? "debug-enabled") "#endif /* DEBUG_ENABLED */\n") =]
 /**
  * [=(get "addtogroup" (get "group"))=] Initialization procedure.

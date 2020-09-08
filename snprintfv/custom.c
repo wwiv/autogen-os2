@@ -146,7 +146,7 @@ printf_generic (STREAM *stream, struct printf_info *const pinfo, union printf_ar
     {
       int padwidth = pinfo->width - len;
       while ((count_or_errorcode >= 0) && (count_or_errorcode < padwidth))
-	SNV_EMIT (pinfo->pad, stream, count_or_errorcode);
+        SNV_EMIT (pinfo->pad, stream, count_or_errorcode);
     }
 
   /* Fill the buffer with as many characters from the format argument
@@ -156,8 +156,8 @@ printf_generic (STREAM *stream, struct printf_info *const pinfo, union printf_ar
     {
       int mark = count_or_errorcode;
       while ((count_or_errorcode >= 0) && *p != '\0'
-	     && ((pinfo->prec == 0) || (count_or_errorcode - mark < len)))
-	SNV_EMIT (*p++, stream, count_or_errorcode);
+             && ((pinfo->prec == 0) || (count_or_errorcode - mark < len)))
+        SNV_EMIT (*p++, stream, count_or_errorcode);
     }
 
   /* Right pad to the width if we still didn't reach the specified
@@ -165,7 +165,7 @@ printf_generic (STREAM *stream, struct printf_info *const pinfo, union printf_ar
    */
   if ((count_or_errorcode < pinfo->width) && pinfo->left)
     while ((count_or_errorcode >= 0)
-	   && (count_or_errorcode < pinfo->width))
+           && (count_or_errorcode < pinfo->width))
       SNV_EMIT (pinfo->pad, stream, count_or_errorcode);
 
   /* Return the number of characters emitted. */

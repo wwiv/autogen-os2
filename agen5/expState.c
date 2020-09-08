@@ -132,7 +132,7 @@ find_entry_value(SCM op, SCM obj, SCM test)
             return SCM_BOOL_F; /* Cannot match string -- not a text value */
         }
 
-        field  = scm_from_latin1_string(def->de_val.dvu_text);
+        field  = AG_SCM_FROM_STR(def->de_val.dvu_text);
         result = AG_SCM_APPLY2(op, field, test);
         if (! has_idx)
             while (result == SCM_BOOL_F) {
@@ -141,7 +141,7 @@ find_entry_value(SCM op, SCM obj, SCM test)
                 if (def == NULL)
                     break;
 
-                field = scm_from_latin1_string(def->de_val.dvu_text);
+                field = AG_SCM_FROM_STR(def->de_val.dvu_text);
                 result = AG_SCM_APPLY2(op, field, test);
             }
 
@@ -165,7 +165,7 @@ find_entry_value(SCM op, SCM obj, SCM test)
      */
     pzField[-1] = name_sep_ch;
     {
-        SCM field   = scm_from_latin1_string(pzField);
+        SCM field   = AG_SCM_FROM_STR(pzField);
         SCM result;
         def_ctx_t ctx = curr_def_ctx;
 
@@ -204,7 +204,7 @@ find_entry_value(SCM op, SCM obj, SCM test)
 SCM
 ag_scm_base_name(void)
 {
-    return scm_from_latin1_string(C(char *, OPT_ARG(BASE_NAME)));
+    return AG_SCM_FROM_STR(C(char *, OPT_ARG(BASE_NAME)));
 }
 
 /*=gfunc version_compare
@@ -320,7 +320,7 @@ ag_scm_count(SCM obj)
 SCM
 ag_scm_def_file(void)
 {
-    return scm_from_latin1_string(C(char *, (base_ctx->scx_fname)));
+    return AG_SCM_FROM_STR(C(char *, (base_ctx->scx_fname)));
 }
 
 /*=gfunc exist_p
@@ -431,7 +431,7 @@ ag_scm_get(SCM v_name, SCM alt_v_name)
         char * vnm = ag_scm2zchars(v_name, "vname");
         def_ent_t * de  = find_def_ent(vnm, &x);
         if ((de != NULL) && (de->de_type == VALTYP_TEXT))
-            return scm_from_locale_string(de->de_val.dvu_text);
+            return AG_SCM_FROM_STR(de->de_val.dvu_text);
         if (OPT_VALUE_TRACE >= TRACE_EXPRESSIONS)
             fprintf(trace_fp, GOT_NOTHING_FMT, vnm,
                     (de != NULL) ? "non text value" : "no value at all",
@@ -444,7 +444,7 @@ ag_scm_get(SCM v_name, SCM alt_v_name)
 
     if (scm_is_string(alt_v_name))
         return alt_v_name;
-    return scm_from_locale_string(zNil);
+    return AG_SCM_FROM_STR(zNil);
 }
 
 /*=gfunc get_c_name
@@ -622,7 +622,7 @@ ag_scm_set_option(SCM opt)
 SCM
 ag_scm_suffix(void)
 {
-    return scm_from_latin1_string((char *)curr_sfx);
+    return AG_SCM_FROM_STR((char *)curr_sfx);
 }
 
 /*=gfunc tpl_file
@@ -644,10 +644,10 @@ ag_scm_tpl_file(SCM full)
 
         char z[AG_PATH_MAX];
         if (SUCCESSFUL(find_file(tpl_fname, z, sfx, NULL)))
-            return scm_from_latin1_string(z);
+            return AG_SCM_FROM_STR(z);
     }
 
-    return scm_from_latin1_string(C(char *, tpl_fname));
+    return AG_SCM_FROM_STR(C(char *, tpl_fname));
 }
 
 /**
@@ -671,7 +671,7 @@ do_tpl_file_line(int line_delta, char const * fmt)
     }
 
     sprintfv(buf, fmt, (snv_constpointer *)args);
-    return scm_from_latin1_string(buf);
+    return AG_SCM_FROM_STR(buf);
 }
 
 /*=gfunc tpl_file_line
@@ -804,7 +804,7 @@ ag_scm_def_file_line(SCM obj, SCM fmt_scm)
         sprintfv(buf, fmt, (snv_constpointer *)args);
     }
 
-    return scm_from_latin1_string(buf);
+    return AG_SCM_FROM_STR(buf);
 }
 
 /**

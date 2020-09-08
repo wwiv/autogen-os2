@@ -69,35 +69,6 @@ init_scm(void)
             SCHEME_INIT_TEXT, AG_TEXT_STRTABLE_FILE, SCHEME_INIT_TEXT_LINENO);
         AGDUPSTR(libguile_ver, scm2display(ini_res), "ini res");
     }
-
-    {
-        unsigned int maj, min, mic;
-        switch (sscanf(libguile_ver, "%u.%u.%u", &maj, &min, &mic)) {
-        case 2:
-        case 3: break;
-        default:
-            AG_ABEND(aprf(GUILE_VERSION_BAD, libguile_ver));
-            /* NOT_REACHED */
-        }
-        maj = min + (100 * maj);
-        if ((GUILE_VERSION / 1000) != maj)
-            AG_ABEND(aprf(GUILE_VERSION_WRONG, libguile_ver,
-                          MK_STR(GUILE_VERSION)));
-    }
-
-    {
-#       if GUILE_VERSION >= 200000
-#         define SCHEME_INIT_DEBUG SCHEME_INIT_DEBUG_2_0
-#       else
-#         define SCHEME_INIT_DEBUG SCHEME_INIT_DEBUG_1_6
-#       endif
-        char * p = aprf(INIT_SCM_ERRS_FMT, SCHEME_INIT_DEBUG);
-#       undef  SCHEME_INIT_DEBUG
-
-        last_scm_cmd = p;
-        ag_scm_c_eval_string_from_file_line(p, __FILE__, __LINE__);
-        AGFREE(p);
-    }
 }
 
 /**

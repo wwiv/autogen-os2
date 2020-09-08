@@ -33,6 +33,7 @@
 #ifndef AUTOGEN_AUTOOPTS_H
 #define AUTOGEN_AUTOOPTS_H
 #include <stdnoreturn.h>
+#include <time.h>
 
 #define AO_NAME_LIMIT           127
 #define AO_NAME_SIZE            ((size_t)(AO_NAME_LIMIT + 1))
@@ -63,6 +64,7 @@
 #define BS                      '\b'
 #define HT                      '\t'
 #define LF                      '\n'
+#define NL                      '\n'
 #define VT                      '\v'
 #define FF                      '\f'
 #define CR                      '\r'
@@ -104,7 +106,6 @@
 #  define EX_OSERR              71
 #endif
 
-#define NL '\n'
 #ifndef C
 /**
  *  Coercive cast.  Compel an address to be interpreted as the type

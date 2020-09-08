@@ -115,7 +115,7 @@ shell_stringify(SCM obj, uint_t qt)
     dtaSize = stringify_for_sh(pzNew, qt, pzDta);
 
     {
-        SCM res = scm_from_latin1_stringn(pzNew, dtaSize);
+        SCM res = AG_SCM_FROM_STRN(pzNew, dtaSize);
         AGFREE(pzNew);
         return res;
     }
@@ -360,7 +360,7 @@ ag_scm_join(SCM sep, SCM list)
 
     sv_l_len = l_len = (int)scm_ilength(list);
     if (l_len == 0)
-        return scm_from_latin1_string(zNil);
+        return AG_SCM_FROM_STR(zNil);
 
     pzSep   = scm_i_string_chars(sep);
     sep_len = scm_c_string_length(sep);
@@ -425,7 +425,7 @@ ag_scm_join(SCM sep, SCM list)
         pzScan += sep_len;
     }
 
-    return scm_from_latin1_stringn(pzRes, str_len);
+    return AG_SCM_FROM_STRN(pzRes, str_len);
 }
 
 
@@ -499,7 +499,7 @@ ag_scm_prefix(SCM prefx, SCM txt)
              * Trim trailing white space on the final line.
              */
             scan = SPN_HORIZ_WHITE_BACK(r_str, scan);
-            return scm_from_latin1_stringn(r_str, scan - r_str);
+            return AG_SCM_FROM_STRN(r_str, scan - r_str);
 
         case NL:
             /*
@@ -608,7 +608,7 @@ ag_scm_raw_shell_str(SCM obj)
 
  returnString:
     {
-        SCM res = scm_from_latin1_string(pzFree);
+        SCM res = AG_SCM_FROM_STR(pzFree);
         AGFREE(pzFree);
         return res;
     }
@@ -737,7 +737,7 @@ ag_scm_stack(SCM obj)
         if (pDE->de_type != VALTYP_TEXT)
             return SCM_UNDEFINED;
 
-        str  = scm_from_latin1_string(pDE->de_val.dvu_text);
+        str  = AG_SCM_FROM_STR(pDE->de_val.dvu_text);
         *pos = scm_cons(str, SCM_EOL);
         pos  = SCM_CDRLOC(*pos);
     }
@@ -766,7 +766,7 @@ ag_scm_kr_string(SCM str)
     char const * pz = ag_scm2zchars(str, "krstr");
     SCM res;
     pz  = optionQuoteString(pz, KR_STRING_NEWLINE);
-    res = scm_from_latin1_string(pz);
+    res = AG_SCM_FROM_STR(pz);
     AGFREE(pz);
     return res;
 }
@@ -797,7 +797,7 @@ ag_scm_c_string(SCM str)
     char const * pz = ag_scm2zchars(str, "cstr");
     SCM res;
     pz  = optionQuoteString(pz, C_STRING_NEWLINE);
-    res = scm_from_latin1_string(pz);
+    res = AG_SCM_FROM_STR(pz);
     AGFREE(pz);
     return res;
 }
@@ -910,7 +910,7 @@ SCM
 ag_scm_string_tr(SCM Str, SCM From, SCM To)
 {
     size_t lenz  = scm_c_string_length(Str);
-    SCM    res   = scm_from_latin1_stringn(scm_i_string_chars(Str), lenz);
+    SCM    res   = AG_SCM_FROM_STRN(scm_i_string_chars(Str), lenz);
     return ag_scm_string_tr_x(res, From, To);
 }
 
@@ -952,7 +952,7 @@ ag_scm_string_substitute(SCM str, SCM Match, SCM Repl)
     else
         do_multi_subs((char **)&text, &len, Match, Repl);
 
-    res = scm_from_latin1_stringn(text, (size_t)len);
+    res = AG_SCM_FROM_STRN(text, (size_t)len);
     return res;
 }
 

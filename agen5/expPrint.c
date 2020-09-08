@@ -164,7 +164,7 @@ run_printf(char const * pzFmt, int len, SCM alist)
     {
         char *  bf;
         size_t  bf_sz = (size_t)safePrintf(&bf, pzFmt, arglist);
-        res = scm_from_latin1_stringn(bf, bf_sz);
+        res = AG_SCM_FROM_STRN(bf, bf_sz);
         free(bf);
     }
 
@@ -284,7 +284,7 @@ ag_scm_hide_email(SCM display, SCM eaddr)
     if (scan > end)
         AG_ABEND(BOGUS_TAG);
 
-    return scm_from_latin1_stringn(res, (size_t)(scan - res));
+    return AG_SCM_FROM_STRN(res, (size_t)(scan - res));
 }
 
 /*=gfunc   format_arg_count

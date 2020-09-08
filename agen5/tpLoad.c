@@ -455,10 +455,15 @@ tpl_load(char const * fname, char const * referrer)
             AG_CANT(LOAD_TPL_IRREGULAR, fname);
         }
 
-        if (time_is_before(outfile_time, stbf.st_mtime))
-            outfile_time = stbf.st_mtime;
-        if (time_is_before(maxfile_time, stbf.st_mtime))
-            maxfile_time = stbf.st_mtime;
+        if (time_is_before(outfile_time, stbf))
+            outfile_time = (struct timespec) {
+                .tv_sec  = (unsigned long)stbf.st_mtime,
+                .tv_nsec = ST_MTIME_NSEC(stbf) };
+
+        if (time_is_before(maxfile_time, stbf))
+            maxfile_time = (struct timespec) {
+                .tv_sec  = (unsigned long)stbf.st_mtime,
+                .tv_nsec = ST_MTIME_NSEC(stbf) };
     }
 
     text_mmap(tpl_file, PROT_READ|PROT_WRITE, MAP_PRIVATE, &map_info);

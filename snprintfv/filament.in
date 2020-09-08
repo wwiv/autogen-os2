@@ -37,7 +37,7 @@ extern "C"
 #if 0
 /* This brace is so that emacs can still indent properly: */ }
 #endif
-#endif				/* __cplusplus */
+#endif                          /* __cplusplus */
 
 #define FILAMENT_BUFSIZ       (512 - sizeof(char *) - (2 * sizeof(size_t)))
 

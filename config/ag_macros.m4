@@ -40,12 +40,11 @@ AC_DEFUN([INVOKE_AG_MACROS_FIRST],[
   AC_PROG_EGREP
   AC_PROG_FGREP
   stat_nsec_found=no
-  AC_CHECK_MEMBERS([struct stat.st_mtim, struct stat.st_mtimensec,
-      struct stat.st_mtimespec], [stat_nsec_found=yes], [],
+  AC_CHECK_MEMBERS([struct stat.st_mtime, struct stat.st_mtime_nsec], [stat_nsec_found=yes], [],
       [[#include <sys/stat.h>]])
 
   if test "${stat_nsec_found}" != yes; then
-	AC_MSG_WARN(Cannot determine nanosecond field of struct stat)
+        AC_MSG_WARN(Cannot determine nanosecond field of struct stat)
   fi
 ])
 
@@ -59,30 +58,9 @@ AC_DEFUN([INVOKE_AG_MACROS_LAST],[
   GUILE_FLAGS
   [test -x "${PKG_CONFIG}" || {
     test -z "${PKG_CONFIG}" && PKG_CONFIG=pkg-config
-    f=`command -v ${PKG_CONFIG}`
-    test -x "${f}" && PKG_CONFIG="$f"
-  }
-  # Grab the first "-I" option that works
-  #
-  ag_gv=`gdir=\`${PKG_CONFIG} --cflags-only-I \
-      guile-${GUILE_EFFECTIVE_VERSION} | \
-    sed 's/ *-I/ /g'\`
-  test ${#gdir} -gt 1 || gdir=/usr/include
-  for d in $gdir
-  do  test -f "$d/libguile/version.h" && gdir=$d && break
-  done
-  gdir=\`awk '/SCM_MICRO_VERSION/{ print @S|@3 }' \
-  "${gdir}/libguile/version.h"\`
-  test -n "$gdir" || exit 1
-  IFS=' .'
-  set -- ${GUILE_EFFECTIVE_VERSION}
-  printf '%u%02u%03u' ${1} ${2} ${gdir}
-  `
-
-  test -n "$ag_gv" || ]AC_MSG_FAILURE([cannot determine Guile version], 1)
-  test ${ag_gv} -ge 200000 || AC_MSG_FAILURE([cannot use pre-2.0 Guile])
-  AC_DEFINE_UNQUOTED(GUILE_VERSION, ${ag_gv},
-             [define to a single number for Guile version])
+    f=$( command -v ${PKG_CONFIG} )
+    test -x "$f" && PKG_CONFIG="$f"
+  }]
   INVOKE_LIBOPTS_MACROS
 
   [test "X${ac_cv_header_sys_wait_h}" = Xyes || \
@@ -103,7 +81,7 @@ AC_DEFUN([INVOKE_AG_MACROS_LAST],[
   # that any typedef will succeed for BSD, while only one that
   # matches the existing definitions in stdio.h will succeed for
   # a newlib system.
-
+  #
   if test "X${ac_cv_func_funopen}" = Xyes; then
     AC_CACHE_CHECK([for cookie_function_t type],
       [ag_cv_cookie_function_t],
@@ -216,11 +194,11 @@ AC_DEFUN([AG_LINK_SETJMP],[
   AC_MSG_CHECKING([whether setjmp() links okay])
   AC_CACHE_VAL([ag_cv_link_setjmp],[
   AC_LINK_IFELSE(
-    AC_LANG_PROGRAM([@%:@include <setjmp.h>],
-      [jmp_buf bf;
-if (setjmp(bf))
-  return 0;
-return 0;]),
+    AC_LANG_PROGRAM([@%:@include <setjmp.h>],[
+	jmp_buf bf;
+	if (setjmp(bf))
+	  return 0;
+	return 0;]),
     [ag_cv_link_setjmp=yes],
     [ag_cv_link_setjmp=no]
   ) # end of AC_LINK_IFELSE
@@ -254,8 +232,8 @@ char const * foo(char const * fmt, int v) __attribute__((format_arg(1)));],
     format_arg_expansion=""
   fi
     AC_DEFINE_UNQUOTED([ATTRIBUTE_FORMAT_ARG(_a)],
-	[${format_arg_expansion}],
-	[format_arg attribute wrapper])
+        [${format_arg_expansion}],
+        [format_arg attribute wrapper])
 
 ]) # end of AC_DEFUN of AG_COMPILE_FORMAT_ARG
 

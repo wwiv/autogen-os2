@@ -125,7 +125,7 @@ filinit (Filament *fil, const char *const init, size_t len)
       /* Recycle any dynamic memory assigned to the previous
          contents of @fil, and point back into the static buffer. */
       if (fil->value != fil->buffer)
-	snv_delete (fil->value);
+        snv_delete (fil->value);
 
       fil->value = fil->buffer;
       fil->length = 0;
@@ -134,24 +134,24 @@ filinit (Filament *fil, const char *const init, size_t len)
   else
     {
       if (len < FILAMENT_BUFSIZ)
-	{
-	  /* We have initialisation data which will easily fit into
-	     the static buffer: recycle any memory already assigned
-	     and initialise in the static buffer. */
-	  if (fil->value != fil->buffer)
-	    {
-	      snv_delete (fil->value);
-	      fil->value = fil->buffer;
-	      fil->size = FILAMENT_BUFSIZ;
-	    }
-	}
+        {
+          /* We have initialisation data which will easily fit into
+             the static buffer: recycle any memory already assigned
+             and initialise in the static buffer. */
+          if (fil->value != fil->buffer)
+            {
+              snv_delete (fil->value);
+              fil->value = fil->buffer;
+              fil->size = FILAMENT_BUFSIZ;
+            }
+        }
       else
-	{
-	  /* If we get to here then we never try to shrink the already
-	     allocated dynamic buffer (if any), we just leave it in
-	     place all ready to expand into later... */
-	  fil_maybe_extend (fil, len, false);
-	}
+        {
+          /* If we get to here then we never try to shrink the already
+             allocated dynamic buffer (if any), we just leave it in
+             place all ready to expand into later... */
+          fil_maybe_extend (fil, len, false);
+        }
 
       snv_assert (len < fil->size);
 
@@ -182,7 +182,7 @@ fildelete (Filament *fil)
   if (fil->value == fil->buffer)
     {
       value = memcpy (snv_new (char, 1 + fil->length),
-		      fil->buffer, 1 + fil->length);
+                      fil->buffer, 1 + fil->length);
       value[fil->length] = '\0';
     }
   else
@@ -216,7 +216,7 @@ _fil_extend (Filament *fil, size_t len, bool copy)
     {
       fil->value = snv_new (char, fil->size);
       if (copy)
-	memcpy (fil->value, fil->buffer, fil->length);
+        memcpy (fil->value, fil->buffer, fil->length);
     }
   else
     fil->value = snv_renew (char, fil->value, fil->size);

@@ -384,10 +384,15 @@ typedef enum {[=
     =][=
 
     CASE (for-index)                            =][=
-    == 64 =][= (set! need-ex-usage    #f)
-               (set! usage-err-name   err-name) =][=
-    == 66 =][= (set! need-ex-noinput  #f)
-               (set! noinput-err-name err-name) =][=
+    == 64 =][=
+             (set! need-ex-usage    #f)
+             (set! usage-err-name
+                   (string-append pname-up "_EXIT_" err-name))
+          =][=
+    == 66 =][=
+             (set! need-ex-noinput  #f)
+             (set! noinput-err-name err-name)
+          =][=
     == 70 =][= (set! need-ex-software #f)       =][=
     ESAC (for-index)                            =][=
   ENDFOR                                        =][=

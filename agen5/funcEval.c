@@ -537,7 +537,7 @@ eval(char const * expr)
         (void)span_quote(pzTemp);
         expr = shell_cmd(pzTemp);
         AGFREE(pzTemp);
-        res = scm_from_latin1_string((char *)expr);
+        res = AG_SCM_FROM_STR((char *)expr);
         AGFREE(expr);
         break;
 
@@ -550,7 +550,7 @@ eval(char const * expr)
         /* FALLTHROUGH */
 
     default:
-        res = scm_from_latin1_string((char *)expr);
+        res = AG_SCM_FROM_STR((char *)expr);
         if (allocated)
             AGFREE(expr);
     }

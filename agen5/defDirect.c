@@ -302,12 +302,16 @@ file_size(char const * fname)
         return 0;
     }
 
-    if (   time_is_before(outfile_time, stbf.st_mtime)
+    if (   time_is_before(outfile_time, stbf)
         && ENABLED_OPT(SOURCE_TIME))
-        outfile_time = stbf.st_mtime;
+        outfile_time = (struct timespec) {
+            .tv_sec  = (unsigned long)stbf.st_mtime,
+            .tv_nsec = ST_MTIME_NSEC(stbf) };
 
-    if (time_is_before(maxfile_time, stbf.st_mtime))
-        maxfile_time = stbf.st_mtime;
+    if (time_is_before(maxfile_time, stbf))
+        maxfile_time = (struct timespec) {
+            .tv_sec  = (unsigned long)stbf.st_mtime,
+            .tv_nsec = ST_MTIME_NSEC(stbf) };
 
     return stbf.st_size;
 }

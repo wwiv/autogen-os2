@@ -45,10 +45,15 @@ load_file(char const * fname)
 
         fsz = stbf.st_size;
         res = (char *)AGALOC(fsz + 1, "load_file");
-        if (time_is_before(outfile_time, stbf.st_mtime))
-            outfile_time = stbf.st_mtime;
-        if (time_is_before(maxfile_time, stbf.st_mtime))
-            maxfile_time = stbf.st_mtime;
+        if (time_is_before(outfile_time, stbf))
+            outfile_time = (struct timespec) {
+                .tv_sec  = (unsigned long)stbf.st_mtime,
+                .tv_nsec = ST_MTIME_NSEC(stbf) };
+        
+        if (time_is_before(maxfile_time, stbf))
+            maxfile_time = (struct timespec) {
+                .tv_sec  = (unsigned long)stbf.st_mtime,
+                .tv_nsec = ST_MTIME_NSEC(stbf) };
     }
 
     {
@@ -162,7 +167,7 @@ mk_empty_text(char const * start, char const * end, SCM def)
         sprintf(pzOut, LINE_CONCAT3_FMT, start, pzDef, end);
     }
 
-    return scm_from_latin1_string(pzOut);
+    return AG_SCM_FROM_STR(pzOut);
 }
 
 
@@ -184,7 +189,7 @@ get_text(char const * text, char const * start, char const * end, SCM def)
 
     pzE += strlen(end);
 
-    return scm_from_latin1_stringn(pzS, (size_t)(pzE - pzS));
+    return AG_SCM_FROM_STRN(pzS, (size_t)(pzE - pzS));
 }
 
 
@@ -347,10 +352,10 @@ ag_scm_find_file(SCM file, SCM suffix)
             apz[0] = (char *)ag_scm2zchars(suffix, "file suffix");
             apz[1] = NULL;
             if (SUCCESSFUL(find_file(pz, z, (char const **)apz, NULL)))
-                res = scm_from_latin1_string(z);
+                res = AG_SCM_FROM_STR(z);
 
         } else if (SUCCESSFUL(find_file(pz, z, NULL, NULL)))
-            res = scm_from_latin1_string(z);
+            res = AG_SCM_FROM_STR(z);
     }
 
     return res;

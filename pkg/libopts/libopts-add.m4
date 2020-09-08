@@ -28,7 +28,7 @@ AC_DEFUN([LIBOPTS_CHECK_COMMON],[
   AC_REQUIRE([INVOKE_LIBOPTS_MACROS_FIRST])
   [NEED_LIBOPTS_DIR='']
   m4_pushdef([AO_Libopts_Dir],
-	    [ifelse($1, , [libopts], [$1])])
+            [ifelse($1, , [libopts], [$1])])
   AC_ARG_ENABLE([local-libopts],
     AC_HELP_STRING([--enable-local-libopts],
        [Use the supplied libopts tearoff code]),[
@@ -117,7 +117,7 @@ m4_ifndef([AM_COND_IF],
 dnl
 AC_DEFUN([LIBOPTS_CHECK_NOBUILD], [
   m4_pushdef([AO_Libopts_Dir],
-	      [ifelse($1, , [libopts], [$1])])
+              [ifelse($1, , [libopts], [$1])])
   LIBOPTS_BUILD_BLOCKED=true
   LIBOPTS_CHECK_COMMON(AO_Libopts_Dir)
   m4_popdef([AO_Libopts_Dir])dnl
@@ -126,7 +126,7 @@ AC_DEFUN([LIBOPTS_CHECK_NOBUILD], [
 dnl
 AC_DEFUN([LIBOPTS_CHECK], [
   m4_pushdef([AO_Libopts_Dir],
-	      [ifelse($1, , [libopts], [$1])])
+              [ifelse($1, , [libopts], [$1])])
   LIBOPTS_BUILD_BLOCKED=''
   LIBOPTS_CHECK_COMMON(AO_Libopts_Dir)
   AM_COND_IF([NEED_LIBOPTS], [

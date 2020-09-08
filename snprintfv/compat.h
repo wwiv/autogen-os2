@@ -104,14 +104,14 @@ SNV_START_EXTERN_C
 #  include <stdarg.h>
 #  ifndef   VA_START
 #    define VA_START(a, f)  va_start(a, f)
-#    define VA_END(a)	    va_end(a)
+#    define VA_END(a)       va_end(a)
 #  endif /* VA_START */
 #  define SNV_USING_STDARG_H
 #elif defined( HAVE_VARARGS_H )
 #  include <varargs.h>
 #  ifndef   VA_START
 #    define VA_START(a, f) va_start(a)
-#    define VA_END(a)	 va_end(a)
+#    define VA_END(a)    va_end(a)
 #  endif /* VA_START */
 #  undef  SNV_USING_STDARG_H
 #else
@@ -153,13 +153,13 @@ typedef int snv_wint_t;
 #  endif
 
 #  ifndef const
-#    define const	__const
+#    define const       __const
 #  endif
 #  ifndef inline
-#    define inline	__inline
+#    define inline      __inline
 #  endif
 #  ifndef signed
-#    define signed	__signed
+#    define signed      __signed
 #  endif
 
 #else
@@ -171,11 +171,11 @@ typedef int snv_wint_t;
 #endif
 
 #ifdef __STDC__
-#  define _SNV_STR(x)		#x
+#  define _SNV_STR(x)           #x
    typedef void *snv_pointer;
    typedef const void *snv_constpointer;
 #else
-#  define _SNV_STR(x)		"x"
+#  define _SNV_STR(x)           "x"
    typedef char *snv_pointer;
    typedef char *snv_constpointer;
 #endif
@@ -201,10 +201,10 @@ typedef int snv_wint_t;
  * architectures, it is not portable to assume a `char*' can be
  * stored in an `int' and extracted later without loss of the msb's
  */
-#define SNV_POINTER_TO_LONG(p)	((long)(p))
-#define SNV_POINTER_TO_ULONG(p)	((unsigned long)(p))
-#define SNV_LONG_TO_POINTER(i)	((snv_pointer)(long)(i))
-#define SNV_ULONG_TO_POINTER(u)	((snv_pointer)(unsigned long)(u))
+#define SNV_POINTER_TO_LONG(p)  ((long)(p))
+#define SNV_POINTER_TO_ULONG(p) ((unsigned long)(p))
+#define SNV_LONG_TO_POINTER(i)  ((snv_pointer)(long)(i))
+#define SNV_ULONG_TO_POINTER(u) ((snv_pointer)(unsigned long)(u))
 
 #ifdef HAVE_STDBOOL_H
 #include <stdbool.h>
@@ -233,48 +233,48 @@ typedef enum {
 #undef SNV_STMT_START
 #undef SNV_STMT_END
 #if defined (__GNUC__) && !defined (__STRICT_ANSI__) && !defined (__cplusplus)
-#  define SNV_STMT_START	(void)(
-#  define SNV_STMT_END		)
+#  define SNV_STMT_START        (void)(
+#  define SNV_STMT_END          )
 
 #elif (defined (sun) || defined (__sun__))
-#  define SNV_STMT_START	if (1)
-#  define SNV_STMT_END		else (void)0
+#  define SNV_STMT_START        if (1)
+#  define SNV_STMT_END          else (void)0
 
 #else
-#  define SNV_STMT_START	do
-#  define SNV_STMT_END		while (false)
+#  define SNV_STMT_START        do
+#  define SNV_STMT_END          while (false)
 #endif
 
 #ifdef _WIN32
 #  ifdef DLL_EXPORT
-#    define SNV_SCOPE	extern __declspec(dllexport)
+#    define SNV_SCOPE   extern __declspec(dllexport)
 #  else
 #    ifdef LIBSNPRINTFV_DLL_IMPORT
-#      define SNV_SCOPE	extern __declspec(dllimport)
+#      define SNV_SCOPE extern __declspec(dllimport)
 #    endif
 #  endif
 #endif
 #ifndef SNV_SCOPE
-#  define SNV_SCOPE	extern
+#  define SNV_SCOPE     extern
 #endif
 
 #undef SNV_GNUC_PRINTF
 #undef SNV_GNUC_NORETURN
 #if GCC_VERSION > 20400
-#  define SNV_GNUC_PRINTF( args, format_idx, arg_idx )		\
-  	args __attribute__((format (printf, format_idx, arg_idx)))
-#  define SNV_GNUC_NORETURN						\
-	__attribute__((__noreturn__))
-#  define SNV_ASSERT_FCN  	 " (", __PRETTY_FUNCTION__, ")"
+#  define SNV_GNUC_PRINTF( args, format_idx, arg_idx )          \
+        args __attribute__((format (printf, format_idx, arg_idx)))
+#  define SNV_GNUC_NORETURN                                             \
+        __attribute__((__noreturn__))
+#  define SNV_ASSERT_FCN         " (", __PRETTY_FUNCTION__, ")"
 #else /* GCC_VERSION */
 #  define SNV_GNUC_PRINTF( args, format_idx, arg_idx ) args
 #  define SNV_GNUC_NORETURN
-#  define SNV_ASSERT_FCN		"", "", ""
+#  define SNV_ASSERT_FCN                "", "", ""
 #endif /* GCC_VERSION */
 
 #define SNV_ASSERT_FMT  "file %s: line %d%s%s%s: assertion \"%s\" failed.\n"
 
-#define snv_assert(expr)		snv_fassert(stderr, expr)
+#define snv_assert(expr)                snv_fassert(stderr, expr)
 #define snv_fassert(stream, expr)   SNV_STMT_START {        \
     if (!(expr))   {                                        \
     fprintf (stream, SNV_ASSERT_FMT, __FILE__, __LINE__,    \
@@ -282,7 +282,7 @@ typedef enum {
     exit(EXIT_FAILURE);                                     \
     }; } SNV_STMT_END
 
-#define return_if_fail(expr)		freturn_if_fail(stderr, expr)
+#define return_if_fail(expr)            freturn_if_fail(stderr, expr)
 #define freturn_if_fail(expr)       SNV_STMT_START {        \
     if (!(expr))   {                                        \
     fprintf (stream, SNV_ASSERT_FMT, __FILE__, __LINE__,    \
@@ -290,7 +290,7 @@ typedef enum {
     return;                                                 \
     }; } SNV_STMT_END
 
-#define return_val_if_fail(expr, val)	freturn_val_if_fail(stderr, expr, val)
+#define return_val_if_fail(expr, val)   freturn_val_if_fail(stderr, expr, val)
 #define freturn_val_if_fail(stream, expr, val)  SNV_STMT_START {    \
     if (!(expr))  {                                                 \
     fprintf (stream, SNV_ASSERT_FMT, __FILE__, __LINE__,            \
@@ -299,15 +299,15 @@ typedef enum {
     }; } SNV_STMT_END
 
 #ifndef MAX
-#define MAX(a,b)	((a) > (b) ? (a) : (b))
+#define MAX(a,b)        ((a) > (b) ? (a) : (b))
 #endif
 
 #ifndef MIN
-#define MIN(a,b)	((a) < (b) ? (a) : (b))
+#define MIN(a,b)        ((a) < (b) ? (a) : (b))
 #endif
 
 #ifndef ABS
-#define ABS(a)		((a) < 0 ? -(a) : (a))
+#define ABS(a)          ((a) < 0 ? -(a) : (a))
 #endif
 
 typedef SNV_LONG_DOUBLE snv_long_double;

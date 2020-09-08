@@ -23,11 +23,11 @@ SUBDIRS         = test
 AM_CPPFLAGS     = @INCLIST@
 AM_CFLAGS       = @WARN_CFLAGS@
 FSMTPL          = fsm.tpl  fsm-macro.tlib fsm-trans.tlib
-templates       = snarf.tpl $(FSMTPL) guile-iface.tpl
-definitions     = cgi.def opts.def pseudo.def guile-iface.def defParse.def \
+templates       = snarf.tpl $(FSMTPL)
+definitions     = cgi.def opts.def pseudo.def defParse.def \
 		  ag-text.def
 ghdr            = ag-text.h cgi-fsm.h defParse-fsm.h directive.h expr.h \
-		  functions.h guile-iface.h opts.h proto.h pseudo-fsm.h
+		  functions.h opts.h proto.h pseudo-fsm.h
 gen_csrc        = expr.ini defParse.x $(ghdr)
 pkgdata_DATA    = $(FSMTPL)
 man_MANS        = autogen.1
@@ -64,7 +64,7 @@ nodist_autogen_SOURCES = ag.c
 autogen_SOURCES = $(gen_csrc)
 autogen_LDADD   = $(LO_LIB) $(SNV_LIB) $(GUILE_LIBS)
 autogen_LDFLAGS = $(DYNAMIC_AG) $(AG_STATIC_AUTOGEN) -no-install
-autogen_CFLAGS  = $(GUILE_CFLAGS)
+autogen_CFLAGS  = @GUILE_CFLAGS@
 stamp_script    = $(srcdir)/mk-stamps.sh
 
 AM_YFLAGS = -d

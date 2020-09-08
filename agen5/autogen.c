@@ -218,7 +218,7 @@ cleanup_and_abort(int sig)
         exit_cleanup(EXIT_PCLOSE_NOWAIT);
 
         if (HAVE_OPT(NO_ABORT))
-            exit(AUTOGEN_EXIT_USAGE_ERROR);
+            exit(AUTOGEN_EXIT_SYSEXIT_USAGE);
         abort();
     }
 
@@ -270,7 +270,7 @@ cleanup_and_abort(int sig)
     exit_cleanup(EXIT_PCLOSE_NOWAIT);
 
     if (HAVE_OPT(NO_ABORT))
-        exit(AUTOGEN_EXIT_USAGE_ERROR);
+        exit(AUTOGEN_EXIT_SYSEXIT_USAGE);
     abort();
 }
 
@@ -474,7 +474,7 @@ ag_abend_at(char const * msg
         fputc(NL, stderr);
 
     if (HAVE_OPT(NO_ABORT))
-        exit(AUTOGEN_EXIT_USAGE_ERROR);
+        exit(AUTOGEN_EXIT_SYSEXIT_USAGE);
 
 #ifdef DEBUG_ENABLED
     abort();

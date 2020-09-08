@@ -160,7 +160,7 @@ typedef struct {
 
 static char *
 print_float_round (snv_long_double fract, int *exp, char *start, char *end,
-		   char ch, int *signp)
+                   char ch, int *signp)
 {
   snv_long_double tmp;
   if (fract)
@@ -171,31 +171,31 @@ print_float_round (snv_long_double fract, int *exp, char *start, char *end,
   if (tmp > 4)
     for (;; --end)
       {
-	if (*end == '.')
-	  --end;
-	if (end == start)
-	  {
-	    if (exp) /* e/E; increment exponent */
-	      ++end, ++*exp;
+        if (*end == '.')
+          --end;
+        if (end == start)
+          {
+            if (exp) /* e/E; increment exponent */
+              ++end, ++*exp;
 
-	    *end = '1';
-	    break;
-	  }
-	if (++*end <= '9')
-	  break;
-	*end = '0';
+            *end = '1';
+            break;
+          }
+        if (++*end <= '9')
+          break;
+        *end = '0';
       }
 
   /* ``"%.3f", (double)-0.0004'' gives you a negative 0. */
   else if (*signp == '-')
     for (;; --end)
       {
-	if (*end == '.')
-	  --end;
-	if (*end != '0')
-	  break;
-	if (end == start)
-	  *signp = 0;
+        if (*end == '.')
+          --end;
+        if (*end != '0')
+          break;
+        if (end == start)
+          *signp = 0;
       }
   return (start);
 }
@@ -373,7 +373,7 @@ do_gformat (print_float_status_t * pfs)
          before the decimal point significant and e/E doesn't
          count it as precision.  */
       --pfs->pfs_prec;
-      pfs->fmtch -= 2;		/* G->E, g->e */
+      pfs->fmtch -= 2;          /* G->E, g->e */
       do_eformat (pfs);
     }
   else
@@ -498,43 +498,43 @@ printf_flag_info (struct printf_info *const pinfo, size_t n, int *argtypes)
   while (pinfo->state & SNV_STATE_FLAG)
     {
       switch (*pinfo->format)
-	{
-	case '#':
-	  pinfo->alt = true;
-	  pinfo->format++;
-	  break;
+        {
+        case '#':
+          pinfo->alt = true;
+          pinfo->format++;
+          break;
 
-	case '0':
-	  if (!pinfo->left)
-	    pinfo->pad = '0';
-	  pinfo->format++;
-	  break;
+        case '0':
+          if (!pinfo->left)
+            pinfo->pad = '0';
+          pinfo->format++;
+          break;
 
-	case '-':
-	  pinfo->pad = ' ';
-	  pinfo->left = true;
-	  pinfo->format++;
-	  break;
+        case '-':
+          pinfo->pad = ' ';
+          pinfo->left = true;
+          pinfo->format++;
+          break;
 
-	case ' ':
-	  pinfo->space = true;
-	  pinfo->format++;
-	  break;
+        case ' ':
+          pinfo->space = true;
+          pinfo->format++;
+          break;
 
-	case '+':
-	  pinfo->showsign = true;
-	  pinfo->format++;
-	  break;
+        case '+':
+          pinfo->showsign = true;
+          pinfo->format++;
+          break;
 
-	case '\'':
-	  pinfo->group = true;
-	  pinfo->format++;
-	  break;
+        case '\'':
+          pinfo->group = true;
+          pinfo->format++;
+          break;
 
-	default:
-	  pinfo->state = ~(SNV_STATE_BEGIN | SNV_STATE_FLAG);
-	  break;
-	}
+        default:
+          pinfo->state = ~(SNV_STATE_BEGIN | SNV_STATE_FLAG);
+          break;
+        }
     }
 
   pinfo->format--;
@@ -595,10 +595,10 @@ printf_numeric_param_info (struct printf_info *const pinfo, size_t n, int *argty
   if (*pinfo->format == '$')
     {
       if (value <= 0)
-	{
+        {
           PRINTF_ERROR (pinfo, "invalid position specifier");
           return -1;
-	}
+        }
 
       position = (unsigned int)value;
       pinfo->format++;
@@ -610,9 +610,9 @@ printf_numeric_param_info (struct printf_info *const pinfo, size_t n, int *argty
     /* We found a * specification */
     case 2:
       if (pinfo->args)
-	value = pinfo->args[pinfo->argindex].pa_int;
+        value = pinfo->args[pinfo->argindex].pa_int;
       if (n)
-	argtypes[0] = PA_INT;
+        argtypes[0] = PA_INT;
       pinfo->argindex++;
       skipped_args = 1;
       found ^= 6;
@@ -629,7 +629,7 @@ printf_numeric_param_info (struct printf_info *const pinfo, size_t n, int *argty
         skipped_args = position - (unsigned)pinfo->argindex;
 
       if (pinfo->args)
-	value = pinfo->args[position - 1].pa_int;
+        value = pinfo->args[position - 1].pa_int;
       found ^= 10;
       break;
     }
@@ -643,11 +643,11 @@ printf_numeric_param_info (struct printf_info *const pinfo, size_t n, int *argty
 
       /* How awful... */
       if (value < 0)
-	{
-	  pinfo->pad = ' ';
-	  pinfo->left = true;
-	  value = -value;
-	}
+        {
+          pinfo->pad = ' ';
+          pinfo->left = true;
+          value = -value;
+        }
 
       pinfo->width = (int)value;
       break;
@@ -700,56 +700,56 @@ printf_modifier_info (struct printf_info *const pinfo, size_t n, int *argtypes)
   while (pinfo->state != SNV_STATE_SPECIFIER)
     {
       switch (*pinfo->format)
-	{
-	case 'h':
-	  if (*++pinfo->format != 'h')
-	    {
-	      pinfo->is_short = true;
-	      break;
-	    }
+        {
+        case 'h':
+          if (*++pinfo->format != 'h')
+            {
+              pinfo->is_short = true;
+              break;
+            }
 
-	  pinfo->is_char = true;
-	  pinfo->format++;
-	  break;
+          pinfo->is_char = true;
+          pinfo->format++;
+          break;
 
-	case 'z':
-	  if (sizeof (size_t) > sizeof (char *))
-	    pinfo->is_long_double = true;
-	  else
-	    pinfo->is_long = true;
+        case 'z':
+          if (sizeof (size_t) > sizeof (char *))
+            pinfo->is_long_double = true;
+          else
+            pinfo->is_long = true;
 
-	  pinfo->format++;
-	  break;
+          pinfo->format++;
+          break;
 
-	case 't':
-	  if (sizeof (ptrdiff_t) > sizeof (char *))
-	    pinfo->is_long_double = true;
-	  else
-	    pinfo->is_long = true;
+        case 't':
+          if (sizeof (ptrdiff_t) > sizeof (char *))
+            pinfo->is_long_double = true;
+          else
+            pinfo->is_long = true;
 
-	  pinfo->format++;
-	  break;
+          pinfo->format++;
+          break;
 
-	case 'l':
-	  if (*++pinfo->format != 'l')
-	    {
-	      pinfo->is_long = true;
-	      break;
-	    }
-	 /*FALLTHROUGH*/
+        case 'l':
+          if (*++pinfo->format != 'l')
+            {
+              pinfo->is_long = true;
+              break;
+            }
+         /*FALLTHROUGH*/
 
-	case 'j':
-	case 'q':
-	case 'L':
-	  pinfo->is_long_double = true;
-	  pinfo->format++;
-	  break;
+        case 'j':
+        case 'q':
+        case 'L':
+          pinfo->is_long_double = true;
+          pinfo->format++;
+          break;
 
-	default:
-	  pinfo->state = SNV_STATE_SPECIFIER;
-	  pinfo->format--;
-	  break;
-	}
+        default:
+          pinfo->state = SNV_STATE_SPECIFIER;
+          pinfo->format--;
+          break;
+        }
     }
 
   /* Return the number of characters emitted. */
@@ -785,7 +785,7 @@ printf_char (STREAM *stream, struct printf_info *const pinfo, union printf_arg c
       int padwidth = pinfo->width - 1;
 
       while ((count_or_errorcode >= 0) && (count_or_errorcode < padwidth))
-	SNV_EMIT (pinfo->pad, stream, count_or_errorcode);
+        SNV_EMIT (pinfo->pad, stream, count_or_errorcode);
     }
 
   /* Emit the character argument.  */
@@ -795,7 +795,7 @@ printf_char (STREAM *stream, struct printf_info *const pinfo, union printf_arg c
      width and the left justify flag was set.  */
   if ((count_or_errorcode < pinfo->width) && pinfo->left)
     while ((count_or_errorcode >= 0)
-	   && (count_or_errorcode < pinfo->width))
+           && (count_or_errorcode < pinfo->width))
       SNV_EMIT (pinfo->pad, stream, count_or_errorcode);
 
   /* Return the number of characters emitted. */
@@ -806,8 +806,8 @@ printf_char (STREAM *stream, struct printf_info *const pinfo, union printf_arg c
 
 static int
 printf_float (STREAM *stream,
-	      struct printf_info *const pinfo,
-	      union printf_arg const *args)
+              struct printf_info *const pinfo,
+              union printf_arg const *args)
 {
   snv_long_double value = 0.0;
   int sign, len, count_or_errorcode = SNV_OK;
@@ -858,7 +858,7 @@ printf_float (STREAM *stream,
      than the width specifier, and the padding character is not ' '.  */
   if (pinfo->pad != ' ' && !pinfo->left)
     while ((count_or_errorcode >= 0) && (pinfo->width-- > 0))
-	SNV_EMIT (pinfo->pad, stream, count_or_errorcode);
+        SNV_EMIT (pinfo->pad, stream, count_or_errorcode);
 
   /* Fill the stream buffer with as many characters from the number
      buffer as possible without overflowing.  */
@@ -961,8 +961,8 @@ printf_integer (STREAM *stream, struct printf_info *const pinfo, union printf_ar
   else
     while (value > 0)
       {
-	*p-- = digits[value % base];
-	value /= base;
+        *p-- = digits[value % base];
+        value /= base;
       }
 
   pinfo->width -= (int)(end - p);
@@ -980,7 +980,7 @@ printf_integer (STREAM *stream, struct printf_info *const pinfo, union printf_ar
     {
       pinfo->width -= pinfo->prec;
       while (pinfo->prec-- > 0)
-	*p-- = '0';
+        *p-- = '0';
     }
 
   /* Reserve room for leading `0x' for hexadecimal. */
@@ -1002,11 +1002,11 @@ printf_integer (STREAM *stream, struct printf_info *const pinfo, union printf_ar
   if (count_or_errorcode >= 0)
     {
       if (is_negative)
-	SNV_EMIT ('-', stream, count_or_errorcode);
+        SNV_EMIT ('-', stream, count_or_errorcode);
       else if (pinfo->showsign)
-	SNV_EMIT ('+', stream, count_or_errorcode);
+        SNV_EMIT ('+', stream, count_or_errorcode);
       else if (pinfo->space)
-	SNV_EMIT (' ', stream, count_or_errorcode);
+        SNV_EMIT (' ', stream, count_or_errorcode);
     }
 
   /* Display `0x' for alternate hexadecimal specifier. */
@@ -1076,7 +1076,7 @@ printf_pointer (STREAM *stream, struct printf_info *const pinfo, union printf_ar
     {
       int padwidth = pinfo->width - 5;
       while ((count_or_errorcode >= 0) && (count_or_errorcode < padwidth))
-	SNV_EMIT (pinfo->pad, stream, count_or_errorcode);
+        SNV_EMIT (pinfo->pad, stream, count_or_errorcode);
     }
 
   SNV_EMIT ('(', stream, count_or_errorcode);
@@ -1087,7 +1087,7 @@ printf_pointer (STREAM *stream, struct printf_info *const pinfo, union printf_ar
 
   if ((pinfo->width > 5) && pinfo->left)
     while ((count_or_errorcode >= 0)
-	   && (count_or_errorcode < pinfo->width))
+           && (count_or_errorcode < pinfo->width))
       SNV_EMIT (pinfo->pad, stream, count_or_errorcode);
 
   return count_or_errorcode;
@@ -1142,14 +1142,14 @@ printf_string (STREAM *stream, struct printf_info *const pinfo, union printf_arg
       while (  (*p != '\0')
             && (  (pinfo->prec == 0)
                || (count_or_errorcode - mark < (int)len)))
-	SNV_EMIT (*p++, stream, count_or_errorcode);
+        SNV_EMIT (*p++, stream, count_or_errorcode);
     }
 
   /* Right pad to the width if we still didn't reach the specified
      width and the left justify flag was set.  */
   if ((count_or_errorcode < pinfo->width) && pinfo->left)
     while ((count_or_errorcode >= 0)
-	   && (count_or_errorcode < pinfo->width))
+           && (count_or_errorcode < pinfo->width))
       SNV_EMIT (pinfo->pad, stream, count_or_errorcode);
 
   /* Return the number of characters emitted. */

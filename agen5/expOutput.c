@@ -311,7 +311,7 @@ ag_scm_out_pop(SCM ret_contents)
                 AG_CANT(SCM_OUT_POP_NO_REREAD, cur_fpstack->stk_fname);
         }
 
-        res = scm_from_latin1_stringn(pz, (size_t)pos);
+        res = AG_SCM_FROM_STRN(pz, (size_t)pos);
     }
 
     outputDepth--;
@@ -387,7 +387,7 @@ ag_scm_out_suspend(SCM susp_nm)
                          suspAllocCt * sizeof(tSuspendName), "add to susp f");
     }
 
-    pSuspended[ suspendCt-1 ].pzSuspendName = scm_to_latin1_string(susp_nm);
+    pSuspended[ suspendCt-1 ].pzSuspendName = AG_SCM_TO_STR(susp_nm);
     pSuspended[ suspendCt-1 ].pOutDesc      = cur_fpstack;
     if (OPT_VALUE_TRACE >= TRACE_EXPRESSIONS)
         fprintf(trace_fp, TRACE_SUSPEND, __func__, cur_fpstack->stk_fname,
