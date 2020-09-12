@@ -108,7 +108,7 @@ AC_DEFUN([INVOKE_LIBOPTS_MACROS_FIRST],[
   AC_CHECK_LIB(intl,gettext)
   AC_FUNC_VPRINTF
   AC_FUNC_FORK
-  AC_CHECK_FUNCS([mmap canonicalize_file_name snprintf strdup strchr \
+  AC_CHECK_FUNCS([mmap canonicalize_file_name snprintf strchr \
                  strrchr strsignal fchmod fstat chmod])
   AC_PROG_SED
   [while :

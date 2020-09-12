@@ -21,8 +21,6 @@
 /option-value-type.h
 /option-xat-attribute.c
 /option-xat-attribute.h
-/parse-duration.c
-/parse-duration.h
 /pkgconfig
 /po
 /proto.h

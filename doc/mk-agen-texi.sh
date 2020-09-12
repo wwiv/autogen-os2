@@ -17,18 +17,26 @@
 ##  You should have received a copy of the GNU General Public License along
 ##  with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-PS4='+mtx=${FUNCNAME:-=}-$LINENO> '
-exec 2> ${0%.sh}.log
+initialize() {
+  TMPDIR=${TMPDIR:-`pwd`}
+  rm -rf ${TMPDIR}/ag-texi-*.d
+  TMPDIR=${TMPDIR}/ag-texi-$$.d
+  mkdir ${TMPDIR} || die "cannot make '${TMPDIR}' directory"
+  export TMPDIR
 
-set -x
+  PS4='+mtx=${FUNCNAME:-=}-$LINENO> '
+  exec 2> ${0%.sh}.log
 
-typeset -r prog=$(basename "$0" .sh)
-typeset -r progdir=$(\cd $(dirname "$0") && pwd -P)
-typeset -r program=${progdir}/$(basename "$0")
-typeset -r progpid=$$
+  set -x
 
-builddir=`pwd`
-. ${top_builddir:-..}/config/shdefs
+  typeset -r prog=$(basename "$0" .sh)
+  typeset -r progdir=$(\cd $(dirname "$0") && pwd -P)
+  typeset -r program=${progdir}/$(basename "$0")
+  typeset -r progpid=$$
+
+  builddir=`pwd`
+  . ${top_builddir:-..}/config/shdefs
+}
 
 die()
 {
@@ -46,11 +54,6 @@ die()
 
 set_config_values()
 {
-  TMPDIR=`pwd`/ag-texi-$$.d
-  rm -rf ag-texi-*.d
-  mkdir ${TMPDIR} || die "cannot make ${TMPDIR} directory"
-  export TMPDIR
-
   case "$-" in
   *x* ) trap "echo 'saved tmp dir:  ${TMPDIR}';chmod 777 ${TMPDIR}" EXIT
         VERBOSE=true ;;
@@ -290,8 +293,8 @@ mk_autogen_texi() {
   fi
 }
 
-PS4='+agt=${FUNCNAME:-=}-$LINENO> '
-set -x
+initialize
+
 GEN_BASE=agdoc
 test "X$1" = X--force && {
   rm -f agdoc.texi

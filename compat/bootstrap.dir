@@ -15,12 +15,9 @@
 ##  You should have received a copy of the GNU General Public License along
 ##  with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-if ${skip_gen}
-then
-    gunzip < strsignal.h.gz > strsignal.h
-else
-    ${AGexe} strsignal.def
-fi
+test "X$1" = Xpre || return 0
+
+${AGexe} strsignal.def
 
 # Local Variables:
 # mode:shell-script

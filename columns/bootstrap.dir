@@ -24,39 +24,19 @@
 #  These files are distributed, so it is not necessary to invoke
 #  AutoGen before building AutoGen.  (Like I had to do long ago :)
 
-#  Dump the bootstrap recursive argument.  We're not interested.
-#
-test "$1" = recursive && shift
-targets="$*"
-test -z "$targets" && targets='opts.h proto.h'
-
 test "X${mainpid}" = X && {
     PS4='+bsl=${FUNCNAME:-=}-$LINENO> ' \
       . ${top_srcdir}/config/bootstrap.shlib
+    PS4='+col=${FUNCNAME:-=}-$LINENO> '
     free_trap=true
 } || {
     free_trap=false
 }
 
-for f in $targets
-do
-  case $f  in
-
-  proto.h )
-    make_proto
-    ;;
-
-  opts.h | \
-  opts.c | \
-  stamp-opts )
-    make_opts
-    ;;
-
-  * )
-    die "Don't know how to make $f"
-    ;;
-  esac
-done
+if test "X$1" = Xpre
+then make_proto
+else make_opts
+fi
 
 ${free_trap} && {
     trap '' 0

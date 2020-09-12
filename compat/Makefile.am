@@ -20,9 +20,8 @@
 ## You should have received a copy of the GNU General Public License along
 ## with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-COMPAT_CSRC = chmod.c pathfind.c snprintf.c strchr.c strdup.c strftime.c \
-	strsignal.c
-COMPAT_HDRS = compat.h strsignal.h windows-config.h unlocked-io.h
+COMPAT_CSRC = chmod.c pathfind.c snprintf.c strchr.c strftime.c strsignal.c
+COMPAT_HDRS = compat.h strsignal.h windows-config.h
 COMPAT_GEN  = bootstrap.dir strsignal.def strsignal.tpl
 EXTRA_DIST  = $(COMPAT_CSRC) $(COMPAT_HDRS) $(COMPAT_GEN)
 

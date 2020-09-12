@@ -84,6 +84,19 @@ add_files_to_mf() {
     )
 
     eval "$tmpl"
+    gnulib_hdr=''
+    gnulib_hdr+='gettext.h '
+    gnulib_hdr+='intprops.h '
+    gnulib_hdr+='parse-duration.h '
+    gnulib_hdr+='stdnoreturn.in.h '
+    gnulib_hdr+='_Noreturn.h '
+    gnulib_hdr+='unlocked-io.h '
+    gnulib_hdr+='verify.h '
+    gnulib_code='strdup.c'
+    for f in $gnulib_hdr $gnulib_code
+    do
+        cp -fp ${GNULIBDIR}/lib/$f . || die "cannot copy ${GNULIBDIR}/lib/$f"
+    done
 
     {
         ls -1 *.3 | \
@@ -104,6 +117,9 @@ add_files_to_mf() {
         printf '\nGENSCRIPTS      = $(srcdir)/funcs.def \\\n'
         echo "${sfil}" | columns -I4 --spread=1 --line=' \'
         echo
+
+        printf 'GNULIB_SRC      = %s\n' "${gnulib_code}"
+        printf 'GNULIB_HDR      = %s\n' "${gnulib_hdr}"
 
         sed -n '/^## begin/,/^## end/{
 		s/^##.*//
@@ -211,38 +227,20 @@ test "X${mainpid}" = X && {
     free_trap=false
 }
 
-${skip_gen} || \
-    export ag_aopts=${AGexe-autogen}\ -L${top_srcdir}/autoopts/tpl
+export ag_aopts=${AGexe-autogen}\ -L${top_srcdir}/autoopts/tpl
 
 case "$1" in
-*genshell.c )
-    if ${skip_gen}
-    then
-        test -f ${top_srcdir}/autoopts/genshell.c || \
-            die "No autogen for building genshell.c"
-    else
-        ${ag_aopts} genshell.def || \
-            die "FAILED: ${ag_aopts} genshell.def"
-    fi
-    ;;
+post )
+    ${ag_aopts} genshell.def || \
+        die "FAILED: ${ag_aopts} genshell.def"
 
-*libopts.texi )
-    if ${skip_gen}
-    then
-        test -f ${top_srcdir}/autoopts/libopts.texi || \
-            die "No autogen for building libopts.texi"
-    else
-        agopts='-Taginfo3.tpl -DLEVEL=subsection -blibopts funcs.def'
+    agopts='-Taginfo3.tpl -DLEVEL=subsection -blibopts funcs.def'
         ${ag_aopts} ${agopts} || \
             die "FAILED: ${ag_aopts} ${agopts}"
-    fi
     ;;
 
-aoconf )
-    if ${skip_gen}
-    then untar_touch gen-src.tgz
-    else make_funcs_def
-    fi || die "could not rebuild files in $PWD"
+pre )
+    make_funcs_def || die "could not rebuild files in $PWD"
     ;;
 esac
 

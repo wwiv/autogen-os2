@@ -46,6 +46,8 @@ AC_DEFUN([INVOKE_AG_MACROS_FIRST],[
   if test "${stat_nsec_found}" != yes; then
         AC_MSG_WARN(Cannot determine nanosecond field of struct stat)
   fi
+  gl_FUNC_NANOSLEEP
+  gl_TIMESPEC
 ])
 
 

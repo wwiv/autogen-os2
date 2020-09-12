@@ -38,6 +38,27 @@ doit ()
     fi
 }
 
+find_gnulib() {
+    test -z "$GNULIBDIR" && {
+        local gld=$(command -v gnulib-tool)
+        test "X$gld" = "X" || gld=$(dirname "$gld")
+        for d in $HOME/tools/gnulib ~gnu/proj/gnulib /usr/share/gnulib \
+                                    ${gld:+"$gld"}
+        do
+            test -d "$d" && GNULIBDIR=$d && break
+        done
+        test -z "$GNULIBDIR" && die "cannot find GNULIBDIR"
+    }
+
+    unset LANG || LANG=''
+    for f in gnulib-tool m4/lib-link.m4 build-aux/config.rpath \
+             build-aux/git-version-gen
+    do test -s ${GNULIBDIR}/$f || die "not found: ${GNULIBDIR}/$f"
+        g=${f##*/} ; g=${g%%.*} ; g=${g//-/_}
+        eval export GL_${g^^}=${GNULIBDIR}/$f
+    done
+}
+
 case `set -o` in
 *posix*) set -o posix  ;;
 *) exec bash $0 ${1+"$@"} ;;
@@ -170,12 +191,8 @@ ${skip_gen} || {
         die "autogen support programs are missing"
 }
 
-export AGexe GDexe CLexe setx dashx VERBOSE nl ht
-
-untar_touch() {
-    list=`tar -xzvf "$@"`
-    touch $list
-}
+find_gnulib
+export AGexe GDexe CLexe setx dashx VERBOSE nl ht GNULIBDIR
 
 # # # # # # # # # # # # # # # # # # #
 #

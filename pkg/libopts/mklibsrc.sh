@@ -54,7 +54,7 @@ die() {
 cd ${top_builddir}/autoopts
 files='libopts.c gettext.h parse-duration.c parse-duration.h
 	stdnoreturn.in.h _Noreturn.h '$(
-    fgrep '#include' libopts.c | \
+    grep -F '#include' libopts.c | \
        sed -e 's,"$,,;s,#.*",,' )
 
 for f in ${files} intprops.h verify.h
@@ -74,8 +74,8 @@ done
 cp -f ${top_srcdir}/pkg/libopts/COPYING.* ${tagd}/.
 
 cd ${top_srcdir}/compat
-cp windows-config.h compat.h pathfind.c snprintf.c strdup.c strchr.c \
-   ../config/snippet/_Noreturn.h ${tagd}/compat/. || \
+cp windows-config.h compat.h pathfind.c snprintf.c strchr.c \
+   ${tagd}/compat/. || \
   die "compat sources could not be found"
 #
 #  END WORK IN SOURCE DIRECTORY

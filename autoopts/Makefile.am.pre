@@ -46,7 +46,8 @@ GENMAN          = $(PATHFIND_MAN) \
 GENHDRS         = autoopts/options.h autoopts/usage-txt.h genshell.h \
 		option-xat-attribute.h option-value-type.h ao-strs.h \
 		ag-char-map.h save-flags.h
-HDRS            = $(GENHDRS) autoopts.h project.h proto.h
+
+HDRS            = $(GENHDRS) $(GNULIB_HDR) autoopts.h project.h proto.h
 GEN_SRC         = ao-strs.c option-value-type.c option-xat-attribute.c \
 		save-flags.c
 
@@ -54,7 +55,7 @@ GEN_SRC         = ao-strs.c option-value-type.c option-xat-attribute.c \
 ## "CSRC".  'sed' does some magic here to get the list of source files for the
 ## documentation.  Files without documentation are on the CSRC = line.
 ##
-CSRC            = parse-duration.c $(GEN_SRC) \
+CSRC            = parse-duration.c $(GEN_SRC) $(GNULIB_SRC) \
     autoopts.c \
     alias.c    boolean.c   check.c     configfile.c cook.c \
     enum.c     env.c       file.c      find.c       genshell.c \
@@ -65,7 +66,7 @@ CSRC            = parse-duration.c $(GEN_SRC) \
 
 SRC             = $(HDRS) $(CSRC) $(GENSRC)
 DEF_FILES       = genshell.def $(srcdir)/funcs.def ao-strs.def
-pkgconfigdir    =$(libdir)/pkgconfig
+pkgconfigdir    = $(libdir)/pkgconfig
 
 ## # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 ##

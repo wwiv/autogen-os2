@@ -86,26 +86,6 @@ one_year_limit() {
     )
 }
 
-find_gnulib() {
-    test -z "$GNULIBDIR" && {
-        local gld=$(command -v gnulib-tool)
-        test "X$gld" = "X" || gld=$(dirname "$gld")
-        for d in $HOME/tools/gnulib ~gnu/proj/gnulib /usr/share/gnulib \
-                                    ${gld:+"$gld"}
-        do
-            test -d "$d" && GNULIBDIR=$d && break
-        done
-        test -z "$GNULIBDIR" && die "cannot find GNULIBDIR"
-    }
-    unset LANG || LANG=''
-    for f in gnulib-tool m4/lib-link.m4 build-aux/config.rpath \
-             build-aux/git-version-gen
-    do test -s ${GNULIBDIR}/$f || die "not found: ${GNULIBDIR}/$f"
-        g=${f##*/} ; g=${g%%.*} ; g=${g//-/_}
-        eval export GL_${g^^}=${GNULIBDIR}/$f
-    done
-}
-
 set_ag_ver() {
     local cmt= ver=$(
         \cd ${SOURCE_DIR}
@@ -144,7 +124,6 @@ set_ag_ver() {
 }
 
 config_versions() {
-    find_gnulib
     set_ag_ver
     unset LANG || LANG=''
 
@@ -156,7 +135,8 @@ config_versions() {
     do sed "$sedcmd" $f > X ; mv -f X $f
     done
 
-    sed "1s/__CURRENT_VERSION__.*/${AG_VERSION} - $(date '+%B %Y')/" NEWS.pre > NEWS
+    sed "1s/__CURRENT_VERSION__.*/${AG_VERSION} - $(date '+%B %Y')/" \
+        NEWS.pre > NEWS
 
     cd ${top_srcdir}
 
@@ -192,29 +172,41 @@ config_versions() {
 	--source-base=autoopts
 	--symlink'
     glmods='
-	extensions
 	errno
+	extensions
 	gendocs
 	gettext-h
 	havelib
+        nanosleep
 	parse-duration
 	snippet/_Noreturn
 	stat-time
-	stdnoreturn'
+	stdnoreturn
+        timespec'
     cmd=$(echo ${GL_GNULIB_TOOL} $glopts $glmods)
     echo GNULIB-TOOL: $cmd
     ${cmd}
-    sed -i 's/do_not_make_me_.*_SOURCES/EXTRA_DIST/;/do_not_make_me/d' \
-        autoopts/gnulib.mk
-    sedcmd='s@/config/snippet/@/compat/@'
-    sedcmd+=$'\n\@begin .*snippet/_Noreturn@,\@end .*snippet/_Noreturn@ p'
-    sedcmd+=$'\n\@begin .* module stdnoreturn@,\@end .* module stdnoreturn@ p'
-    sed -n "$sedcmd" autoopts/gnulib.mk | \
-      grep -v '^##' > pkg/libopts/stdnoreturn.mk
-    cp ${GNULIBDIR}/build-aux/config.rpath ${GNULIBDIR}/m4/lib-link.m4 config/.
+    test -z "" || {
+      sed -i 's/do_not_make_me_.*_SOURCES/EXTRA_DIST/;/do_not_make_me/d' \
+          autoopts/gnulib.mk
+      sedcmd='s@/config/snippet/@/compat/@'
+      sedcmd+=$'\n\@begin .*snippet/_Noreturn@,\@end .*snippet/_Noreturn@ p'
+      sedcmd+=$'\n\@begin .* module stdnoreturn@,\@end .* module stdnoreturn@ p'
+      sed -n "$sedcmd" autoopts/gnulib.mk | \
+        grep -v '^##' > pkg/libopts/stdnoreturn.mk
+    }
+    files='build-aux/config.rpath'
+    files+=' m4/lib-link.m4'
+    for f in $files
+    do
+      cp ${GNULIBDIR}/$f config/.
+    done
+    f='doc/gendocs_template'
+    cp ${GNULIBDIR}/$f doc/.
 
     ${GNULIBDIR}/build-aux/gitlog-to-changelog | \
-        one_year_limit > ${top_srcdir}/ChangeLog
+      one_year_limit > ${top_srcdir}/ChangeLog
+    ls -l config
     echo GNULIB-TOOL-DONE
 }
 
@@ -243,8 +235,6 @@ tweak_Makefile_am()
 }
 
 cd ${top_srcdir}
-: START BOOTSTRAP-LOCAL $1
-
 case "${1}" in
 ( pre )
     echo '@setfilename autogen.info' > doc/autogen.texi
@@ -254,11 +244,10 @@ case "${1}" in
     ;;
 
 ( post )
-    rm -f doc/autogen.texi
+    rm -f doc/autogen.texi `find * -type f -name '*.pre'`
+    : FIN BOOTSTRAP-LOCAL $(date)
     ;;
 esac
-
-: FIN BOOTSTRAP-LOCAL $1
 
 # Local Variables:
 # mode: shell-script

@@ -214,43 +214,10 @@ find_libguiledir() {
     guile_scm_h=`find ${libguiledir} -type f -name __scm.h`
 }
 
-fix_guile() {
-    cd ${builddir}
-    find_libguiledir ${LGCFLAGS}
-
-    list=`exec 2>/dev/null
-        find ${libguiledir}/libguile* -type f | \
-            xargs grep -l -E '\<noreturn\>'`
-
-    test -z "$list" && exit 0
-
-    test -d libguile || mkdir libguile || {
-        echo "cannot make libguile directory"
-        exit 1
-    } 1>&2
-
-    noret='\([^a-zA-Z0-9_]\)noreturn\([^a-zA-Z0-9_]\)'
-    nores='\1__noreturn__\2'
-    sedex="s@${noret}@${nores}@"
-
-    echo "Patching files to remove bare 'noreturn' keyword in" \
-	 $list >&2
-
-    for f in $list
-    do
-        g=libguile${f##*/libguile}
-        sed "${sedex}" $f > $g
-        diff -u $f $g >&2 || :
-    done
-
-    test -f libguile.h || cp ${libguiledir}/libguile.h .
-}
-
 init
 collect_src "$@" > ${builddir}/libopts.c
 extension_defines
 fix_scripts
 find_shell_prog
 find_cat_prog
-fix_guile
 touch ${sentinel_file}

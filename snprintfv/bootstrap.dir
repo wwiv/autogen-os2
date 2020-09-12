@@ -29,6 +29,8 @@
 # the same distribution terms used by the libopts library.
 
 # Code:
+test "X$1" = Xpre || return 0
+shift
 
 init() {
     top_srcdir=..

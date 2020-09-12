@@ -30,16 +30,20 @@
 #  because some of the rules are complex and we don't want to
 #  deal with the dual update problem.
 
-readonly stamp_list=$(echo "stamp-proto"
-    sed -n '/^make_[a-z_]*[(]/{;s/^make_/stamp-/;s/[()].*//;p;}' \
-        ${top_srcdir}/agen5/mk-stamps.sh)
-
 set_defaults()
 {
-    builddir=$(pwd)
-    srcdir=${top_srcdir}/agen5
+    test "X${mainpid}" = X && {
+        PS4='+slb=${FUNCNAME:-=}-$LINENO> ' \
+           source ${top_srcdir:-..}/config/bootstrap.shlib
+        PS4='+ag5=${FUNCNAME:-=}-$LINENO> '
+        free_trap=true
+    } || {
+        free_trap=false
+    }
 
-    export builddir srcdir
+    builddir=$(pwd)
+    srcdir=$builddir
+    top_srcdir=$(cd $builddir/.. ; pwd)
 
     #  Make sure we have a default for top build and source.
     #  Some of the templates need this information.
@@ -55,7 +59,27 @@ set_defaults()
     #  Ensure complete success or a noticable failure
     #
     set -e
+
+    mk_stamps=$builddir/mk-stamps.sh
+
+    readonly stamp_list=$(
+        echo "stamp-proto"
+        sed -n '/^make_[a-z_]*[(]/{;s/^make_/stamp-/;s/[()].*//;p;}' \
+            ${mk_stamps})
+
+    test ${#stamp_list} -gt 16 || \
+        die "not enough agen5 stamps: " $stamp_list
+
+    test -x ${mk_stamps} || \
+        chmod a+x ${mk_stamps} || \
+        die "cannot execute ${mk_stamps}"
+
+    export builddir srcdir top_srcdir TEMP_DIR
 }
+
+assemble_dot_dot_Mf() {
+    :
+} > ../Makefile.am
 
 assemble_Makefile() {
     sed '/# *start-generated-text/q' ${srcdir}/Makefile.am.pre
@@ -96,24 +120,13 @@ assemble_Makefile() {
 #
 #  M A I N
 #
-set_defaults ${1+"$@"}
 
-if ${skip_gen:-false}
-then
-    untar_touch agen5.tgz
-else
-    export TEMP_DIR
-    . ${srcdir}/mk-stamps.sh $stamp_list
-    assemble_Makefile
-fi
+test "X$1" = Xpre || return 0
+set_defaults
 
-#  IF we symlinked in columns or getdefs,
-#  THEN it is time to unlink them
-#
-test -z "$rmlist" || rm -f $rmlist
-echo STAMPS COMPLETED: $stamp_list > /dev/tty
-date > /dev/tty
-sleep 1
+source ${mk_stamps} $stamp_list
+
+assemble_Makefile
 
 # Local Variables:
 # mode:shell-script

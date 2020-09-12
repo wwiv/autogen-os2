@@ -28,12 +28,12 @@
 # so supplementary actions can be placed in a bootstrap.local script
 # in the same directory as this script, and anywhere in the source tree
 # in bootstrap.dir files.  The bootstrap.local script will be sourced
-# twice; first with BOOTSTRAP=pre before the main part is run, and then
-# again with BOOTSTRAP=post after the main part has finished.  This makes
+# twice; first with 'pre' before the main part is run, and then
+# again with 'post' after the main part has finished.  This makes
 # it possible to set up any links or temporary files required for this
 # script to work before it has executed, and then remove them when it
 # has finished.  The bootstrap.dir files are also sourced, in a random
-# order, as they are found in the tree just before the BOOTSTRAP=post
+# order, as they are found in the tree just before the post
 # phase.  This allows a developer to put any peculiar bootstrap actions
 # required by individual directories where they can be seen (and not
 # forgotten!).
@@ -82,9 +82,20 @@ config_tools()
     test -f "${top_srcdir}/${config_file}.pre" || \
         die "${config_file}.pre not in ${top_srcdir}"
 
-    #  This missing function is used in many places
+    # ORDERED LIST. "pre" goes in this order, "post" in reverse so,
+    # bootstrap.local pre is first and bootstrap.local post is last.
     #
-    export config_file top_srcdir top_builddir
+    bootstrap_list='
+        config/bootstrap.local
+        autoopts/bootstrap.dir
+        agen5/bootstrap.dir
+        columns/bootstrap.dir
+        compat/bootstrap.dir
+        getdefs/bootstrap.dir
+        snprintfv/bootstrap.dir'
+
+    export config_file top_srcdir top_builddir bootstrap_list
+    readonly bootstrap_list
 
     # ------------------------------------------------------------------
     # Make sure all of the maintainer tools required for bootstrap are
@@ -115,10 +126,10 @@ config_tools()
     set +e
 }
 
-# Source any local scripts which add to the bootstrap procedure.
-# The bootstrap.local script should test the value of the BOOTSTRAP
-# environment variable to see whether it should run the sections
-# to be called before the main script, or afterwards.
+# Source any local scripts which add to the bootstrap procedure.  The
+# bootstrap.local script should test the value of the argument to see
+# whether it should run the sections to be called before the main
+# script, or afterwards.
 #
 source_bs() {
     local file=${2}
@@ -134,26 +145,19 @@ source_bs() {
     cd - >/dev/null
 }
 
-pre_local()
+sub_bootstrap()
 {
-    BOOTSTRAP=pre REQUEST_METHOD=
-    export BOOTSTRAP
-    unset REQUEST_METHOD
-    source_bs pbs  ${conf_dir}/bootstrap.local pre
-    source_bs aobs autoopts/bootstrap.dir aoconf
-    :
-}
+    local list=
+    if test X$1 = Xpost
+    then list=$(tac <<<"$bootstrap_list")
+    else list="$bootstrap_list"
+    fi
 
-post_local()
-{
-    bslist=`find . -name bootstrap.dir`
-    for f in ${bslist}
+    for f in ${list}
     do
-        echo START $f $(date) > /dev/tty
-        source_bs ${f%/bootstrap.dir} $f recursive
+        echo START $f ${1^^} $(date) > /dev/tty
+        source_bs ${f%/bootstrap.dir} $f $1
     done
-
-    source_bs Abs ${conf_dir}/bootstrap.local post
 }
 
 filter_chaff() {
@@ -198,15 +202,14 @@ run_autotools()
 #
 {
     config_tools
-    pre_local
+    sub_bootstrap pre
     tool_out_file=${TMPDIR}/autotool-out.txt
     run_autotools 1> ${tool_out_file} 2>&1
     filter_chaff ${tool_out_file}
-
-    post_local
+    sub_bootstrap post
 
     trap '' 0
-    echo 'bootstrap complete'
+    echo 'bootstrap complete' $(date)
     ${i_made_temp_dir} && rm -rf ${TMPDIR}
     : ; exit 0
 }
