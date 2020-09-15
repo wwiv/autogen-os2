@@ -32,6 +32,7 @@ passenv         = MAKE=$(MAKE) srcdir="$(srcdir)" SHELL="$(POSIX_SHELL)" \
 
 run_mktexi      = $(passenv) $(POSIX_SHELL) $${dashx} \
 	$(srcdir)/mk-agen-texi.sh
+
 all : $(INFO_DEPS)
 
 BUILT_SOURCES   = autogen.texi

@@ -1,26 +1,3 @@
-#if defined(ENABLE_FMEMOPEN)
-#include <sys/ioctl.h>
-
-typedef enum {
-    FMEMC_INVALID       = 0,
-    FMEMC_GET_BUF_ADDR
-} fmemctl_t;
-
-typedef struct {
-    enum { FMEMC_GBUF_LEAVE_OWNERSHIP,
-           FMEMC_GBUF_TAKE_OWNERSHIP
-    }          own;
-    char *     buffer;
-    size_t     buf_size;
-    size_t     eof;
-} fmemc_get_buf_addr_t;
-
-#ifdef __gnu_hurd__
-#define _IOT__IOTBASE_fmemc_get_buf_addr_t sizeof(fmemc_get_buf_addr_t)
-#endif
-
-#define IOCTL_FMEMC_GET_BUF_ADDR \
-    _IOWR('m', FMEMC_GET_BUF_ADDR, fmemc_get_buf_addr_t)
 
 /**
  * @file fmemopen.c
@@ -52,6 +29,30 @@ typedef struct {
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+#if defined(ENABLE_FMEMOPEN)
+#include <sys/ioctl.h>
+
+typedef enum {
+    FMEMC_INVALID       = 0,
+    FMEMC_GET_BUF_ADDR
+} fmemctl_t;
+
+typedef struct {
+    enum { FMEMC_GBUF_LEAVE_OWNERSHIP,
+           FMEMC_GBUF_TAKE_OWNERSHIP
+    }          own;
+    char *     buffer;
+    size_t     buf_size;
+    size_t     eof;
+} fmemc_get_buf_addr_t;
+
+#ifdef __gnu_hurd__
+#define _IOT__IOTBASE_fmemc_get_buf_addr_t sizeof(fmemc_get_buf_addr_t)
+#endif
+
+#define IOCTL_FMEMC_GET_BUF_ADDR \
+    _IOWR('m', FMEMC_GET_BUF_ADDR, fmemc_get_buf_addr_t)
+
 #if defined(HAVE_FOPENCOOKIE)
 
    typedef off64_t * seek_off_t;

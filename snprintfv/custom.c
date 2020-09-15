@@ -1,6 +1,7 @@
-/*  -*- Mode: C -*-  */
 
-/* custom.c --- printf clone for argv arrays
+/**
+ * @file custom.c
+ * --- printf clone for argv arrays
  * Copyright (C) 2003 Gary V. Vaughan
  * Originally by Paolo Bonzini, 2002
  * This file is part of Snprintfv

@@ -59,6 +59,11 @@ find_gnulib() {
     done
 }
 
+rm_temp_dir() {
+    echo RM TEMP_DIR: $TEMP_DIR
+    # rm -rf ${TEMP_DIR}
+}
+
 case `set -o` in
 *posix*) set -o posix  ;;
 *) exec bash $0 ${1+"$@"} ;;
@@ -126,7 +131,6 @@ then
     run_ag()
     {
         local tag=${1} ; shift
-        # local vgfile=/tmp/vglog/${tag}-%p.txt
         local tfile='>>'ag-${tag}-$$.log
         if test -n "$DEPFILE"
         then tag="-MTstamp-${tag} -MF${DEPFILE} -MP"
@@ -140,7 +144,6 @@ then
 else
     run_ag()
     {
-        # local vgfile=/tmp/vglog/${1}-%p.txt
         if test -n "$DEPFILE"
         then tag="-MTstamp-${1} -MF${DEPFILE} -MP"
         else tag="-MFstamp-${1} -MP"
@@ -240,7 +243,8 @@ make_proto()
 
     for f in ${files}
     do
-        grep -q 'buffer-read-only:' $f && continue
+        grep -q  'buffer-read-only:' $f && continue
+        grep -qE "file +$f" $f  || continue
 
         txt=$(sed -n "$sed_static" $f | sed "$sed_trim")
         test ${#txt} -gt 4 && {

@@ -1,6 +1,6 @@
 
 /**
- *  @file xml2ag.c
+ * @file xml2ag.c
  *
  *  This is the main routine for xml2ag.
  *

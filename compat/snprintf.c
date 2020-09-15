@@ -1,4 +1,7 @@
 
+/**
+ * @file snprintf.c
+ */
 #ifndef HAVE_VPRINTF
 #include "choke-me: no vprintf and no snprintf"
   choke me.

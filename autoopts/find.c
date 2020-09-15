@@ -1,5 +1,6 @@
+
 /**
- * @file check.c
+ * @file find.c
  *
  * @brief Hunt for options in the option descriptor list
  *

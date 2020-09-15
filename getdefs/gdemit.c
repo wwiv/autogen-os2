@@ -1,6 +1,7 @@
 
 /**
- *  @file gdemit.c
+ * @file gdemit.c
+ *
  *  @addtogroup columns
  *  @{
  */

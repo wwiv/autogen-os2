@@ -1,4 +1,7 @@
-/*
+
+/**
+ * @file collapse.c
+ *
  *  EDIT THIS FILE WITH CAUTION  (collapse.c)
  *
  *  It has been AutoGen-ed  March  8, 2013 at 03:16:23 PM by AutoGen 5.17.3.pre6

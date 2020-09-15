@@ -1,6 +1,6 @@
 
 /**
- *  \file load.c
+ * @file load.c
  *
  *  This file contains the routines that deal with processing text strings
  *  for options, either from a NUL-terminated string passed in or from an

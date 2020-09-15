@@ -28,55 +28,59 @@
 #  because some of the rules are complex and we don't want to
 #  deal with the dual update problem.
 
-test -z "$TEMP_DIR" && {
-    TEMP_DIR=${TMPDIR:-/tmp}/mk-stamp-????????.tdir
-    rm -rf ${TEMP_DIR}
-    TEMP_DIR=$(mktemp -d ${TEMP_DIR//\?/X})
-    export TEMP_DIR
-}
-exec 9>&2 2>> ${TEMP_DIR}/mk-stamps.log
-stop_tracing=:
-if (shopt -qo xtrace)
-then
-    shopt -qo xtrace || stop_tracing="set +x"
-else
-    shopt() {
-        local on=$(set -o|sed -n "s/^$2 *//p")
-        test $on = on
+init_stamps() {
+    test -z "$TEMP_DIR" && {
+        TEMP_DIR=${TMPDIR:-/tmp}/mk-stamp-????????.tdir
+        rm -rf ${TEMP_DIR}
+        TEMP_DIR=$(mktemp -d ${TEMP_DIR//\?/X})
+        export TEMP_DIR
     }
+    exec 9>&2 2>> ${TEMP_DIR}/mk-stamps.log
+    stop_tracing=:
+    if (shopt -qo xtrace)
+    then
+        shopt -qo xtrace || stop_tracing="set +x"
+    else
+        shopt() {
+            local on=$(set -o|sed -n "s/^$2 *//p")
+            test $on = on
+        }
 
-    shopt -qo xtrace || stop_tracing="set +x"
-fi
-set -x
+        shopt -qo xtrace || stop_tracing="set +x"
+    fi
+    set -x
 
-if test -z "$mainpid"
-then
-    test -z "${top_srcdir}" && top_srcdir=`
+    if test -z "$mainpid"
+    then
+        test -z "${top_srcdir}" && top_srcdir=`
         \\cd \`dirname $0\`
         \\cd ..
         pwd`
 
-    test -z "${top_builddir}" && top_builddir=`
+        test -z "${top_builddir}" && top_builddir=`
         \\cd ..
         pwd`
-    export top_srcdir top_builddir
-    . ${top_srcdir}/config/bootstrap.shlib
+        export top_srcdir top_builddir
+        . ${top_srcdir}/config/bootstrap.shlib
 
-    test -f ${top_builddir}/config/shdefs || {
+        test -f ${top_builddir}/config/shdefs || {
 
-        test -f ${top_builddir:-..}/config/mk-shdefs || {
-            echo "mk-shdefs has not beein configured in ${top_builddir:-$PWD/..}"
-            exit 1
-        } 1>&2
+            test -f ${top_builddir:-..}/config/mk-shdefs || {
+                echo "mk-shdefs has not beein configured in ${top_builddir:-$PWD/..}"
+                exit 1
+            } 1>&2
 
-        ( set -e
-          cd ${top_builddir:-..}
-          make shdefs
-        ) || exit 1
+            ( set -e
+              cd ${top_builddir:-..}
+              make shdefs
+            ) || exit 1
 
-        . ${top_builddir:-..}/config/shdefs
-    }
-fi
+            . ${top_builddir:-..}/config/shdefs
+        }
+    fi
+
+    set_defaults
+}
 
 set_defaults()
 {
@@ -144,6 +148,7 @@ make_parse()
         opts=-DDEBUG_ENABLED
 
     run_ag parse ${opts} defParse.def
+    echo EXIT $? 1>&2
 }
 
 # # # # # # # # # # # # # # # # # # #
@@ -153,12 +158,14 @@ make_parse()
 make_cgi()
 {
     run_ag cgi cgi.def
+    echo EXIT $? 1>&2
 }
 
 make_pseudo()
 {
     run_ag pseudo pseudo.def
     rm -f .fsm.*
+    echo EXIT $? 1>&2
 }
 
 # # # # # # # # # # # # # # # # # # #
@@ -194,10 +201,11 @@ make_exprini()
     echo ${GDexe} load=expr.cfg
     set +e
     {
-        SHELL=sh ${GDexe} load=expr.cfg ${files} 2>&1
+        SHELL=sh ${GDexe} load=expr.cfg 2>&1
     } | ${GREP} -v 'no copies of pattern' >&2
     set -e
     run_ag exprini expr.def
+    echo EXIT $? 1>&2
     rm -f expr.cfg
 }
 
@@ -232,6 +240,7 @@ make_directive()
     } > directive.def
 
     run_ag dirtv directive.def
+    echo EXIT $? 1>&2
     echo directive.cfg >&5
 }
 
@@ -245,6 +254,7 @@ make_texi()
     eopt="-Tagtexi-cmd.tpl -DLEVEL=chapter -binvoke-autogen"
     eopt=${eopt}\ --timeout=`expr $AG_TIMEOUT '*' 3`
     run_ag texi ${eopt} ${srcdir}/opts.def
+    echo EXIT $? 1>&2
 }
 
 # # # # # # # # # # # # # # # # # # #
@@ -254,6 +264,7 @@ make_texi()
 make_opts()
 {
     run_ag opts ${srcdir}/opts.def
+    echo EXIT $? 1>&2
 }
 
 # # # # # # # # # # # # # # # # # # #
@@ -263,6 +274,7 @@ make_opts()
 make_ag_text()
 {
     run_ag ag_text ${srcdir}/ag-text.def
+    echo EXIT $? 1>&2
 }
 
 # # # # # # # # # # # # # # # # # # #
@@ -273,11 +285,13 @@ make_fmem()
 {
     ${GDexe} templ=agman3.tpl linenum output=fmemopen.def ${srcdir}/fmemopen.c
     run_ag fmem fmemopen.def
+    echo EXIT $? 1>&2
 }
 
 make_man()
 {
     run_ag man -Tagman-cmd -DMAN_SECTION=1 ${srcdir}/opts.def
+    echo EXIT $? 1>&2
 }
 
 # # # # # # # # # # # # # # # # # # #
@@ -291,6 +305,7 @@ make_func()
 
     ${GDexe} output=functions.def template=functions.tpl ${opts} ${files}
     run_ag func functions.def
+    echo EXIT $? 1>&2
 }
 
 # make_proto() -- comes from bootstrap.shlib
@@ -302,8 +317,9 @@ dispatch()
     then DEPFILE=./${DEPDIR}/stamp-${1}.d
     else DEPFILE=''
     fi
-    eval make_${1} '&'
-    pid_list="$pid_list $!"
+    eval make_${1} 2> ${TEMP_DIR}/make-$1.log '&'
+    pid_list+=" $!"
+    log_file_list+=" ${TEMP_DIR}/make-$1.log"
 }
 
 conf_time_make_dep_file() {
@@ -317,10 +333,11 @@ conf_time_make_dep_file() {
 #  M A I N
 #
 export PS4='+stmp=${FUNCNAME:-=}-$LINENO> '
-set_defaults ${1+"$@"}
+init_stamps
 rmlist=${TEMP_DIR}/rm-list.txt
 exec 5> $rmlist
 pid_list=''
+log_file_list=''
 
 #  FOR each output target,
 #   DO the appropriate rule...
@@ -370,8 +387,13 @@ do
     esac
 done
 
-wait $pid_list
-rm -f ag-*.log `cat $rmlist`
+test ${#pid_list} -gt 1 && wait $pid_list
+{
+    echo =============================
+    head -n 99999 $log_file_list
+    echo =============================
+} >&2
+rm -rf ${TEMP_DIR}/.ag-?????? `cat $rmlist` $log_file_list
 $stop_tracing
 exec 2>&9 9>&-
 trap '' 0

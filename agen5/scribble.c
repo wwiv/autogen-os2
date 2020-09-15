@@ -1,5 +1,8 @@
 
-/*  This file is part of AutoGen.
+/**
+ * @file scribble.c
+ *
+ *  This file is part of AutoGen.
  *  Copyright (C) 1992-2018 Bruce Korb - all rights reserved
  *
  * AutoGen is free software: you can redistribute it and/or modify it

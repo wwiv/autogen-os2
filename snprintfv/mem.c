@@ -1,6 +1,7 @@
-/*  -*- Mode: C -*-  */
 
-/* mem.c --- memory management routines
+/**
+ * @file mem.c
+ * --- memory management routines
  * Copyright (C) 2002 Gary V. Vaughan
  * Originally by Paolo Bonzini, 2002
  * This file is part of Snprintfv

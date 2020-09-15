@@ -1,6 +1,7 @@
-/*  -*- Mode: C -*-  */
 
-/* filament.c --- a bit like a string, but different =)O|
+/**
+ * @file filament.c
+ * --- a bit like a string, but different =)O|
  * Copyright (C) 1999 Gary V. Vaughan
  * Originally by Gary V. Vaughan, 1999
  * This file is part of Snprintfv

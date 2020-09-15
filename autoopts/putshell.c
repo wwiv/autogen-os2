@@ -1,6 +1,6 @@
 
 /**
- * \file putshell.c
+ * @file putshell.c
  *
  *  This module will interpret the options set in the tOptions
  *  structure and print them to standard out in a fashion that

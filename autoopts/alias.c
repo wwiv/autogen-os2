@@ -1,6 +1,6 @@
 
 /**
- * \file alias.c
+ * @file alias.c
  *
  * Handle options that are aliases for another option.
  *

@@ -1,6 +1,6 @@
 
 /**
- * \file reset.c
+ * @file reset.c
  *
  *  Reset the option state to the compiled state.
  *

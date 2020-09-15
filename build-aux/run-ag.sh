@@ -25,7 +25,11 @@
 # any containing directory must be created. The target is created with a
 # very old time stamp.
 #
-AGexe=/u/bkorb/tools/ag/autogen-bld/agen5/.libs/autogen
+die() {
+  echo "FATAL run-ag error: $*"
+  exit 1
+} 1>&2
+
 find_exe() {
   eval local exe=\${$1}
   test -x "$exe" && return 0
@@ -37,25 +41,45 @@ find_exe() {
         exit 1 ;;
   esac
   test -x "$exe" || exe=`command -v $2`
-  test -x "$exe" || {
-    echo "cannot locate $2"
-    return 1
-  } 1>&2
+  test -x "$exe" || die "cannot locate $2"
   eval $1=$exe
   return 0
 }
 
-STAMP_TEMP_DIR=$(mktemp --suffix=.tdir -d /tmp/run-ag-XXXXXXXX)
-exec 9>&2 2>> ${STAMP_TEMP_DIR}/mk-stamps.log
-VERBOSE=1
+open_log_file() {
+  test -o xtrace && VERBOSE=1
+  test "X$VERBOSE" = X1 && {
+    PS4='+run-ag-$LINENO> '
+    set -x
+    : in $PWD
+  }
 
-test "X$VERBOSE" = X1 && {
-  PS4='+run-ag-$LINENO> '
-  set -x
-  : in $PWD
+  if test -z "${TEMP_DIR}"
+  then
+    TEMP_DIR="${TMPDIR:-/tmp}/run-ag-????????"
+    eval rm -rf ${TEMP_DIR}
+    TEMP_DIR=$(mktemp -d ${TEMP_DIR//\?/X})
+  fi
+
+  local STAMP_TEMP_DIR=${TEMP_DIR}/ag-stamps-$$
+  mkdir -p "${STAMP_TEMP_DIR}" || die "cannot mkdir ${STAMP_TEMP_DIR}"
+  exec 9>&2 2>> ${STAMP_TEMP_DIR}/mk-stamps.log
 }
 
-stamp_file=''
+set_exe_vars() {
+  test -x "$AGexe" || find_exe AGexe autogen
+  test -x "CLexe"  || find_exe CLexe columns
+  PATH=`dirname "$CLexe"`:"$PATH"
+  L_opt="-L'${top_srcdir}/autoopts/tpl'"
+  test "X${top_srcdir}" = "X${top_builddir}" || \
+    L_opt="$L_opt -L'${top_builddir}/autoopts/tpl'"
+  test -o xtrace || return 0
+  L_opt="${L_opt} --trace=every --trace-out='${STAMP_TEMP_DIR}/ag-trace.txt'"
+}
+
+open_log_file
+set_exe_vars
+
 case "$1" in
   -MF*-dep.mk ) : ;;
 
@@ -66,15 +90,8 @@ case "$1" in
     exit $?
     ;;
 
-  '' ) exit 1 ;;
+  * ) die "not a dependency file name: '$1'" ;;
 esac
-
-test -x "$AGexe" || find_exe AGexe autogen
-test -x "CLexe"  || find_exe CLexe columns
-PATH=`dirname "$CLexe"`:"$PATH"
-L_opt="-L'${top_srcdir}/autoopts/tpl'"
-test "X${top_srcdir}" = "X${top_builddir}" || \
-  L_opt="$L_opt -L'${top_builddir}/autoopts/tpl'"
 
 eval "${AGexe}" $L_opt '"$@"'
 exit $?

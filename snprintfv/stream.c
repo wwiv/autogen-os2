@@ -1,6 +1,7 @@
-/*  -*- Mode: C -*-  */
 
-/* stream.c ---  customizable stream routines
+/**
+ * @file stream.c
+ * ---  customizable stream routines
  * Copyright (C) 1998, 1999, 2000, 2002, 2003 Gary V. Vaughan
  * Originally by Gary V. Vaughan, 1998
  * This file is part of Snprintfv

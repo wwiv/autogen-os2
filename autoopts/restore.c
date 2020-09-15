@@ -1,6 +1,6 @@
 
-/*
- * \file restore.c
+/**
+ * @file restore.c
  *
  *  This module's routines will save the current option state to memory
  *  and restore it.  If saved prior to the initial optionProcess call,

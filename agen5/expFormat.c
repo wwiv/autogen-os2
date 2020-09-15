@@ -130,37 +130,34 @@ trim_trailing_white(char * text)
 SCM
 ag_scm_dne(SCM prefix, SCM first, SCM opt)
 {
+    char const *  out_text;
     char const *  date_str;
-    char const *  pzFirst;
-    char const *  pzPrefix;
+    char const *  first_pfx;
+    char const *  pfx_pz;
 
     if (! scm_is_string(prefix))
         return SCM_UNDEFINED;
 
-    date_str = zNil;
-    pzFirst  = zNil;
+    date_str   = zNil;
+    first_pfx  = zNil;
+    pfx_pz     = ag_scm2zchars(prefix, "dne-prefix");
 
-    {
-        size_t pfxLen   = scm_c_string_length(prefix);
-        pzPrefix = ag_scm2zchars(prefix, "dne-prefix");
+    /*
+     * Check for a -d option (ignored) or a -D option (emit date)
+     * by default, "dne" will not emit a date in the output.
+     */
+    if ((strlen(pfx_pz) == 2) && (*pfx_pz == '-')) {
+        switch (pfx_pz[1]) {
+        case 'D':
+            date_str = NULL;
+            pfx_pz   = ag_scm2zchars(first, "dne-prefix");
+            first    = opt;
+            break;
 
-        /*
-         * Check for a -d option (ignored) or a -D option (emit date)
-         * by default, "dne" will not emit a date in the output.
-         */
-        if ((pfxLen == 2) && (*pzPrefix == '-')) {
-            switch (pzPrefix[1]) {
-            case 'D':
-                date_str = NULL;
-                pzPrefix = ag_scm2zchars(first, "dne-prefix");
-                first    = opt;
-                break;
-
-            case 'd':
-                pzPrefix = ag_scm2zchars(first, "dne-prefix");
-                first    = opt;
-                break;
-            }
+        case 'd':
+            pfx_pz = ag_scm2zchars(first, "dne-prefix");
+            first  = opt;
+            break;
         }
     }
 
@@ -188,8 +185,8 @@ ag_scm_dne(SCM prefix, SCM first, SCM opt)
      *  THEN we set it to something other than ``zNil'' and deallocate later.
      */
     if (scm_is_string(first))
-        pzFirst = aprf(ENABLED_OPT(WRITABLE) ? "%s\n" : EXP_FMT_DNE1,
-                       ag_scm2zchars(first, "pfx-1"), pzPrefix);
+        first_pfx = aprf(ENABLED_OPT(WRITABLE) ? "%s\n" : EXP_FMT_DNE1,
+                       ag_scm2zchars(first, "pfx-1"), pfx_pz);
 
     if (date_str == NULL) {
         static char const tim_fmt[] =
@@ -204,45 +201,49 @@ ag_scm_dne(SCM prefix, SCM first, SCM opt)
     }
 
     {
-        char const  * pz;
-        out_stack_t * pfp = cur_fpstack;
-        char const  * tpl_name = strrchr(tpl_fname, DIRCH);
-        if (tpl_name == NULL)
-            tpl_name = tpl_fname;
-        else
-            tpl_name++;
+        char const  * def_file;
+        char const  * out_name;
 
-        while (pfp->stk_flags & FPF_UNLINK)  pfp = pfp->stk_prev;
-        if (! ENABLED_OPT(DEFINITIONS))
-            pz = "<<no definitions>>";
-
-        else if (*oops_pfx != NUL)
-            pz = "<<CGI-definitions>>";
-
-        else {
-            pz = OPT_ARG(DEFINITIONS);
-            if (strcmp(pz, "-") == 0)
-                pz = "stdin";
+        /*
+         * Get the basename of the current output file.
+         * Scratch files are marked with FPF_UNLINK. Skip 'em.
+         */
+        {
+            out_stack_t * pfp = cur_fpstack;
+            while (pfp->stk_flags & FPF_UNLINK)
+                pfp = pfp->stk_prev;
+            out_name = ag_basename(pfp->stk_fname);
         }
 
-        pz = aprf(ENABLED_OPT(WRITABLE) ? EXP_FMT_DNE2 : EXP_FMT_DNE,
-                  pzPrefix, pfp->stk_fname, date_str,
-                  pz, tpl_name, pzFirst);
-        if (pz == NULL)
+        if (! ENABLED_OPT(DEFINITIONS))
+            def_file = "<<no definitions>>";
+
+        else if (*oops_pfx != NUL)
+            def_file = "<<CGI-definitions>>";
+
+        else {
+            def_file = OPT_ARG(DEFINITIONS);
+            if (strcmp(def_file, "-") == 0)
+                def_file = "stdin";
+        }
+
+        out_text = aprf(ENABLED_OPT(WRITABLE) ? EXP_FMT_DNE2 : EXP_FMT_DNE,
+                  pfx_pz, out_name, date_str,
+                  def_file, ag_basename(tpl_fname), first_pfx);
+        if (out_text == NULL)
             AG_ABEND("Allocating Do-Not-Edit string");
-        trim_trailing_white(C(char *, pz));
-        date_str = pz;
+        trim_trailing_white(C(char *, out_text));
     }
 
     /*
-     *  Deallocate any temporary buffers.  pzFirst either points to
+     *  Deallocate any temporary buffers.  first_pfx either points to
      *  the zNil string, or to an allocated buffer.
      */
-    if (pzFirst != zNil)
-        AGFREE(pzFirst);
+    if (first_pfx != zNil)
+        AGFREE(first_pfx);
     {
-        SCM res = AG_SCM_FROM_STR(date_str);
-        AGFREE(date_str);
+        SCM res = AG_SCM_FROM_STR(out_text);
+        AGFREE(out_text);
 
         return res;
     }

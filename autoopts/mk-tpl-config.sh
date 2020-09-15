@@ -52,6 +52,7 @@ collect_src() {
     sentinel_file=${1} ; shift
     cat 1>&8 <<- _EOF_
 	#define  AUTOOPTS_INTERNAL 1
+	#include "config.h"
 	#include "autoopts/project.h"
 
 	#include "ao-strs.h"

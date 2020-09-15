@@ -1,5 +1,6 @@
+
 /**
- * \file initialize.c
+ * @file init.c
  *
  *  initialize the libopts data structures.
  *

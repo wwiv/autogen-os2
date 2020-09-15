@@ -1,6 +1,6 @@
 
 /**
- * \file streqvcmp.c
+ * @file streqvcmp.c
  *
  *  String Equivalence Comparison
  *

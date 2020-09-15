@@ -1,5 +1,6 @@
 
-/** \file version.c
+/**
+ * @file version.c
  *
  *  This module implements the default usage procedure for
  *  Automated Options.  It may be overridden, of course.

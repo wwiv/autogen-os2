@@ -1,6 +1,6 @@
 
 /**
- *  \file cright-update.c
+ * @file cright-update.c
  *
  *  cright-update Copyright (C) 1992-2018 by Bruce Korb - all rights reserved
  *

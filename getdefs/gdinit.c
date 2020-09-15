@@ -1,6 +1,7 @@
 
 /**
- *  @file gdinit.c
+ * @file gdinit.c
+ *
  *  @addtogroup columns
  *  @{
  */

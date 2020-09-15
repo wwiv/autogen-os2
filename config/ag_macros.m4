@@ -43,11 +43,70 @@ AC_DEFUN([INVOKE_AG_MACROS_FIRST],[
   AC_CHECK_MEMBERS([struct stat.st_mtime, struct stat.st_mtime_nsec], [stat_nsec_found=yes], [],
       [[#include <sys/stat.h>]])
 
-  if test "${stat_nsec_found}" != yes; then
-        AC_MSG_WARN(Cannot determine nanosecond field of struct stat)
+  if test "${stat_nsec_found}" != yes
+  then
+    AC_MSG_WARN(Cannot determine nanosecond field of struct stat)
   fi
+
+  gl_FUNC_ALLOCA
+  gl_HEADER_ERRNO_H
+  gl_LIMITS_H
+  gl_STDALIGN_H
+  gl_STDBOOL_H
+  gl_STDINT_H
+
+  AC_SUBST([LIBINTL])
+  AC_SUBST([LTLIBINTL])
+  AC_REQUIRE([gl_EXTERN_INLINE])
+
+  dnl havelib
+  AC_DEFUN([gl_HAVE_MODULE_HAVELIB])
+
+  dnl nanosleep
   gl_FUNC_NANOSLEEP
+  if test $HAVE_NANOSLEEP = 0 || test $REPLACE_NANOSLEEP = 1; then
+    AC_LIBOBJ([nanosleep])
+    gl_PREREQ_NANOSLEEP
+  fi
+  gl_TIME_MODULE_INDICATOR([nanosleep])
+
+  dnl signal-h
+  gl_SIGNAL_H
+
+  dnl stat-time
+  gl_STAT_TIME
+  gl_STAT_BIRTHTIME
+
+  dnl stddef
+  gl_STDDEF_H
+
+  dnl stdnoreturn
+  gl_STDNORETURN_H
+
+  dnl sys_select
+  AC_REQUIRE([gl_HEADER_SYS_SELECT])
+  AC_PROG_MKDIR_P
+
+  dnl sys_socket
+  AC_REQUIRE([gl_HEADER_SYS_SOCKET])
+  AC_PROG_MKDIR_P
+
+  dnl sys_types
+  gl_SYS_TYPES_H
+  AC_PROG_MKDIR_P
+
+  dnl sys_uio
+  gl_HEADER_SYS_UIO
+  AC_PROG_MKDIR_P
+
+  dnl time
+  gl_HEADER_TIME_H
+
+  dnl timespec
   gl_TIMESPEC
+
+  dnl unistd
+  gl_UNISTD_H
 ])
 
 

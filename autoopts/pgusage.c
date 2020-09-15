@@ -1,6 +1,6 @@
 
 /**
- * \file pgusage.c
+ * @file pgusage.c
  *
  *   Automated Options Paged Usage module.
  *

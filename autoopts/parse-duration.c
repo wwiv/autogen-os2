@@ -1,4 +1,8 @@
-/* Parse a time duration and return a seconds count
+
+/**
+ * @file parse-duration.c
+ *
+ * Parse a time duration and return a seconds count
    Copyright (C) 2008-2020 Free Software Foundation, Inc.
    Written by Bruce Korb <bkorb@gnu.org>, 2008.
 

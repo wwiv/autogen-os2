@@ -1,6 +1,6 @@
 
 /**
- * \file time.c
+ * @file time.c
  *
  * @addtogroup autoopts
  * @{

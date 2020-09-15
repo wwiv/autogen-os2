@@ -1,6 +1,6 @@
 
 /**
- * \file nested.c
+ * @file nested.c
  *
  *  Handle options with arguments that contain nested values.
  *

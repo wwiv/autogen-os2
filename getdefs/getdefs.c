@@ -1,6 +1,7 @@
 
 /**
- *  @file getdefs.c
+ * @file getdefs.c
+ *
  *  @addtogroup getdefs
  *  @{
  */

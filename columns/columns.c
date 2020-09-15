@@ -1,6 +1,7 @@
 
 /**
- *  @file columns.c
+ * @file columns.c
+ *
  *  @group columns
  *  @{
  */

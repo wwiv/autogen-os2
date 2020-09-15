@@ -1,6 +1,6 @@
 
 /**
- * \file environment.c
+ * @file env.c
  *
  *  This file contains all of the routines that must be linked into
  *  an executable to use the generated option processing.  The optional

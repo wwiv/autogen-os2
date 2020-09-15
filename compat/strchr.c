@@ -1,4 +1,7 @@
-/*
+
+/**
+ * @file strchr.c
+ *
    SYNOPSIS
        #include <string.h>
 

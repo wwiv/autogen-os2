@@ -1,6 +1,6 @@
 
 /**
- * \file numeric.c
+ * @file numeric.c
  *
  * Handle options with numeric (integer) arguments.
  *

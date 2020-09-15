@@ -43,13 +43,10 @@ init() {
 do_all_headers() {
     # Generate the header files
     #
-    local sv_PS4="$PS4"
-    PS4='+hdr=${FUNCNAME:-=}-$LINENO> '
     for file in [abd-z]*.in
     do
         gen_hdr `echo $file | sed 's/\.in$//'`
     done
-    PS4="$sv_PS4"
 }
 
 protoize() {
@@ -100,21 +97,20 @@ gen_hdr() {
     stp=${1}.stamp
     tmp=${1}.tmp
 
-    exec < ${inf} > ${tmp}
     while IFS='' read -r line
     do
         line_no=`expr $line_no + 1`
 
         case "${line}" in
-        '@protos '* ) : ;;
-        * ) printf '%s\n' "${line}"
-            continue ;;
+            '@protos '* ) : ;;
+            * ) printf '%s\n' "${line}"
+                continue ;;
         esac
 
         cfile=`echo "$line" | sed 's/.* //'`
         sed -n '/^\/\*\*$/,/^{$/p' ${cfile} | protoize
         printf '#line %d "%s"\n' $line_no $inf
-    done
+    done < ${inf} > ${tmp}
 
     if cmp -s $hdr $tmp
     then rm -f $tmp
@@ -131,5 +127,12 @@ gen_hdr() {
 
 init
 do_all_headers
+
+# Local Variables:
+# mode:shell-script
+# sh-indentation:4
+# sh-basic-offset:4
+# indent-tabs-mode: nil
+# End:
 
 # bootstrap.dir ends here

@@ -1,6 +1,6 @@
 
 /**
- * \file makeshell.c
+ * @file makeshell.c
  *
  *  This module will interpret the options set in the tOptions
  *  structure and create a Bourne shell script capable of parsing them.

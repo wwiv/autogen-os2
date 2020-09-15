@@ -83,6 +83,7 @@ assemble_dot_dot_Mf() {
 
 assemble_Makefile() {
     sed '/# *start-generated-text/q' ${srcdir}/Makefile.am.pre
+    rm ${srcdir}/Makefile.am.pre
     printf '\nif AMDEP\n'
 
     depfl_list=

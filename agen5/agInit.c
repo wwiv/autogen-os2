@@ -59,6 +59,26 @@ initialize(int arg_ct, char ** arg_vec)
         SCM_EVAL_CONST(INIT_SCM_DEBUG_FMT);
 }
 
+
+/**
+ * extract the base name of a file
+ *
+ * @param fname name of the file
+ * @returns a pointer to where the base file name starts
+ */
+static char const *
+ag_basename( char const * fname )
+{
+    char const * res = strrchr(fname, DIRCH);
+    if (res == NULL)
+        return fname;
+    return res + 1;
+}
+
+
+/**
+ * Feed the initializing instructions to the SCM interpreter
+ */
 static void
 init_scm(void)
 {

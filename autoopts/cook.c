@@ -1,5 +1,6 @@
+
 /**
- * \file cook.c
+ * @file cook.c
  *
  *  This file contains the routines that deal with processing quoted strings
  *  into an internal format.

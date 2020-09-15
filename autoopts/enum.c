@@ -1,6 +1,6 @@
 
 /**
- * \file enumeration.c
+ * @file enum.c
  *
  *  Handle options with enumeration names and bit mask bit names
  *  for their arguments.

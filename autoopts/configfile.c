@@ -1,5 +1,6 @@
+
 /**
- * \file configfile.c
+ * @file configfile.c
  *
  *  configuration/rc/ini file handling.
  *

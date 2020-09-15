@@ -1,6 +1,6 @@
 
 /**
- * \file char-mapper.c
+ * @file char-mapper.c
  *
  *  This is the main routine for char-mapper.
  *

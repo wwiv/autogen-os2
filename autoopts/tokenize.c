@@ -1,4 +1,6 @@
-/** \file tokenize.c
+
+/**
+ * @file tokenize.c
  *
  *  Tokenize a string, accommodating quoted strings.
  *

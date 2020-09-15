@@ -1,6 +1,6 @@
 
 /**
- * \file boolean.c
+ * @file boolean.c
  *
  * Handle options with true/false values for arguments.
  *

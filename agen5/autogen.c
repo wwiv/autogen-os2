@@ -1,6 +1,6 @@
 
 /**
- *  @file autogen.c
+ * @file autogen.c
  *
  *  This is the main routine for autogen.
  *  @addtogroup autogen

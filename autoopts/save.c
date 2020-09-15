@@ -1,6 +1,6 @@
 
-/*
- * \file save.c
+/**
+ * @file save.c
  *
  *  This module's routines will take the currently set options and
  *  store them into an ".rc" file for re-interpretation the next

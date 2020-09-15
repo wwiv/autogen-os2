@@ -1,6 +1,8 @@
-/*  -*- Mode: C -*-  */
 
-/* pathfind.c --- find a FILE  MODE along PATH */
+/**
+ * @file pathfind.c
+ * --- find a FILE  MODE along PATH
+ */
 
 /* Author: Gary V Vaughan <gvaughan@oranda.demon.co.uk> */
 

@@ -1,6 +1,6 @@
 
 /**
- * \file stack.c
+ * @file stack.c
  *
  *  This is a special option processing routine that will save the
  *  argument to an option in a FIFO queue.

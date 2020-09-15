@@ -95,7 +95,9 @@ add_files_to_mf() {
     gnulib_code='strdup.c'
     for f in $gnulib_hdr $gnulib_code
     do
-        cp -fp ${GNULIBDIR}/lib/$f . || die "cannot copy ${GNULIBDIR}/lib/$f"
+        test -f "$f" && continue
+        cp -fp ${GNULIBDIR}/lib/$f . || \
+            die "cannot copy ${GNULIBDIR}/lib/$f"
     done
 
     {
@@ -130,7 +132,7 @@ add_files_to_mf() {
     } > Makefile.lists
 
     sed '/^GENMAN /r Makefile.lists' Makefile.am.pre > Makefile.am
-    rm -f Makefile.lists gnulib.mk *.3
+    rm -f Makefile.lists gnulib.mk *.3 Makefile.am.pre
 }
 
 make_funcs_def()
@@ -215,6 +217,15 @@ make_funcs_def()
         die "FAILED: ${ag_aopts} aoconf.def"
 }
 
+gen_post_code() {
+    ${ag_aopts} genshell.def || \
+        die "FAILED: ${ag_aopts} genshell.def"
+
+    agopts='-Taginfo3.tpl -DLEVEL=subsection -blibopts funcs.def'
+    ${ag_aopts} ${agopts} || \
+        die "FAILED: ${ag_aopts} ${agopts}"
+}
+
 test "X${mainpid}" = X && {
     echo SOURCING BOOTSTRAP.SHLIB
     \cd ${top_srcdir-..}
@@ -230,22 +241,13 @@ test "X${mainpid}" = X && {
 export ag_aopts=${AGexe-autogen}\ -L${top_srcdir}/autoopts/tpl
 
 case "$1" in
-post )
-    ${ag_aopts} genshell.def || \
-        die "FAILED: ${ag_aopts} genshell.def"
+post )  gen_post_code ;;
 
-    agopts='-Taginfo3.tpl -DLEVEL=subsection -blibopts funcs.def'
-        ${ag_aopts} ${agopts} || \
-            die "FAILED: ${ag_aopts} ${agopts}"
-    ;;
-
-pre )
-    make_funcs_def || die "could not rebuild files in $PWD"
-    ;;
+pre )   make_funcs_def || die "could not rebuild files in $PWD" ;;
 esac
 
 ${free_trap} && trap '' 0
-true
+return 0
 
 # Local Variables:
 # mode:shell-script

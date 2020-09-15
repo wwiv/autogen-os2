@@ -38,7 +38,7 @@ AM_CPPFLAGS     = @INCLIST@ $(LIBXML2_CFLAGS)
 AM_CFLAGS       = @WARN_CFLAGS@
 AG_ENV          =  top_builddir="$(top_builddir)" top_srcdir="$(top_srcdir)" \
 	VERBOSE="$(V)"
-RUN_AG       = $(AG_ENV) $(SHELL) "${top_srcdir}/build-aux/run-ag.sh"
+RUN_AG          = $(AG_ENV) $(SHELL) "${top_srcdir}/build-aux/run-ag.sh"
 DOC_TIMEOUT     = -DLEVEL=section --timeout=`expr $(AG_TIMEOUT) '*' 3`
 
 all 	    : gen

@@ -1,6 +1,6 @@
 
-/*
- * \file sort.c
+/**
+ * @file sort.c
  *
  *  This module implements argument sorting.
  *

@@ -1,6 +1,6 @@
 
 /**
- * \file file.c
+ * @file file.c
  *
  * Handle options that have file names for arguments.
  *

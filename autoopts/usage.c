@@ -1,6 +1,6 @@
 
-/*
- * \file usage.c
+/**
+ * @file usage.c
  *
  *  This module implements the default usage procedure for
  *  Automated Options.  It may be overridden, of course.

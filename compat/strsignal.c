@@ -1,6 +1,6 @@
 
 /**
- * \file strsignal.c
+ * @file strsignal.c
  *
  *  This file is part of AutoGen.
  *
