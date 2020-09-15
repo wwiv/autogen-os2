@@ -60,7 +60,9 @@ CASE (suffix)  =][=
 
   ==  c
 
-=]#include <stdio.h>
+=]
+#include <config.h>
+#include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 

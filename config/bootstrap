@@ -56,6 +56,8 @@ PS4='+shlib=${FUNCNAME:-=}-$LINENO> ' \
 
 config_tools()
 {
+    shopt -qo xtrace && VERBOSE=true || VERBOSE=${VERBOSE:-false}
+
     if test -d "$TEMP_DIR"
     then
         TMPDIR="$TEMP_DIR"
@@ -71,7 +73,7 @@ config_tools()
         $VERBOSE && must_remove_temp_dir=false || must_remove_temp_dir=true
         TEMP_DIR=$TMPDIR
     fi
-    export TMPDIR TEMP_DIR
+    export TMPDIR TEMP_DIR VERBOSE
 
     conf_dir=${top_srcdir}/config
     test -f "${top_srcdir}/configure.ac.pre" || \
@@ -237,7 +239,7 @@ run_autotools()
     trap '' 0
     echo 'bootstrap complete' $(date)
     ${must_remove_temp_dir} && rm_temp_dir
-    : ; exit 0
+    exit 0
 }
 # Local Variables:
 # mode:shell-script

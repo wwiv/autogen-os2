@@ -388,7 +388,7 @@ do
 done
 
 test ${#pid_list} -gt 1 && wait $pid_list
-{
+test -z "$log_file_list" || {
     echo =============================
     head -n 99999 $log_file_list
     echo =============================

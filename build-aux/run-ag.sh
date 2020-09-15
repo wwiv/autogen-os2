@@ -47,7 +47,13 @@ find_exe() {
 }
 
 open_log_file() {
-  test -o xtrace && VERBOSE=1
+  test -o xtrace && VERBOSE=true || {
+      case "X$VERBOSE" in
+        Xt* | X1* ) VERBOSE=true ;;
+        * ) VERBOSE=false ;;
+      esac
+    }
+
   test "X$VERBOSE" = X1 && {
     PS4='+run-ag-$LINENO> '
     set -x
@@ -56,12 +62,11 @@ open_log_file() {
 
   if test -z "${TEMP_DIR}"
   then
-    TEMP_DIR="${TMPDIR:-/tmp}/run-ag-????????"
-    eval rm -rf ${TEMP_DIR}
-    TEMP_DIR=$(mktemp -d ${TEMP_DIR//\?/X})
+    TEMP_DIR=$(mktemp -d "${TMPDIR:-/tmp}/run-ag-XXXXXXXX")
   fi
 
-  local STAMP_TEMP_DIR=${TEMP_DIR}/ag-stamps-$$
+  local tag=${1#-MF} ; tag=${tag%-dep.mk}
+  STAMP_TEMP_DIR=${TEMP_DIR}/ag-stamp-${tag##*/}
   mkdir -p "${STAMP_TEMP_DIR}" || die "cannot mkdir ${STAMP_TEMP_DIR}"
   exec 9>&2 2>> ${STAMP_TEMP_DIR}/mk-stamps.log
 }
@@ -73,11 +78,11 @@ set_exe_vars() {
   L_opt="-L'${top_srcdir}/autoopts/tpl'"
   test "X${top_srcdir}" = "X${top_builddir}" || \
     L_opt="$L_opt -L'${top_builddir}/autoopts/tpl'"
-  test -o xtrace || return 0
-  L_opt="${L_opt} --trace=every --trace-out='${STAMP_TEMP_DIR}/ag-trace.txt'"
+  $VERBOSE && \
+    L_opt="${L_opt} --trace=every --trace-out='${STAMP_TEMP_DIR}/ag-trace.txt'"
 }
 
-open_log_file
+open_log_file "$1"
 set_exe_vars
 
 case "$1" in
@@ -85,7 +90,9 @@ case "$1" in
 
   *-dep.mk )
     dir=`dirname "$1"`
-    test -d "$dir" || mkdir -p "$dir" || exit 1
+    test -d "$dir" || \
+      mkdir -p "$dir" || \
+      die "cannot mkdir '$dir'"
     touch -t 197001020000 "$1"
     exit $?
     ;;
@@ -99,8 +106,8 @@ exit $?
 ## Local Variables:
 ## mode: shell-script
 ## indent-tabs-mode: nil
-## sh-indentation: 2
-## sh-basic-offset: 2
+## sh-indentation: 4
+## sh-basic-offset: 4
 ## End:
 
 # END OF add-on/build-aux/mk-ag-dep.sh

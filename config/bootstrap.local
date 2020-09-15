@@ -195,6 +195,7 @@ run_gnulib_tool() {
 	stdnoreturn
         sys_select
         sys_socket
+        sys_time
         sys_types
         sys_uio
 	time

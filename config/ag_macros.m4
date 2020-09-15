@@ -101,6 +101,8 @@ AC_DEFUN([INVOKE_AG_MACROS_FIRST],[
 
   dnl time
   gl_HEADER_TIME_H
+  gl_HEADER_SYS_TIME_H
+  AC_PROG_MKDIR_P
 
   dnl timespec
   gl_TIMESPEC

@@ -54,6 +54,7 @@ protoize() {
 
     while IFS='' read -r line
     do
+        # $state "$line"
         case $state in
         do_comment )
             printf '%s\n' "${line}"

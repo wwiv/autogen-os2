@@ -19,3 +19,6 @@
 /host-cpu-c-abi.m4
 /lib-ld.m4
 /lib-prefix.m4
+bootstrap.conf
+bootstrap.new
+bootstrap.new-shlib

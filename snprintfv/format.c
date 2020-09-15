@@ -1,5 +1,5 @@
 
-/**
+/***
  * @file format.c
  * --- printf clone for argv arrays
  * Copyright (C) 1998, 1999, 2000, 2002 Gary V. Vaughan
