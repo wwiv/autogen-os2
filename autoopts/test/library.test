@@ -125,8 +125,10 @@ cat > ${testname}-main.c <<- _EOCode_
 	  check_library_opt();
 	  return EXIT_SUCCESS; }
 	_EOCode_
+test $? -eq 0 || failure cannot create ${testname}-main.c
 
-${CC} ${CFLAGS} ${INC} -o ${testname} ${testname}-main.c ${testname}-lib.o ${LIB}
+${CC} ${CFLAGS} ${LDFLAGS} ${LIBS} ${INC} \
+      -o ${testname} ${testname}-main.c ${testname}-lib.o ${LIB}
 test $? -eq 0 || failure cannot compile ${testname}-main.c
 
 ./${testname} -c || failure library option not detected
@@ -163,7 +165,7 @@ cleanup
 ## Local Variables:
 ## mode: shell-script
 ## indent-tabs-mode: nil
-## sh-indentation: 2
+## sh-indentation: 4
 ## End:
 
 # end of library.test
