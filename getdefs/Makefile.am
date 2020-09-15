@@ -77,8 +77,10 @@ gd.c : $(gdsrcs)
 	echo '#undef   PKGDATADIR' ; \
 	echo '#define  PKGDATADIR "$(pkgdatadir)"' ; \
 	echo ; echo '#define  DEFINING 1' ; \
+	echo '#include <config.h>' ; \
+	echo '#include "autoopts/ag-char-map.h"' ; \
 	echo '#include "autoopts/project.h"' ; \
-	for f in opts.c $(gdsrcs) ; \
+	for f in opts.h opts.c $(gdsrcs) ; \
 	do echo "#include \"$$f\"" ; done
 
 $(getdefs_OBJECTS) opts.h opts.c : stamp-opts
