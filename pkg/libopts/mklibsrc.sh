@@ -157,9 +157,6 @@ make_tarball() {
 #
 #  MAIN
 #
-set -x
-PS4='+mls-${FUNCNAME:-=}-$LINENO> '
-
 init
 copy_sources
 create_makefile
