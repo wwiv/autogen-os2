@@ -34,6 +34,16 @@ TESTS      = \
     nls.test     rc.test       shell.test     stdopts.test   \
     time.test    usage.test    vendor.test    vers.test
 
+TESTS_ENVIRONMENT = TERM='' \
+	CFLAGS='$(CFLAGS)' \
+	COMPILE='$(COMPILE)' \
+	EXPRLIST="$(EXPRLIST)" \
+	LDFLAGS='$(LDFLAGS)' \
+	SHELL="$(POSIX_SHELL)" \
+	srcdir="$(srcdir)" \
+	top_builddir="$(top_builddir)" \
+	top_srcdir="$(top_srcdir)"
+
 getopt.test : ../$(libsrc)
 ../$(libsrc):
 	cd .. ; echo $(MAKE) $(libsrc) ; $(MAKE) $(libsrc) >/dev/null 2>&1
@@ -47,7 +57,7 @@ perm-stamp :
 	@-cd $(srcdir) ; chmod +x *.test 2>/dev/null
 
 verbose : distclean-local
-	VERBOSE=true ; export VERBOSE ; \
+	VERBOSE=true LIBINTL="$(LIBINTL)" ; export LIBINTL VERBOSE ; \
 	$(MAKE) check TESTS="$(TESTS)"
 
 .PHONY : distclean-local verbose perm-stamp

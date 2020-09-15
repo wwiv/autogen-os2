@@ -283,7 +283,7 @@ compile()
   test "X${Dnam}"  = "X" && Dnam="${testname}"
 
   d=`echo TEST_TEST_${Dnam}_OPTS | ${TR} '[a-z]-' '[A-Z]_'`
-  cc_cmd="${CC} ${CFLAGS} -D$d ${INC} -o ${Cexe} ${Csrc}.c ${LIB}"
+  cc_cmd="${CC} ${CFLAGS} ${LDFLAGS} -D$d ${INC} -o ${Cexe} ${Csrc}.c ${LIB}"
   eval ${cc_cmd} || \
     failure cannot compile ${Csrc}.c
   if test $# -gt 0

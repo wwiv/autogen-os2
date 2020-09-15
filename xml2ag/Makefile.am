@@ -67,10 +67,10 @@ include $(DEPDIR)/man-dep.mk
 include $(DEPDIR)/texi-dep.mk
 include $(DEPDIR)/fork-dep.mk
 else
-DEPFL_OPTS      = $@
-DEPFL_MAN       = $@
-DEPFL_TEXI      = $@
-DEPFL_FORK      = $@
+DEPFL_OPTS      = $@-dep.mk
+DEPFL_MAN       = $@-dep.mk
+DEPFL_TEXI      = $@-dep.mk
+DEPFL_FORK      = $@-dep.mk
 endif
 
 AGARG_OPTS      = -MF$(DEPFL_OPTS) -MT$@ -MP

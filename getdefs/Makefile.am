@@ -55,9 +55,9 @@ $(DEPFL_INFO) :
 	$(RUN_AG) "$@"
 include $(DEPFL_INFO)
 else
-DEPFL_OPTS = $@
-DEPFL_TEXI = $@
-DEPFL_MAN  = $@
+DEPFL_OPTS = $@-dep.mk
+DEPFL_TEXI = $@-dep.mk
+DEPFL_MAN  = $@-dep.mk
 endif
 
 AGARG_OPTS = -MF$(DEPFL_OPTS) -MT$@ -MP
