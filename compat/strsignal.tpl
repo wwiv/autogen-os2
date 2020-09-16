@@ -25,7 +25,7 @@ h
  *
  *  Generated for a [=`uname -r`=] [=`uname`=] platform
  *
- *  strsignal Copyright (C) 1992-2017 by Bruce Korb - all rights reserved
+ *  strsignal Copyright (C) 1992-2020 by Bruce Korb - all rights reserved
  *
 [=(gpl "AutoGen" " *  ")=]
  */

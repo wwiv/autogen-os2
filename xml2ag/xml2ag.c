@@ -10,7 +10,7 @@
 /*
  *  xml2ag Copyright (C) 2002-2020 by Bruce Korb - all rights reserved
  *  This file is part of AutoGen.
- *  AutoGen Copyright (C) 1992-2017 by Bruce Korb - all rights reserved
+ *  AutoGen Copyright (C) 1992-2020 by Bruce Korb - all rights reserved
  *
  *  AutoGen is free software: you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the
