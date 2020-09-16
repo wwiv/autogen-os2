@@ -23,7 +23,7 @@
 TARG = getdefs
 
 bin_PROGRAMS    = getdefs
-getdefs_LDFLAGS = -no-install
+getdefs_LDFLAGS =
 gdsrcs          = getdefs.h proto.h gdemit.c gdinit.c getdefs.c
 getdefs_SOURCES = proto.h
 BUILT_SOURCES   = gd.c

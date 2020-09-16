@@ -20,7 +20,7 @@
 ## with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 bin_PROGRAMS    = columns
-columns_LDFLAGS = -no-install
+columns_LDFLAGS =
 csrc            = opts.h columns.c opts.c
 nodist_columns_SOURCES = cols.c
 
