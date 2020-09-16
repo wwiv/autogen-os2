@@ -2,7 +2,7 @@
 /**
  * @file cright-update.c
  *
- *  cright-update Copyright (C) 1992-2018 by Bruce Korb - all rights reserved
+ *  cright-update Copyright (C) 1992-2020 by Bruce Korb - all rights reserved
  *
  * cright-update is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the

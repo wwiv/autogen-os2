@@ -2,7 +2,7 @@
 /**
  * @file fmemopen.c
  *
- * Copyright (C) 2004-2018 by Bruce Korb.  All rights reserved.
+ * Copyright (C) 2004-2020 by Bruce Korb.  All rights reserved.
  *
  * This code was inspired from software written by
  *   Hanno Mueller, kontakt@hanno.de

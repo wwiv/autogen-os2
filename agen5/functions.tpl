@@ -88,7 +88,7 @@
  *
  *  Tables of Text Functions for AutoGen
  *
- *  Copyright (C) 1992-2018 by Bruce Korb - all rights reserved
+ *  Copyright (C) 1992-2020 by Bruce Korb - all rights reserved
  *
 [=(gpl "AutoGen" " *  ")=]
  *
