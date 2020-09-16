@@ -23,7 +23,7 @@ addtogroup = getdefs;
  */
 
 copyright = {
-    date   = "1999-2018";
+    date   = "1999-2020";
     type   = gpl;
     owner  = "Bruce Korb";
     eaddr  = 'autogen-users@lists.sourceforge.net';

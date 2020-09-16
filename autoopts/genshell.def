@@ -30,7 +30,7 @@ autogen definitions options;
  */
 
 copyright = {
-    date  = "1999-2018";
+    date  = "1999-2020";
     owner = "Bruce Korb";
     eaddr = "autogen-users@lists.sourceforge.net";
     type  = lgplv2;

@@ -4,7 +4,7 @@ AutoGen Definitions options; /* -*- Mode: conf -*- */
  *  "([12][90][0-9][0-9])"
  *
  *  update-copyright is copyrighted
- *  Copyright (C) 2001-2018 Bruce Korb
+ *  Copyright (C) 2001-2020 by Bruce Korb
  *  All rights reserved.
  */
 argument        = "[ <file-name> ... ]";
@@ -16,7 +16,7 @@ explain         = <<- _EOF_
 	_EOF_;
 
 copyright = {
-    date  = "2009-2015";
+    date  = "2009-2020";
     owner = "Bruce Korb";
     eaddr = "bkorb@gnu.org";
     type  = mbsd;
@@ -167,7 +167,7 @@ flag = {
 
     doc = <<- EODoc
 	Replace all the individual and ranged years with one range:
-	<first-year>-<current-year>.  e.g. 1991-2013.
+	<first-year>-<current-year>.  e.g. 1991-2020.
 	EODoc;
 };
 
@@ -188,7 +188,7 @@ detail = <<- _EOF_
 	Comment markers at the start of each line are preserved on following
 	lines, should they be necessary.  A program name is allowed to appear
 	after comment markers and before the copyright mark.  Contiguous years
-	of 2 or more years are replaced with a year range, e.g. "2008-2011".
+	of 2 or more years are replaced with a year range, e.g. "2008-2020".
 	Two digit years will trigger a diagnostic and the copyright will not
 	get updated.
 

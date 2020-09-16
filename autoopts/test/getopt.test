@@ -160,7 +160,7 @@ gnu-usage;
 no-libopts;
 
 copyright = {
-    date  = "2003-2018";
+    date  = "2003-2020";
     owner = "Odyssey Computing Concepts, Inc.";
     author= "Bruce Korb";
     eaddr = "bkorb@gnu.org";
@@ -273,7 +273,7 @@ optionPrintVersion (tOptions * pOptions, tOptDesc * pOptDesc)
   char const * pz_by =
     _("test_getopt 1.2.3\n\
 Written by Bruce Korb.\n\n\
-Copyright (C) 2003-2018 Odyssey Computing Concepts, Inc.\n\
+Copyright (C) 2003-2020 Odyssey Computing Concepts, Inc.\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n");
 
@@ -507,7 +507,7 @@ optionPrintVersion (tOptions * pOptions, tOptDesc * pOptDesc)
   char const * pz_by =
     _("test_getopt 1.2.3\n\
 Written by Bruce Korb.\n\n\
-Copyright (C) 2003-2018 Odyssey Computing Concepts, Inc.\n\
+Copyright (C) 2003-2020 Odyssey Computing Concepts, Inc.\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n");
 

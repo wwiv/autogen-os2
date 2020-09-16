@@ -200,7 +200,8 @@ run_gnulib_tool() {
         sys_uio
 	time
 	timespec
-	unistd'
+	unistd
+	unlocked-io'
     local cmd=$(echo ${GL_GNULIB_TOOL} $glopts $glmods)
     echo GNULIB-TOOL: $cmd
     ${cmd}

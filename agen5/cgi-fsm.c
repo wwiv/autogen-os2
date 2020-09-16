@@ -12,7 +12,7 @@
  *
  *  Automated Finite State Machine
  *
- *  Copyright (C) 1992-2018 Bruce Korb - all rights reserved
+ *  Copyright (C) 1992-2020 by Bruce Korb - all rights reserved
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,7 +49,7 @@
 /* START === USER HEADERS === DO NOT CHANGE THIS COMMENT */
 
 /*  This file is part of AutoGen.
- *  Copyright (C) 1992-2018 Bruce Korb - all rights reserved
+ *  Copyright (C) 1992-2020 by Bruce Korb - all rights reserved
  */
 
 #include "autogen.h"

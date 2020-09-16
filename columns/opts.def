@@ -22,7 +22,7 @@ addtogroup = columns;
  */
 
 copyright = {
-    date   = "1999-2017";
+    date   = "1999-2020";
     type   = gpl;
     owner  = "Bruce Korb";
     eaddr  = 'autogen-users@lists.sourceforge.net';
