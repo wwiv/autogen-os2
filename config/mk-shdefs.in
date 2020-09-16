@@ -128,10 +128,10 @@ configure() {
     rm -f shdef-temp*
 }
 
-set -x
 exec 9>&2
-tmp=$(mktemp -d /tmp/shdefs-XXXXXXXXX)
+tmp=$(mktemp -d ${TEMP_DIR:-/tmp}/shdefs-XXXXXXXXX)
 exec 2>> $tmp/mk-shdef.log
+set -x
 init $0 $1
 mk_config
 configure
