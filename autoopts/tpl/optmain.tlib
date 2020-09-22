@@ -922,7 +922,7 @@ DEFINE range-option-code
     option_usage_fp = stderr;
 
  emit_ranges:
-optionShowRange(pOptions, pOptDesc, VOIDP(rng), [= (. range-count) =]);[=
+    optionShowRange(pOptions, pOptDesc, VOIDP(rng), [= (. range-count) =]);[=
 
 (. ok-return-code)  =][=
 

@@ -206,7 +206,7 @@ optionPrintVersion(tOptions * opts, tOptDesc * od)
  * doc:
  *  This routine will print the version to stdout and return
  *  instead of exiting.  Please see the source for the
- *  @code{print_ver} funtion for details on selecting how
+ *  @code{print_ver} function for details on selecting how
  *  verbose to be after this function returns.
 =*/
 void

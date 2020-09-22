@@ -31,13 +31,13 @@ AG_VERSION=$AG_REVISION$AG_PATCHLEVEL
 # AO_CURRENT  represents the number of visible changes to the interface
 # AO_REVISION represents the number of times the library has been
 #             modified with an unchanged interface.
-# AO_AGE      represents the number of older revisions the current library
-#             is capable of handling.
+# AO_AGE      represents the number of older interfaces the current
+#             library is capable of handling.
 #
 AO_LIBRARY=libopts.la
 AO_CURRENT=42
 AO_REVISION=2
-AO_AGE=18
+AO_AGE=17
 
 # For automake
 #

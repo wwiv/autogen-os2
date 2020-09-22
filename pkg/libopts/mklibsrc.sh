@@ -56,14 +56,15 @@ try_copy_file() {
     do
         for d in . autoopts
         do
-            test -f $td/$d/$f && {
-                cp -f $td/$d/$f ${tagd}/${f}
+            test -f "$td/$d/$file" && {
+                cp -f "$td/$d/$file" "${tagd}/$file"
                 return 0
             }
         done
     done
 
-    die "could not locate ${f} in ${top_srcdir} to copy into tarball"
+    die "could not locate ${file} in ${top_srcdir} or" \
+        "${top_builddir} to copy into tarball"
 }
 
 copy_sources() {
@@ -86,7 +87,7 @@ copy_sources() {
         die "compat sources could not be found"
 
     cd ${tagd}
-    cp ${top_srcdir}/config/libopts*.m4 ${top_srcdir}/config/stdnoret*.m4 m4/.
+    cp ${top_srcdir}/config/*.m4 m4/.
     chmod u+w m4/libopts.m4
     cat ${top_srcdir}/pkg/libopts/libopts-add.m4 >> m4/libopts.m4
     test ! -f Makefile.am || rm -f Makefile.am

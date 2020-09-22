@@ -47,12 +47,14 @@ find_exe() {
 }
 
 open_log_file() {
-  test -o xtrace && VERBOSE=true || {
-      case "X$VERBOSE" in
-        Xt* | X1* ) VERBOSE=true ;;
-        * ) VERBOSE=false ;;
-      esac
-    }
+    case "$-" in
+        *x* )  VERBOSE=true ;;
+        * )    case "X$VERBOSE" in
+                   Xt* | X1* ) VERBOSE=true ;;
+                   * ) VERBOSE=false ;;
+               esac
+               ;;
+    esac
 
   test "X$VERBOSE" = X1 && {
     PS4='+run-ag-$LINENO> '

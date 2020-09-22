@@ -112,17 +112,14 @@ optionNumericVal(tOptions * opts, tOptDesc * od)
     /*
      *  Guard against all the different ways this procedure might get invoked
      *  when there is no string argument provided.
-     */
-    if (INQUERY_CALL(opts, od) || (od->optArg.argString == NULL))
-        return;
-
-    /*
+     *
      *  Numeric options may have a range associated with it.
      *  If it does, the usage procedure requests that it be
      *  emitted by passing a NULL od pointer.  Also bail out
      *  if there is no option argument or if we are being reset.
      */
-    if (  (od == NULL)
+    if (  INQUERY_CALL(opts, od)
+       || (od == NULL)
        || (od->optArg.argString == NULL)
        || ((od->fOptState & OPTST_RESET) != 0)
        || (opts <= OPTPROC_EMIT_LIMIT))
