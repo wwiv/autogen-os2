@@ -112,6 +112,10 @@ inner_main(void * closure, int argc, char ** argv)
 int
 main(int argc, char ** argv)
 {
+    /*
+     * Things just don't work right in the Guile library if we're not
+     * in the "C" language environment. If we are not, then start over.
+     */
     {
         char const * lc = getenv("LC_ALL");
         if ((lc != NULL) && (*lc != NUL) && (strcmp(lc, "C") != 0)) {
