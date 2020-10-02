@@ -84,7 +84,6 @@ AM_WITH_DMALLOC
 # ----------------------------------------------------------------------
 AC_PROG_CC_STDC
 AM_PROG_CC_C_O
-gl_FUNC_GLIBC_UNLOCKED_IO
 AC_EXEEXT
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
