@@ -88,9 +88,10 @@ copy_sources() {
 
     cd ${tagd}
     cp ${top_srcdir}/config/*.m4 m4/.
+    rm -f m4/unlocked-io*
     chmod u+w m4/libopts.m4
     cat ${top_srcdir}/pkg/libopts/libopts-add.m4 >> m4/libopts.m4
-    test ! -f Makefile.am || rm -f Makefile.am
+    rm -f Makefile.am config.h
     sed s,'\${tag}',"${tag}",g ${top_srcdir}/pkg/libopts/README > README
 }
 

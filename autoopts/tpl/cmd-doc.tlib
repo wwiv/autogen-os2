@@ -228,12 +228,14 @@ DEFINE doc-sections                   :+][+:
 FOR doc-section                       :+][+:
   IF
     (define sec-type (string-upcase (get "ds-type")))
+    (define sec-fmt  (string-downcase! (get "ds-format" "man")))
     (define sec-name (name-to-fname sec-type))
-    (define cvt-fn (find-file (string-append
-         (get "ds-format" "man") "2mdoc")))
+    (define cvt-fn   "")
+    (if (not (= sec-fmt "mdoc"))
+        (set! cvt-fn (find-file (string-append sec-fmt "2mdoc")))
+	(set! cvt-fn "/usr/bin/cat") )
     (if (not (defined? 'cvt-fn))
-        (error (sprintf "Cannot locate converter for %s"
-               (get "ds-format" "man"))))
+        (error (sprintf "Cannot locate %s to mdoc converter" sec-fmt)))
 
     (define sec-file (string-append tmp-dir "/SEC/" sec-name))
     (access? sec-file R_OK)           :+][+:

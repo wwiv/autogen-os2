@@ -129,7 +129,7 @@ config_tools()
 # script, or afterwards.
 #
 source_bs() {
-    local file=${1##*/}
+    local file=${1##*/} sv_ps4="$PS4"
     local _PS4=${PWD##*/}
     _PS4=+BS${_PS4:0:4}-$2='${FUNCNAME:-=}-$LINENO> '
 
@@ -137,6 +137,7 @@ source_bs() {
     : IN $PWD sourcing "$file"
     PS4="$_PS4" source "$PWD/${file}" ${2} || \
         die "$PWD/${file} failed"
+    PS4="$sv_ps4"
 }
 
 sub_bootstrap()

@@ -133,6 +133,7 @@ AC_DEFUN([LIBOPTS_CHECK], [
     INVOKE_LIBOPTS_MACROS
   ])
   AC_CONFIG_FILES(AO_Libopts_Dir/Makefile)
+  ag_UNLOCKED_IO_CHECK
   m4_popdef([AO_Libopts_Dir])dnl
 # end of AC_DEFUN of LIBOPTS_CHECK
 ])

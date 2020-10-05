@@ -50,15 +50,20 @@ AC_DEFUN([INVOKE_AG_MACROS_FIRST],[
     AC_MSG_WARN(Cannot determine nanosecond field of struct stat)
   fi
 
-dnl GNULIB REQUIREMENTS:
-dnl
+  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+  # ag_UNLOCKED_IO_CHECK
+  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+  ag_UNLOCKED_IO_CHECK
+
+  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+  # GNULIB
+  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
   AC_DEFUN([gl_HAVE_MODULE_HAVELIB])
   AC_REQUIRE([gl_EXTERN_INLINE])
   AC_REQUIRE([gl_HEADER_SYS_SELECT])
   AC_REQUIRE([gl_HEADER_SYS_SOCKET])
 
   gl_FUNC_ALLOCA
-  gl_FUNC_GLIBC_UNLOCKED_IO
   gl_FUNC_NANOSLEEP
   gl_HEADER_ERRNO_H
   gl_HEADER_SYS_TIME_H
@@ -86,7 +91,6 @@ dnl
     gl_PREREQ_NANOSLEEP
   fi
 ])
-
 
 
 dnl
