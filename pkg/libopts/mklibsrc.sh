@@ -45,7 +45,7 @@ init() {
     cd ${top_builddir}/pkg
     [ ! -d ${tag} ] || rm -rf ${tag}
     mkdir ${tag} ${tag}/compat ${tag}/autoopts ${tag}/m4
-    tagd=`pwd`/${tag}
+    tagd=${top_builddir}/pkg/${tag}
     prog=${0##*/}
 }
 
@@ -96,6 +96,7 @@ copy_sources() {
 }
 
 create_makefile() {
+    cd ${tagd}
     touch MakeDefs.inc
 
     vers=${AO_CURRENT}:${AO_REVISION}:${AO_AGE}
@@ -135,23 +136,24 @@ create_makefile() {
 }
 
 make_tarball() {
-    gz='gzip --best -n'
-    sfx=tar.gz
-
-    cd ..
-    echo ! cd `pwd`
-    echo ! tar cvf ${tag}.${sfx} ${tag}
+    cd ${top_builddir}/pkg
 
     # If we have a SOURCE_DATE_EPOCH *and* tar supports a sort option,
     # then add some fancy options to make tar output repeatable.
     #
     rbopts=""
-    [ -z "$SOURCE_DATE_EPOCH" ] \
-        || ! tar --help|grep -q sort= \
-        || rbopts="--sort=name --format=gnu --clamp-mtime --mtime @$SOURCE_DATE_EPOCH"
+    if test ${#SOURCE_DATE_EPOCH} -gt 1
+    then
+        if (exec 2>/dev/null ; tar --help|grep -q sort=)
+        then
+            rbopts="--sort=name --format=gnu --clamp-mtime"
+            rbopts="$rbopts --mtime @$SOURCE_DATE_EPOCH"
+        fi
+    fi
 
     tar cvf - $rbopts ${tag} | \
-        $gz > ${top_builddir}/autoopts/${tag}.${sfx}
+        gzip --best -n > \
+             ${top_builddir}/autoopts/${tag}.tar.gz
     rm -rf ${tag}
 }
 

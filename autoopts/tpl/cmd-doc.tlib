@@ -233,7 +233,7 @@ FOR doc-section                       :+][+:
     (define cvt-fn   "")
     (if (not (= sec-fmt "mdoc"))
         (set! cvt-fn (find-file (string-append sec-fmt "2mdoc")))
-	(set! cvt-fn "/usr/bin/cat") )
+	(set! cvt-fn (shell "command -v cat")) )
     (if (not (defined? 'cvt-fn))
         (error (sprintf "Cannot locate %s to mdoc converter" sec-fmt)))
 
